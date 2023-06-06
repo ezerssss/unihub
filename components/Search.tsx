@@ -15,7 +15,7 @@ const Search = (props: SearchProps) => {
   }
 
   return (
-    <View className="flex-row items-center justify-center bg-light-yellow rounded-full flex-1 mx-2 px-2 py-3">
+    <View className="flex-row items-center justify-center bg-white rounded-full flex-1 mx-2 px-2 py-3">
       <TouchableOpacity onPress={handleSearch}>
         <View className="mr-2">
           <AntDesign name="search1" size={15} color="black" />
