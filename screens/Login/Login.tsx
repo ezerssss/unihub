@@ -17,7 +17,7 @@ function Login({ navigation }: RootNavigationProps) {
           className="p-2 my-2 border rounded"
           onPress={handleGoHome}
         >
-          <Text>Go to Home</Text>
+          <Text className="text-primary-100">Go to Home</Text>
         </TouchableOpacity>
       </View>
     </ContentWrapper>

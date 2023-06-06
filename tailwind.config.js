@@ -6,7 +6,25 @@ module.exports = {
     './components/**/*.{js,jsx,ts,tsx}',
   ],
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        primary: {
+          100: '#000080',
+          200: '#000066',
+          300: '#000040',
+        },
+        secondary: {
+          100: '#FFD700',
+          200: '#BFA300',
+          300: '#403600',
+        },
+        dark: '#01010E',
+        'unihub-gray': {
+          100: '#BFBFBF',
+          200: '#808080',
+        },
+      },
+    },
   },
   plugins: [],
 };
