@@ -16,6 +16,7 @@ function ContentWrapper(props: PropsInterface) {
 
   const navigation =
     useNavigation<NativeStackNavigationProp<RootStackParamsList>>();
+  const renderHeader = hasHeader && <Header />;
 
   useLayoutEffect(() => {
     navigation.setOptions({ headerShown: false });
@@ -23,14 +24,8 @@ function ContentWrapper(props: PropsInterface) {
 
   return (
     <View className={`flex-1 ${className || ''} bg-white`}>
-      {hasHeader ? (
-        <>
-          <Header />
-          {children}
-        </>
-      ) : (
-        children
-      )}
+      {renderHeader}
+      {children}
     </View>
   );
 }
