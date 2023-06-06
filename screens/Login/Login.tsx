@@ -4,7 +4,7 @@ import { RootNavigationProps } from '../../types/navigation';
 import ContentWrapper from '../../components/ContentWrapper';
 import { Routes } from '../../enums/routes';
 
-const Login = ({ navigation }: RootNavigationProps) => {
+function Login({ navigation }: RootNavigationProps) {
   function handleGoHome() {
     navigation.navigate(Routes.HOME);
   }
@@ -22,6 +22,6 @@ const Login = ({ navigation }: RootNavigationProps) => {
       </View>
     </ContentWrapper>
   );
-};
+}
 
 export default Login;

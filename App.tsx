@@ -14,8 +14,8 @@ export default function App() {
       <StatusBar style="auto" />
       <NavigationContainer>
         <Stack.Navigator>
-          <Stack.Screen name="Login" component={Login} />
-          <Stack.Screen name="Home" component={Home} />
+          <Stack.Screen component={Login} name="Login" />
+          <Stack.Screen component={Home} name="Home" />
         </Stack.Navigator>
       </NavigationContainer>
     </View>
