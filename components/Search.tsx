@@ -10,9 +10,9 @@ const Search = (props: SearchProps) => {
   const { onSearch } = props;
   const [searchQuery, setSearchQuery] = useState<string>('');
 
-  const handleSearch = () => {
+  function handleSearch() {
     onSearch(searchQuery);
-  };
+  }
 
   return (
     <View className="flex-row items-center justify-center bg-light-yellow rounded-full flex-1 mx-2 px-2 py-3">
