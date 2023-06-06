@@ -6,10 +6,11 @@ import { RootStackParamsList } from '../types/navigation';
 
 interface PropsInterface {
   children: JSX.Element | JSX.Element[];
+  className?: string;
 }
 
 function ContentWrapper(props: PropsInterface) {
-  const { children } = props;
+  const { children, className } = props;
 
   const navigation =
     useNavigation<NativeStackNavigationProp<RootStackParamsList>>();
@@ -18,7 +19,9 @@ function ContentWrapper(props: PropsInterface) {
     navigation.setOptions({ headerShown: false });
   }, []);
 
-  return <View className="flex-1 p-5 bg-white">{children}</View>;
+  return (
+    <View className={`flex-1 ${className || ''} bg-white`}>{children}</View>
+  );
 }
 
 export default ContentWrapper;
