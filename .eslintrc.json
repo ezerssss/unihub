@@ -17,7 +17,7 @@
   },
   "plugins": ["react", "react-native", "@typescript-eslint"],
   "rules": {
-    "react/react-in-jsx-scope": "off",
+    "react/react-in-jsx-scope": "on",
     "@typescript-eslint/no-unused-vars": "error",
     "no-console": ["error", { "allow": ["warn", "error"] }],
     "no-mixed-spaces-and-tabs": [2, "smart-tabs"],
