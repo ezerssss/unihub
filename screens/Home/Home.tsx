@@ -10,7 +10,7 @@ function Home({ navigation }: RootNavigationProps) {
   }
 
   return (
-    <ContentWrapper>
+    <ContentWrapper className="px-0">
       <View className="flex-1 items-center justify-center">
         <Text className="font-bold text-lg">Home</Text>
         <TouchableOpacity
