@@ -1,11 +1,11 @@
 import React from 'react';
 import { View, Text } from 'react-native';
 import Search from './Search';
-import { MaterialIcons, Ionicons, AntDesign } from '@expo/vector-icons';
+import { MaterialIcons, Ionicons } from '@expo/vector-icons';
 
 const Header: React.FC = () => {
   return (
-    <View className="bg-primary-100 pt-20 w-full">
+    <View className="bg-primary-100 pt-20 pb-10">
       <View className="px-4 flex-row items-center justify-between">
         <View className="w-1/6">
           <MaterialIcons name="menu" size={30} color="white" />
@@ -17,14 +17,6 @@ const Header: React.FC = () => {
         />
         <View className="w-1/6 flex-row justify-end">
           <Ionicons name="chatbox-ellipses-outline" size={30} color="white" />
-        </View>
-      </View>
-      <View className="px-4 flex-row justify-evenly mt-10 mb-4">
-        <View className="flex-1">
-          <Text className="text-white font-bold text-center">Shop</Text>
-        </View>
-        <View className="flex-1">
-          <Text className="text-white font-bold text-center">Services</Text>
         </View>
       </View>
     </View>
