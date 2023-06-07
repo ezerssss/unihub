@@ -1,6 +1,6 @@
 import type { Product } from '../types/product';
 
-const products: Product[] = [
+export const featuredProducts: Product[] = [
   {
     id: '1',
     image:
@@ -23,4 +23,33 @@ const products: Product[] = [
   },
 ];
 
-export default products;
+export const products: Product[] = [
+  {
+    id: '1',
+    image:
+      'https://thenextsomewhere.com/wp-content/uploads/2021/04/FilipinaAuthors-BlogPost.jpg',
+    title: 'Old Books',
+    price: 99,
+  },
+  {
+    id: '2',
+    image:
+      'https://s.alicdn.com/@sc04/kf/H8666353031fe4496bb8740ea13108a889.jpg_300x300.jpg',
+    title: 'Old Unifrom',
+    price: 299,
+  },
+  {
+    id: '3',
+    image:
+      'https://www.permajet.com/wp-content/uploads/2021/03/longridge-pencil-pack.jpg',
+    title: 'Pencils',
+    price: 9,
+  },
+  {
+    id: '4',
+    image:
+      'https://www.officewarehouse.com.ph/__resources/_web_data_/products/products/images/4640.jpg',
+    title: 'Paper',
+    price: 2000,
+  },
+];
