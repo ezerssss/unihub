@@ -19,7 +19,6 @@ function Home({ navigation }: RootNavigationProps) {
         </View>
         <View className="bg-white h-full">
           <View className="flex-1 my-5 mx-3">
-            {/* also check this out */}
             <Text className="font-semibold text-lg">Also check this out</Text>
 
             <Text className="font-bold text-lg">Home</Text>
