@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, Image } from 'react-native';
 import Swiper from 'react-native-swiper';
 
-import type { Product } from '../types/product';
+import type { Product } from '../../types/product';
 
 interface CarouselProps {
   products: Product[];
