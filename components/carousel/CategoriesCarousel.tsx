@@ -15,11 +15,13 @@ function CategoriesCarousel(props: CategoriesCarouselProps) {
       {categories.map((category) => (
         <View key={category.id} style={{ margin: 10 }}>
           <View style={{ borderRadius: 10, overflow: 'hidden' }}>
-            <Image
-              source={{ uri: category.image }}
-              style={{ width: 100, height: 100 }}
-              resizeMode="cover"
-            />
+            <TouchableOpacity>
+              <Image
+                source={{ uri: category.image }}
+                style={{ width: 100, height: 100 }}
+                resizeMode="cover"
+              />
+            </TouchableOpacity>
           </View>
           <Text style={{ marginTop: 10, fontWeight: 'bold' }}>
             {category.name}

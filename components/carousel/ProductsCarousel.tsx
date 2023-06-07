@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, Image, ScrollView } from 'react-native';
+import { View, Text, Image, ScrollView, TouchableOpacity } from 'react-native';
 
 import type { Product } from '../../types/product';
 
@@ -15,11 +15,13 @@ function ProductsCarousel(props: ProductsCarouselProps) {
       {products.map((product) => (
         <View key={product.id} style={{ margin: 10 }}>
           <View style={{ borderRadius: 10, overflow: 'hidden' }}>
-            <Image
-              source={{ uri: product.image }}
-              style={{ width: 150, height: 150 }}
-              resizeMode="cover"
-            />
+            <TouchableOpacity>
+              <Image
+                source={{ uri: product.image }}
+                style={{ width: 150, height: 150 }}
+                resizeMode="cover"
+              />
+            </TouchableOpacity>
           </View>
           <Text style={{ marginTop: 10, fontWeight: 'bold' }}>
             {product.title}
