@@ -1,13 +1,9 @@
-import * as React from "react"
-import Svg, { Defs, ClipPath, Path, G } from "react-native-svg"
+import * as React from 'react';
+import Svg, { Defs, ClipPath, Path, G } from 'react-native-svg';
 
-function UnihubIcon() {
+function UniHubIcon() {
   return (
-    <Svg
-      width={96}
-      viewBox="0 0 375 374.999991"
-      height={96}
-    >
+    <Svg width={96} viewBox="0 0 375 374.999991" height={96}>
       <Defs>
         <ClipPath id="a">
           <Path d="M84.05 80.48H288.8v213.75H84.05zm0 0" />
@@ -119,7 +115,7 @@ function UnihubIcon() {
         />
       </G>
     </Svg>
-  )
+  );
 }
 
-export default UnihubIcon
+export default UniHubIcon;

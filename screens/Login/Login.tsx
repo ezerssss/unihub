@@ -3,7 +3,7 @@ import React from 'react';
 import { RootNavigationProps } from '../../types/navigation';
 import ContentWrapper from '../../components/ContentWrapper';
 import { Routes } from '../../enums/routes';
-import UnihubIcon from '../../components/icons/UniHubIcon';
+import UniHubIcon from '../../components/icons/UniHubIcon';
 import GoogleIcon from '../../components/icons/GoogleIcon';
 
 function Login({ navigation }: RootNavigationProps) {
@@ -19,7 +19,7 @@ function Login({ navigation }: RootNavigationProps) {
     <ContentWrapper hasHeader={false}>
       <View className="flex-1 items-center bg-primary-100 justify-center">
         <View className="flex-none items-center justify-center bg-white w-11/12 h-5/6 rounded-3xl">
-          <UnihubIcon />
+          <UniHubIcon />
           <Text className="t text-primary-100 text-xl font-bold mt-7">
             Welcome
           </Text>
