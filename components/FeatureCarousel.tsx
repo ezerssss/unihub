@@ -15,7 +15,9 @@ function CarouselComponent(props: CarouselProps) {
     <View key={product.id} className="rounded-2xl overflow-hidden">
       <View className="relative">
         <Image
-          source={product.image}
+          source={{
+            uri: product.image,
+          }}
           style={{ width: '100%', height: '100%', borderRadius: 8 }}
         />
         <View className="absolute top-0 left-0 p-4 bg-opacity-70">
