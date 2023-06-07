@@ -8,7 +8,7 @@ function Login({ navigation }: RootNavigationProps) {
   function handleGoHome() {
     navigation.navigate(Routes.HOME);
   }
-//ss
+
 function openToS(): void {
   Linking.openURL('http://google.com/search?q=terms+of+service');
 }
