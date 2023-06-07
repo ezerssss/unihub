@@ -8,8 +8,8 @@ function Login({ navigation }: RootNavigationProps) {
   function handleGoHome() {
     navigation.navigate(Routes.HOME);
   }
-
-function OpenToS(): void {
+//ss
+function openToS(): void {
   Linking.openURL('http://google.com/search?q=terms+of+service');
 }
 
@@ -27,7 +27,7 @@ function OpenToS(): void {
             By signing in you are agreeing to our{'\n'}
               <Text 
               className="text-center color-primary-100" 
-              onPress={OpenToS}>
+              onPress={openToS}>
               terms and privacy policies
               </Text>
             </Text>
