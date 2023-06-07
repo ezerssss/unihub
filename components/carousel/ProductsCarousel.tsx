@@ -17,9 +17,9 @@ function ProductsCarousel(props: ProductsCarouselProps) {
           <View style={{ borderRadius: 10, overflow: 'hidden' }}>
             <TouchableOpacity>
               <Image
+                resizeMode="cover"
                 source={{ uri: product.image }}
                 style={{ width: 150, height: 150 }}
-                resizeMode="cover"
               />
             </TouchableOpacity>
           </View>

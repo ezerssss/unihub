@@ -17,9 +17,9 @@ function CategoriesCarousel(props: CategoriesCarouselProps) {
           <View style={{ borderRadius: 10, overflow: 'hidden' }}>
             <TouchableOpacity>
               <Image
+                resizeMode="cover"
                 source={{ uri: category.image }}
                 style={{ width: 100, height: 100 }}
-                resizeMode="cover"
               />
             </TouchableOpacity>
           </View>

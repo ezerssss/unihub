@@ -1,9 +1,10 @@
-import { View, Text } from 'react-native';
+import { View } from 'react-native';
 import Search from './Search';
 import { MaterialIcons, Ionicons } from '@expo/vector-icons';
 
-const Header = () => {
+function Header() {
   function onSearch(query: string) {
+    // eslint-disable-next-line no-console
     console.log(query);
   }
 
@@ -11,15 +12,15 @@ const Header = () => {
     <View className="bg-primary-100 pt-20 pb-10">
       <View className="px-4 flex-row items-center justify-between">
         <View className="w-1/6">
-          <MaterialIcons name="menu" size={30} color="white" />
+          <MaterialIcons color="white" name="menu" size={30} />
         </View>
         <Search onSearch={onSearch} />
         <View className="w-1/6 flex-row justify-end">
-          <Ionicons name="chatbox-ellipses-outline" size={30} color="white" />
+          <Ionicons color="white" name="chatbox-ellipses-outline" size={30} />
         </View>
       </View>
     </View>
   );
-};
+}
 
 export default Header;

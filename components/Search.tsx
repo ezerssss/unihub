@@ -18,7 +18,7 @@ function Search(props: SearchProps) {
     <View className="flex-row items-center justify-center bg-white rounded-full flex-1 mx-2 px-2 py-3">
       <TouchableOpacity onPress={handleSearch}>
         <View className="mr-3 ml-1">
-          <AntDesign name="search1" size={15} color="gray" />
+          <AntDesign color="gray" name="search1" size={15} />
         </View>
       </TouchableOpacity>
       <TextInput
