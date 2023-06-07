@@ -9,12 +9,12 @@ function Login({ navigation }: RootNavigationProps) {
     navigation.navigate(Routes.HOME);
   }
 
-function openToS(): void {
+function OpenToS(): void {
   Linking.openURL('http://google.com/search?q=terms+of+service');
 }
 
   return (
-    <ContentWrapper>
+    <ContentWrapper hasHeader={false}>
       <View className="flex-1 items-center bg-primary-100 justify-center">
         <View className="flex-none items-center justify-center bg-white w-11/12 h-5/6 rounded-3xl">
           <Image 
@@ -27,7 +27,7 @@ function openToS(): void {
             By signing in you are agreeing to our{'\n'}
               <Text 
               className="text-center color-primary-100" 
-              onPress={openToS}>
+              onPress={OpenToS}>
               terms and privacy policies
               </Text>
             </Text>
