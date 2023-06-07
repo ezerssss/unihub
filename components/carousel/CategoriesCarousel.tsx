@@ -13,19 +13,17 @@ function CategoriesCarousel(props: CategoriesCarouselProps) {
   return (
     <ScrollView horizontal showsHorizontalScrollIndicator={false}>
       {categories.map((category) => (
-        <View key={category.id} style={{ margin: 10 }}>
-          <View style={{ borderRadius: 10, overflow: 'hidden' }}>
+        <View className="mt-5 mx-3" key={category.id}>
+          <View className="rounded-lg overflow-hidden">
             <TouchableOpacity>
               <Image
+                className="w-24 h-24"
                 resizeMode="cover"
                 source={{ uri: category.image }}
-                style={{ width: 100, height: 100 }}
               />
             </TouchableOpacity>
           </View>
-          <Text style={{ marginTop: 10, fontWeight: 'bold' }}>
-            {category.name}
-          </Text>
+          <Text className="mt-3 text-sm">{category.name}</Text>
         </View>
       ))}
     </ScrollView>

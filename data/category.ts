@@ -28,7 +28,7 @@ export const categories: Category[] = [
   {
     id: '5',
     image:
-      'https://media.karousell.com/media/photos/products/2020/9/30/grade_9_math_textbook_1601468442_dddb9ac9.jpg',
-    name: 'Product 5',
+      'https://www.thetechedvocate.org/wp-content/uploads/2019/05/photo-1519389950473-47ba0277781c-660x400@2x.jpg',
+    name: 'Devices',
   },
 ];

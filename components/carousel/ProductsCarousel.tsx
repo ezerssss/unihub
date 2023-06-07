@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Text, Image, ScrollView, TouchableOpacity } from 'react-native';
+import { formatNumber } from '../../helpers/number';
 
 import type { Product } from '../../types/product';
 
@@ -13,20 +14,20 @@ function ProductsCarousel(props: ProductsCarouselProps) {
   return (
     <ScrollView horizontal showsHorizontalScrollIndicator={false}>
       {products.map((product) => (
-        <View key={product.id} style={{ margin: 10 }}>
-          <View style={{ borderRadius: 10, overflow: 'hidden' }}>
+        <View className="mt-5 mx-3" key={product.id}>
+          <View className="rounded-lg overflow-hidden">
             <TouchableOpacity>
               <Image
+                className="w-40 h-40"
                 resizeMode="cover"
                 source={{ uri: product.image }}
-                style={{ width: 150, height: 150 }}
               />
             </TouchableOpacity>
           </View>
-          <Text style={{ marginTop: 10, fontWeight: 'bold' }}>
-            {product.title}
+          <Text className="mt-3 text-lg">{product.title}</Text>
+          <Text className="font-bold text-lg">
+            PHP {formatNumber(product.price)}
           </Text>
-          <Text style={{ color: 'gray' }}>PHP {product.price}</Text>
         </View>
       ))}
     </ScrollView>
