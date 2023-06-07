@@ -11,25 +11,27 @@ interface ProductsCarouselProps {
 function ProductsCarousel(props: ProductsCarouselProps) {
   const { products } = props;
 
+  const renderProducts = products.map((product) => (
+    <View className="mt-5 mx-3" key={product.id}>
+      <View className="rounded-lg overflow-hidden">
+        <TouchableOpacity>
+          <Image
+            className="w-40 h-40"
+            resizeMode="cover"
+            source={{ uri: product.image }}
+          />
+        </TouchableOpacity>
+      </View>
+      <Text className="mt-3 text-lg">{product.title}</Text>
+      <Text className="font-bold text-lg">
+        PHP {formatNumber(product.price)}
+      </Text>
+    </View>
+  ));
+
   return (
     <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-      {products.map((product) => (
-        <View className="mt-5 mx-3" key={product.id}>
-          <View className="rounded-lg overflow-hidden">
-            <TouchableOpacity>
-              <Image
-                className="w-40 h-40"
-                resizeMode="cover"
-                source={{ uri: product.image }}
-              />
-            </TouchableOpacity>
-          </View>
-          <Text className="mt-3 text-lg">{product.title}</Text>
-          <Text className="font-bold text-lg">
-            PHP {formatNumber(product.price)}
-          </Text>
-        </View>
-      ))}
+      {renderProducts}
     </ScrollView>
   );
 }
