@@ -1,7 +1,8 @@
 import { View, Text, TouchableOpacity, ScrollView } from 'react-native';
 import React from 'react';
 import ContentWrapper from '../../components/ContentWrapper';
-import FeatureCarousel from '../../components/FeatureCarousel';
+import FeatureCarousel from '../../components/carousel/FeatureCarousel';
+import ProductsCarousel from '../../components/carousel/ProductsCarousel';
 import { RootNavigationProps } from '../../types/navigation';
 import products from '../../data/products';
 import { Routes } from '../../enums/routes';
@@ -20,6 +21,7 @@ function Home({ navigation }: RootNavigationProps) {
         <View className="bg-white h-full">
           <View className="flex-1 my-5 mx-3">
             <Text className="font-semibold text-lg">Also check this out</Text>
+            <ProductsCarousel />
 
             <Text className="font-bold text-lg">Home</Text>
             <TouchableOpacity
