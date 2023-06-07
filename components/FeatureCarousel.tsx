@@ -12,7 +12,7 @@ function CarouselComponent(props: CarouselProps) {
   const { products } = props;
 
   const renderProducts = products.map((product) => (
-    <View key={product.id} className="rounded-2xl overflow-hidden">
+    <View className="rounded-2xl overflow-hidden" key={product.id}>
       <View className="relative">
         <Image
           source={{
@@ -38,9 +38,9 @@ function CarouselComponent(props: CarouselProps) {
   return (
     <View>
       <Swiper
-        style={{ height: 250 }}
-        dot={<View className="w-2 h-2 rounded-full bg-gray-400 mx-2" />}
         activeDot={<View className="w-2 h-2 rounded-full bg-black mx-2" />}
+        dot={<View className="w-2 h-2 rounded-full bg-gray-400 mx-2" />}
+        style={{ height: 250 }}
       >
         {renderProducts}
       </Swiper>
