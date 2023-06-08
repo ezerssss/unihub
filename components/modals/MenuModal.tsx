@@ -13,6 +13,7 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { Routes } from '../../enums/routes';
 import { Ionicons } from '@expo/vector-icons';
 import { ProfileIcon, ShopIcon, ProductIcon, SettingsIcon } from '../icons';
+import { BlurView } from 'expo-blur';
 
 interface MenuModalProps {
   isOpen: boolean;
@@ -43,75 +44,84 @@ function MenuModal(props: MenuModalProps) {
 
   return (
     <Modal transparent visible={isOpen}>
-      <TouchableOpacity
-        activeOpacity={1}
-        className="flex-1"
-        onPress={(event) => {
-          if (event.target === event.currentTarget) {
-            closeMenu();
-          }
+      <BlurView
+        intensity={10}
+        style={{
+          flex: 1,
         }}
       >
-        <Animated.View
-          className="rounded-b-3xl bg-white px-10 pt-16 shadow shadow-black"
-          style={{
-            height: menuHeight,
-            transform: [
-              {
-                translateY: modalAnimation.interpolate({
-                  inputRange: [0, screenHeight - menuHeight],
-                  outputRange: [-menuHeight, 0],
-                  extrapolate: 'clamp',
-                }),
-              },
-            ],
+        <TouchableOpacity
+          activeOpacity={1}
+          className="flex-1"
+          onPress={(event) => {
+            if (event.target === event.currentTarget) {
+              closeMenu();
+            }
           }}
         >
-          <View className="flex flex-row items-center mb-10">
-            <View className="w-16 h-16 rounded-full bg-secondary-100 flex items-center justify-center mr-3">
-              <Text className="text-black text-4xl font-medium">S</Text>
-            </View>
-            <View className="flex flex-col gap-1">
-              <Text className="text-black font-semibold">John Doe</Text>
-              <Text className="text-gray-500">johndoe@example.com</Text>
-            </View>
-          </View>
-
-          <TouchableOpacity className="flex flex-row gap-4 items-center mb-4">
-            <ProfileIcon />
-            <Text className="text-primary-400">Profile</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity className="flex flex-row gap-4 items-center mb-4">
-            <ShopIcon />
-            <Text className="text-primary-400">Sell Something</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity className="flex flex-row gap-4 items-center mb-4">
-            <ProductIcon />
-            <Text className="text-primary-400">Your Product List</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity className="flex flex-row gap-4 items-center mb-4">
-            <SettingsIcon />
-            <Text className="text-primary-400">Settings</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            className="flex flex-row items-center"
-            onPress={signOut}
+          <Animated.View
+            className="rounded-b-3xl bg-white px-10 pt-16 shadow shadow-black"
+            style={{
+              height: menuHeight,
+              transform: [
+                {
+                  translateY: modalAnimation.interpolate({
+                    inputRange: [0, screenHeight - menuHeight],
+                    outputRange: [-menuHeight, 0],
+                    extrapolate: 'clamp',
+                  }),
+                },
+              ],
+            }}
           >
-            <Ionicons
-              name="log-out-outline"
-              size={33}
-              style={{
-                color: '#191970',
-              }}
-            />
-            <Text className="text-primary-400 ml-4">Sign Out</Text>
-          </TouchableOpacity>
-        </Animated.View>
-      </TouchableOpacity>
+            <View className="flex flex-row items-center mb-10">
+              <TouchableOpacity>
+                <View className="w-16 h-16 rounded-full bg-secondary-100 flex items-center justify-center mr-3">
+                  <Text className="text-black text-4xl font-medium">S</Text>
+                </View>
+              </TouchableOpacity>
+              <View className="flex flex-col gap-1">
+                <Text className="text-black font-semibold">John Doe</Text>
+                <Text className="text-gray-500">johndoe@example.com</Text>
+              </View>
+            </View>
+
+            <TouchableOpacity className="flex flex-row gap-4 items-center mb-4">
+              <ProfileIcon />
+              <Text className="text-primary-400">Profile</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity className="flex flex-row gap-4 items-center mb-4">
+              <ShopIcon />
+              <Text className="text-primary-400">Sell Something</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity className="flex flex-row gap-4 items-center mb-4">
+              <ProductIcon />
+              <Text className="text-primary-400">Your Product List</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity className="flex flex-row gap-4 items-center mb-4">
+              <SettingsIcon />
+              <Text className="text-primary-400">Settings</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              className="flex flex-row items-center"
+              onPress={signOut}
+            >
+              <Ionicons
+                name="log-out-outline"
+                size={33}
+                style={{
+                  color: '#191970',
+                }}
+              />
+              <Text className="text-primary-400 ml-4">Sign Out</Text>
+            </TouchableOpacity>
+          </Animated.View>
+        </TouchableOpacity>
+      </BlurView>
     </Modal>
   );
 }
