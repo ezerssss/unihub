@@ -12,6 +12,7 @@ module.exports = {
           100: '#000080',
           200: '#000066',
           300: '#000040',
+          400: '#191970',
         },
         secondary: {
           100: '#FFD700',
@@ -24,8 +25,8 @@ module.exports = {
           200: '#808080',
         },
         'light-yellow': '#FFFEDF',
-        "pale-yellow": '#FDFDBA',
-        "orange-yellow": "#EECE5E"
+        'pale-yellow': '#FDFDBA',
+        'orange-yellow': '#EECE5E',
       },
     },
   },
