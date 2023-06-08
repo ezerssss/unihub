@@ -10,8 +10,8 @@ function Header() {
   }
 
   return (
-    <View className="bg-primary-100 pt-14 pb-8">
-      <View className="px-4 flex-row items-center justify-between">
+    <View className="bg-primary-100 pb-8 pt-14">
+      <View className="flex-row items-center justify-between px-4">
         <View className="w-1/6">
           <TouchableOpacity>
             <MaterialIcons color="white" name="menu" size={30} />

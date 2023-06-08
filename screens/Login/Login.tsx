@@ -17,17 +17,17 @@ function Login({ navigation }: RootNavigationProps) {
 
   return (
     <ContentWrapper hasHeader={false}>
-      <View className="flex-1 items-center bg-primary-100 justify-center">
-        <View className="flex-none items-center justify-center bg-white w-11/12 h-5/6 rounded-3xl">
+      <View className="flex-1 items-center justify-center bg-primary-100">
+        <View className="h-5/6 w-11/12 flex-none items-center justify-center rounded-3xl bg-white">
           <UniHubIcon />
-          <Text className="t text-primary-100 text-xl font-bold mt-7">
+          <Text className="t mt-7 text-xl font-bold text-primary-100">
             Welcome
           </Text>
-          <View className="flex w-64 h-14">
+          <View className="flex h-14 w-64">
             <Text className="text-center">
               By signing in you are agreeing to our{'\n'}
               <Text
-                className="text-center color-primary-100"
+                className="color-primary-100 text-center"
                 onPress={openTermsOfService}
               >
                 terms and privacy policies
@@ -35,11 +35,11 @@ function Login({ navigation }: RootNavigationProps) {
             </Text>
           </View>
           <TouchableOpacity
-            className="p-2 my-28 border rounded-3xl h-12 w-64 bg-primary-100 justify-center items-center flex-row"
+            className="my-28 h-12 w-64 flex-row items-center justify-center rounded-3xl border bg-primary-100 p-2"
             onPress={handleGoHome}
           >
             <GoogleIcon />
-            <Text className="text-white ml-2">
+            <Text className="ml-2 text-white">
               Sign in with your school email
             </Text>
           </TouchableOpacity>
