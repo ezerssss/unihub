@@ -6,6 +6,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import Login from './screens/Login/Login';
 import Home from './screens/Home/Home';
 import Sell from './screens/Sell/Sell';
+import { Routes } from './enums/routes';
 
 const Stack = createNativeStackNavigator<RootStackParamsList>();
 
@@ -15,9 +16,9 @@ export default function App() {
       <StatusBar style="auto" />
       <NavigationContainer>
         <Stack.Navigator>
-          <Stack.Screen component={Login} name="Login" />
-          <Stack.Screen component={Home} name="Home" />
-          <Stack.Screen component={Sell} name="Sell" />
+          <Stack.Screen component={Login} name={Routes.LOGIN} />
+          <Stack.Screen component={Home} name={Routes.HOME} />
+          <Stack.Screen component={Sell} name={Routes.SELL} />
         </Stack.Navigator>
       </NavigationContainer>
     </View>
