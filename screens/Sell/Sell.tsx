@@ -63,18 +63,18 @@ export default function Sell() {
         }}
       >
         <View className="flex-1 justify-start">
-          <View className="flex-row items-center justify-center bg-primary-400 pt-20 pb-10 relative">
+          <View className="relative flex-row items-center justify-center bg-primary-400 pb-10 pt-20">
             <TouchableOpacity className="absolute left-7 top-20">
               <AntDesign color="white" name="left" size={30} />
             </TouchableOpacity>
-            <Text className="font-bold text-white text-2xl">Sell</Text>
+            <Text className="text-2xl font-bold text-white">Sell</Text>
           </View>
-          <View className="py-5 pl-5 flex-row bg-white">
+          <View className="flex-row bg-white py-5 pl-5">
             <AddPhoto text="+ Add Thumbnail Photo" />
             <AddPhoto text="+ Add Photo" />
             <AddPhoto text="+ Add Photo" />
           </View>
-          <View className="py-5 px-7 bg-white mt-5">
+          <View className="mt-5 bg-white px-7 py-5">
             <ProductDescription
               placeholder="Enter product name..."
               title="Product Name"
@@ -84,7 +84,7 @@ export default function Sell() {
               title="Product Description"
             />
           </View>
-          <View className="py-5 px-7 bg-white mt-5">
+          <View className="mt-5 bg-white px-7 py-5">
             <CategoryPicker
               selectedCategory={selectedCategory}
               onChange={handleCategoryChange}
@@ -95,12 +95,12 @@ export default function Sell() {
               title="Price"
             />
           </View>
-          <View className="py-5 px-7 bg-white my-5">
+          <View className="my-5 bg-white px-7 py-5">
             <TouchableOpacity
-              className="flex-row justify-between items-center mb-6"
+              className="mb-6 flex-row items-center justify-between"
               onPress={() => handleShowTimePicker(true)}
             >
-              <Text className="font-bold text-lg">Preferred Meetup Time</Text>
+              <Text className="text-lg font-bold">Preferred Meetup Time</Text>
               {renderPreferredTime}
             </TouchableOpacity>
             {renderTimePicker}
@@ -110,8 +110,8 @@ export default function Sell() {
             />
           </View>
         </View>
-        <TouchableOpacity className="bg-secondary-100 mt-10 py-7 items-center justify-center">
-          <Text className="text-white text-2xl font-bold">Sell</Text>
+        <TouchableOpacity className="mt-10 items-center justify-center bg-secondary-100 py-7">
+          <Text className="text-2xl font-bold text-white">Sell</Text>
         </TouchableOpacity>
       </ScrollView>
     </ContentWrapper>

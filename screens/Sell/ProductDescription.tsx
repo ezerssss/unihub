@@ -21,9 +21,9 @@ export default function ProductDescription(props: PropsInterface) {
 
   return (
     <>
-      <Text className="font-bold text-lg mb-2">{title}</Text>
+      <Text className="mb-2 text-lg font-bold">{title}</Text>
       <TextInput
-        className="text-unihub-gray-200 mb-2"
+        className="mb-2 text-unihub-gray-200"
         keyboardType={keyboardType}
         placeholder={placeholder}
         onChangeText={(text) => handleChange(text)}

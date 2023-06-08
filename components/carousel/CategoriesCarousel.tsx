@@ -11,11 +11,11 @@ function CategoriesCarousel(props: CategoriesCarouselProps) {
   const { categories } = props;
 
   const renderCategories = categories.map((category) => (
-    <View className="mt-5 mx-3" key={category.id}>
-      <View className="rounded-lg overflow-hidden">
+    <View className="mx-3 mt-5" key={category.id}>
+      <View className="overflow-hidden rounded-lg">
         <TouchableOpacity>
           <Image
-            className="w-24 h-24"
+            className="h-24 w-24"
             resizeMode="cover"
             source={{ uri: category.image }}
           />

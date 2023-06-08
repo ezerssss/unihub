@@ -20,17 +20,17 @@ function Home({ navigation }: RootNavigationProps) {
         <View className="rounded-lg px-4 py-8">
           <FeatureCarousel products={featuredProducts} />
         </View>
-        <View className="bg-white max-h-max">
-          <View className="flex-1 my-5 mx-3">
-            <Text className="font-semibold text-lg">Also check this out</Text>
+        <View className="max-h-max bg-white">
+          <View className="mx-3 my-5 flex-1">
+            <Text className="text-lg font-semibold">Also check this out</Text>
             <ProductsCarousel products={products} />
             <View className="h-5" />
-            <Text className="font-semibold text-xl">Categories</Text>
+            <Text className="text-xl font-semibold">Categories</Text>
             <CategoriesCarousel categories={categories} />
 
-            <Text className="font-bold text-lg">Home</Text>
+            <Text className="text-lg font-bold">Home</Text>
             <TouchableOpacity
-              className="p-2 my-2 border rounded"
+              className="my-2 rounded border p-2"
               onPress={handleGoLogin}
             >
               <Text>Go to Login</Text>
