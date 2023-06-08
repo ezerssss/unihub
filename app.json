@@ -25,6 +25,12 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "0026fa9e-feac-42c4-af33-8b87c2ca3f40"
+      }
+    },
+    "owner": "unihub"
   }
 }

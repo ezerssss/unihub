@@ -21,7 +21,7 @@ export default function CategoryPicker(props: PropsInterface) {
 
   return (
     <>
-      <Text className="font-bold text-lg">Category</Text>
+      <Text className="text-lg font-bold">Category</Text>
       <Picker selectedValue={selectedCategory} onValueChange={onChange}>
         {renderCategories}
       </Picker>

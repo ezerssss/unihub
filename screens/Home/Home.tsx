@@ -14,12 +14,12 @@ function Home() {
         <View className="rounded-lg px-4 py-8">
           <FeatureCarousel products={featuredProducts} />
         </View>
-        <View className="bg-white max-h-max">
-          <View className="flex-1 my-5 mx-3">
-            <Text className="font-semibold text-lg">Also check this out</Text>
+        <View className="max-h-max bg-white">
+          <View className="mx-3 my-5 flex-1">
+            <Text className="text-lg font-semibold">Also check this out</Text>
             <ProductsCarousel products={products} />
             <View className="h-5" />
-            <Text className="font-semibold text-xl">Categories</Text>
+            <Text className="text-xl font-semibold">Categories</Text>
             <CategoriesCarousel categories={categories} />
           </View>
         </View>

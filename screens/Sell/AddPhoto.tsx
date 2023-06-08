@@ -17,10 +17,10 @@ export default function AddPhoto(props: PropsInterface) {
 
   return (
     <TouchableOpacity
-      className="w-24 aspect-square p-1 items-center justify-center border border-primary-400 block mx-2"
+      className="mx-2 block aspect-square w-24 items-center justify-center border border-primary-400 p-1"
       onPress={handlePress}
     >
-      <Text className="text-primary-400 text-center text-xs">{text}</Text>
+      <Text className="text-center text-xs text-primary-400">{text}</Text>
     </TouchableOpacity>
   );
 }
