@@ -122,11 +122,7 @@ function MenuModal(props: MenuModalProps) {
               className="flex flex-row items-center"
               onPress={signOut}
             >
-              <Ionicons
-                className="text-primary-400"
-                name="log-out-outline"
-                size={33}
-              />
+              <Ionicons color="#191970" name="log-out-outline" size={33} />
               <Text className="ml-4 text-primary-400">Sign Out</Text>
             </TouchableOpacity>
           </Animated.View>
