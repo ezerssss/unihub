@@ -1,14 +1,22 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, ScrollView } from 'react-native';
-import ContentWrapper from '../icons/components/ContentWrapper';
-import ArrowIcon from '../icons/components/ArrowIcon';
-import EmojiIcon from '../icons/components/EmojiIcon';
-import ReturnIcon from '../icons/components/ReturnIcon';
-import { Message } from '../../messages/types';
-import { formatTime } from '../../helpers/date'
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  ScrollView,
+} from 'react-native';
+import ContentWrapper from '../../components/ContentWrapper';
+import ArrowIcon from '../../components/icons/ArrowIcon';
+import EmojiIcon from '../../components/icons/EmojiIcon';
+import ReturnIcon from '../../components/icons/ReturnIcon';
+import { Message } from '../../types/messages';
+import useGoBack from '../../hooks/useGoBack';
+import { formatTime } from '../../helpers/date';
 
+function Chat() {
+  const goBack = useGoBack();
 
-function Chat(): React.FC {
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputText, setInputText] = useState<string>('');
 
@@ -28,35 +36,39 @@ function Chat(): React.FC {
     setInputText('');
   }
 
-
   const renderMessages = messages.map((message) => {
     const textBackground = message.user._id === 1 ? 'bg-white' : 'bg-blue-900';
     const textAlign = message.user._id === 1 ? 'self-end' : 'self-start';
-    const messageStyle = message.user._id === 1 ? 'text-gray-900' : 'text-white';
-    const dateTextStyle = `text-${message.user._id === 1 ? 'gray-500' : 'gray-900'} text-xs self-end`;
-  
+    const messageStyle =
+      message.user._id === 1 ? 'text-gray-900' : 'text-white';
+    const dateTextStyle = `text-${
+      message.user._id === 1 ? 'gray-500' : 'gray-900'
+    } text-xs self-end`;
+
     return (
-      <View className={`${textBackground} rounded-2xl p-4 mb-4 ${textAlign}`}  key={message._id}>
+      <View
+        className={`${textBackground} mb-4 rounded-2xl p-4 ${textAlign}`}
+        key={message._id}
+      >
         <Text className={messageStyle}>{message.text}</Text>
         <Text className={dateTextStyle}>{formatTime(message.createdAt)}</Text>
       </View>
     );
   });
-  
 
   return (
-    <ContentWrapper>
+    <ContentWrapper hasHeader={false}>
       <View className="flex-1 bg-yellow-50">
-        <View className="flex-row bg-yellow-50 items-center justify-center p-4 mt-10">
+        <View className="mt-10 flex-row items-center justify-center bg-yellow-50 p-4">
           <View className="absolute left-0">
-            <ReturnIcon />
+            <TouchableOpacity className="ml-4" onPress={goBack}>
+              <ReturnIcon />
+            </TouchableOpacity>
           </View>
           <Text className="text-2xl font-bold text-gray-900">TedTeddy</Text>
         </View>
-        <ScrollView className="flex-grow p-4" contentContainerClassName="pb-10" inverted={true}>
-          {renderMessages}
-        </ScrollView>
-        <View className="flex-row items-center p-4 bg-white h-24">
+        <ScrollView className="flex-grow p-4">{renderMessages}</ScrollView>
+        <View className="h-24 flex-row items-center bg-white p-4">
           <View className="mr-4">
             <TouchableOpacity>
               <EmojiIcon />
@@ -64,7 +76,7 @@ function Chat(): React.FC {
           </View>
           <View className="flex-1">
             <TextInput
-              className="h-10 bg-white rounded-lg px-4"
+              className="h-10 rounded-lg bg-white px-4"
               placeholder="Type a message..."
               value={inputText}
               onChangeText={setInputText}
@@ -72,7 +84,7 @@ function Chat(): React.FC {
           </View>
           <View className="ml-4">
             <TouchableOpacity
-              className="bg-white w-10 h-10 rounded-full justify-center items-center"
+              className="h-10 w-10 items-center justify-center rounded-full bg-white"
               onPress={handleSend}
             >
               <ArrowIcon />
