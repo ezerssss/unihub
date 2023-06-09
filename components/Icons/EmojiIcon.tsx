@@ -4,7 +4,7 @@ import { emojiIconTintColor } from '../constants/color';
 
 function EmojiIcon() {
   return (
-    <View className="emojiIcon" >
+    <View>
     <Image source={require('../assets/happiness.png')} style={{ width: 30, height: 30, tintColor: emojiIconTintColor }} />
     </View>
   );

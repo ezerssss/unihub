@@ -30,21 +30,19 @@ function Chat(): React.FC {
 
 
   const renderMessages = messages.map((message) => {
-    const textBackground = message.user._id === 1 ? 'white' : 'blue-900';
+    const textBackground = message.user._id === 1 ? 'bg-white' : 'bg-blue-900';
     const textAlign = message.user._id === 1 ? 'self-end' : 'self-start';
-    const messageStyle = message.user._id === 1 ? 'gray-900' : 'white';
+    const messageStyle = message.user._id === 1 ? 'text-gray-900' : 'text-white';
     const dateTextStyle = `text-${message.user._id === 1 ? 'gray-500' : 'gray-900'} text-xs self-end`;
-
+  
     return (
-      <View
-        key={message._id}
-        className={`bg-${textBackground} rounded-2xl p-4 mb-4 ${textAlign}`}
-      >
-        <Text className={`text-${messageStyle}`}>{message.text}</Text>
+      <View className={`${textBackground} rounded-2xl p-4 mb-4 ${textAlign}`}  key={message._id}>
+        <Text className={messageStyle}>{message.text}</Text>
         <Text className={dateTextStyle}>{formatTime(message.createdAt)}</Text>
       </View>
     );
   });
+  
 
   return (
     <ContentWrapper>
