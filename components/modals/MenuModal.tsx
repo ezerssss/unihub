@@ -15,6 +15,10 @@ import { Ionicons } from '@expo/vector-icons';
 import { ProfileIcon, ShopIcon, ProductIcon, SettingsIcon } from '../icons';
 import { BlurView } from 'expo-blur';
 
+import type { GestureResponderEvent, StyleProp, ViewStyle } from 'react-native';
+
+type AnimatedViewStyle = Animated.AnimatedProps<StyleProp<ViewStyle>>;
+
 interface MenuModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -31,7 +35,10 @@ function MenuModal(props: MenuModalProps) {
 
   const modalAnimation = new Animated.Value(screenHeight);
 
-  function closeMenu() {
+  function handleCloseMenu(event: GestureResponderEvent) {
+    if (event.target === event.currentTarget) {
+      return;
+    }
     Animated.spring(modalAnimation, {
       toValue: screenHeight,
       useNativeDriver: true,
@@ -41,6 +48,19 @@ function MenuModal(props: MenuModalProps) {
   function signOut() {
     navigation.navigate(Routes.LOGIN);
   }
+
+  const animatedViewStyle: AnimatedViewStyle = {
+    height: menuHeight,
+    transform: [
+      {
+        translateY: modalAnimation.interpolate({
+          inputRange: [0, screenHeight - menuHeight],
+          outputRange: [-menuHeight, 0],
+          extrapolate: 'clamp',
+        }),
+      },
+    ],
+  };
 
   return (
     <Modal transparent visible={isOpen}>
@@ -53,55 +73,40 @@ function MenuModal(props: MenuModalProps) {
         <TouchableOpacity
           activeOpacity={1}
           className="flex-1"
-          onPress={(event) => {
-            if (event.target === event.currentTarget) {
-              closeMenu();
-            }
-          }}
+          onPress={handleCloseMenu}
         >
           <Animated.View
             className="rounded-b-3xl bg-white px-10 pt-16 shadow shadow-black"
-            style={{
-              height: menuHeight,
-              transform: [
-                {
-                  translateY: modalAnimation.interpolate({
-                    inputRange: [0, screenHeight - menuHeight],
-                    outputRange: [-menuHeight, 0],
-                    extrapolate: 'clamp',
-                  }),
-                },
-              ],
-            }}
+            style={animatedViewStyle}
           >
-            <View className="flex flex-row items-center mb-10">
+            <View className="mb-10 flex flex-row items-center">
               <TouchableOpacity>
-                <View className="w-16 h-16 rounded-full bg-secondary-100 flex items-center justify-center mr-3">
-                  <Text className="text-black text-4xl font-medium">S</Text>
+                <View className="mr-3 flex h-16 w-16 items-center justify-center rounded-full bg-secondary-100">
+                  <Text className="text-4xl font-medium text-black">S</Text>
                 </View>
               </TouchableOpacity>
               <View className="flex flex-col gap-1">
-                <Text className="text-black font-semibold">John Doe</Text>
+                <Text className="font-semibold text-black">John Doe</Text>
                 <Text className="text-gray-500">johndoe@example.com</Text>
               </View>
             </View>
 
-            <TouchableOpacity className="flex flex-row gap-4 items-center mb-4">
+            <TouchableOpacity className="mb-4 flex flex-row items-center gap-4">
               <ProfileIcon />
               <Text className="text-primary-400">Profile</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity className="flex flex-row gap-4 items-center mb-4">
+            <TouchableOpacity className="mb-4 flex flex-row items-center gap-4">
               <ShopIcon />
               <Text className="text-primary-400">Sell Something</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity className="flex flex-row gap-4 items-center mb-4">
+            <TouchableOpacity className="mb-4 flex flex-row items-center gap-4">
               <ProductIcon />
               <Text className="text-primary-400">Your Product List</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity className="flex flex-row gap-4 items-center mb-4">
+            <TouchableOpacity className="mb-4 flex flex-row items-center gap-4">
               <SettingsIcon />
               <Text className="text-primary-400">Settings</Text>
             </TouchableOpacity>
@@ -111,13 +116,11 @@ function MenuModal(props: MenuModalProps) {
               onPress={signOut}
             >
               <Ionicons
+                className="text-primary-400"
                 name="log-out-outline"
                 size={33}
-                style={{
-                  color: '#191970',
-                }}
               />
-              <Text className="text-primary-400 ml-4">Sign Out</Text>
+              <Text className="ml-4 text-primary-400">Sign Out</Text>
             </TouchableOpacity>
           </Animated.View>
         </TouchableOpacity>
