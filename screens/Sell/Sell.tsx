@@ -7,10 +7,14 @@ import ProductDescription from './ProductDescription';
 import RNDateTimePicker, {
   DateTimePickerEvent,
 } from '@react-native-community/datetimepicker';
+
 import { formatTime } from '../../helpers/date';
+import useGoBack from '../../hooks/useGoBack';
 import CategoryPicker from './CategoryPicker';
 
 export default function Sell() {
+  const goBack = useGoBack();
+
   const [showPreferredTime, setShowPreferredTime] = useState<boolean>(false);
   const [showTimePicker, setShowTimePicker] = useState<boolean>(false);
   const [time, setTime] = useState<Date>(new Date());
@@ -64,7 +68,10 @@ export default function Sell() {
       >
         <View className="flex-1 justify-start">
           <View className="relative flex-row items-center justify-center bg-primary-400 pb-10 pt-20">
-            <TouchableOpacity className="absolute left-7 top-20">
+            <TouchableOpacity
+              className="absolute left-7 top-20"
+              onPress={goBack}
+            >
               <AntDesign color="white" name="left" size={30} />
             </TouchableOpacity>
             <Text className="text-2xl font-bold text-white">Sell</Text>

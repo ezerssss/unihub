@@ -37,12 +37,16 @@ function MenuModal(props: MenuModalProps) {
 
   function handleCloseMenu(event: GestureResponderEvent) {
     if (event.target === event.currentTarget) {
-      return;
+      Animated.spring(modalAnimation, {
+        toValue: screenHeight,
+        useNativeDriver: true,
+      }).start(onClose);
     }
-    Animated.spring(modalAnimation, {
-      toValue: screenHeight,
-      useNativeDriver: true,
-    }).start(onClose);
+  }
+
+  function goToSell() {
+    onClose();
+    navigation.navigate(Routes.SELL);
   }
 
   function signOut() {
@@ -96,7 +100,10 @@ function MenuModal(props: MenuModalProps) {
               <Text className="text-primary-400">Profile</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity className="mb-4 flex flex-row items-center gap-4">
+            <TouchableOpacity
+              className="mb-4 flex flex-row items-center gap-4"
+              onPress={goToSell}
+            >
               <ShopIcon />
               <Text className="text-primary-400">Sell Something</Text>
             </TouchableOpacity>
@@ -115,11 +122,7 @@ function MenuModal(props: MenuModalProps) {
               className="flex flex-row items-center"
               onPress={signOut}
             >
-              <Ionicons
-                className="text-primary-400"
-                name="log-out-outline"
-                size={33}
-              />
+              <Ionicons color="#191970" name="log-out-outline" size={33} />
               <Text className="ml-4 text-primary-400">Sign Out</Text>
             </TouchableOpacity>
           </Animated.View>
