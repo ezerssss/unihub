@@ -37,12 +37,16 @@ function MenuModal(props: MenuModalProps) {
 
   function handleCloseMenu(event: GestureResponderEvent) {
     if (event.target === event.currentTarget) {
-      return;
+      Animated.spring(modalAnimation, {
+        toValue: screenHeight,
+        useNativeDriver: true,
+      }).start(onClose);
     }
-    Animated.spring(modalAnimation, {
-      toValue: screenHeight,
-      useNativeDriver: true,
-    }).start(onClose);
+  }
+
+  function goToSell() {
+    onClose();
+    navigation.navigate(Routes.SELL);
   }
 
   function signOut() {
@@ -96,7 +100,10 @@ function MenuModal(props: MenuModalProps) {
               <Text className="text-primary-400">Profile</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity className="mb-4 flex flex-row items-center gap-4">
+            <TouchableOpacity
+              className="mb-4 flex flex-row items-center gap-4"
+              onPress={goToSell}
+            >
               <ShopIcon />
               <Text className="text-primary-400">Sell Something</Text>
             </TouchableOpacity>
