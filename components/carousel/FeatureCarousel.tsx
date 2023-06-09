@@ -12,11 +12,11 @@ function CarouselComponent(props: CarouselProps) {
   const { products } = props;
 
   const renderProducts = products.map((product) => (
-    <View className="overflow-hidden rounded-2xl" key={product.id}>
+    <View className="overflow-hidden rounded-2xl" key={product.images[0]}>
       <View className="relative">
         <Image
           source={{
-            uri: product.image,
+            uri: product.images[0],
           }}
           style={{ width: '100%', height: '100%', borderRadius: 8 }}
         />
