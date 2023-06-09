@@ -12,13 +12,13 @@ function ProductsCarousel(props: ProductsCarouselProps) {
   const { products } = props;
 
   const renderProducts = products.map((product) => (
-    <View className="mx-3 mt-5" key={product.id}>
+    <View className="mx-3 mt-5" key={product.images[0]}>
       <View className="overflow-hidden rounded-lg">
         <TouchableOpacity>
           <Image
             className="h-40 w-40"
             resizeMode="cover"
-            source={{ uri: product.image }}
+            source={{ uri: product.images[0] }}
           />
         </TouchableOpacity>
       </View>
