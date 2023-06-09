@@ -1,6 +1,11 @@
 export interface Product {
-  id: string;
-  image: string;
+  images: string[];
   title: string;
   price: number;
+  description: string;
+  category: string;
+  meetup: {
+    time: Date;
+    location: string;
+  };
 }
