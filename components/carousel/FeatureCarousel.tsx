@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, Image } from 'react-native';
 import Swiper from 'react-native-swiper';
 
-import type { Product } from '../types/product';
+import type { Product } from '../../types/product';
 
 interface CarouselProps {
   products: Product[];
@@ -12,7 +12,7 @@ function CarouselComponent(props: CarouselProps) {
   const { products } = props;
 
   const renderProducts = products.map((product) => (
-    <View className="rounded-2xl overflow-hidden" key={product.id}>
+    <View className="overflow-hidden rounded-2xl" key={product.id}>
       <View className="relative">
         <Image
           source={{
@@ -20,14 +20,14 @@ function CarouselComponent(props: CarouselProps) {
           }}
           style={{ width: '100%', height: '100%', borderRadius: 8 }}
         />
-        <View className="absolute top-0 left-0 p-4 bg-opacity-70">
-          <Text className="text-black text-lg mb-2">Featured</Text>
+        <View className="absolute left-0 top-0 bg-opacity-70 p-4">
+          <Text className="mb-2 text-lg text-black">Featured</Text>
         </View>
-        <View className="absolute bottom-0 left-0 right-0 p-4 bg-opacity-70">
-          <Text className="text-black text-2xl font-extrabold mb-2">
+        <View className="absolute bottom-0 left-0 right-0 bg-opacity-70 p-4">
+          <Text className="mb-2 text-2xl font-extrabold text-black">
             {product.title}
           </Text>
-          <Text className="text-secondary-100 text-2xl font-medium">
+          <Text className="text-2xl font-medium text-secondary-100">
             ₱{product.price}
           </Text>
         </View>
@@ -38,8 +38,8 @@ function CarouselComponent(props: CarouselProps) {
   return (
     <View>
       <Swiper
-        activeDot={<View className="w-2 h-2 rounded-full bg-black mx-2" />}
-        dot={<View className="w-2 h-2 rounded-full bg-gray-400 mx-2" />}
+        activeDot={<View className="mx-2 h-2 w-2 rounded-full bg-black" />}
+        dot={<View className="mx-2 h-2 w-2 rounded-full bg-gray-400" />}
         style={{ height: 250 }}
       >
         {renderProducts}

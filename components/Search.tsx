@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, TextInput, TouchableOpacity } from 'react-native';
-import { AntDesign } from '@expo/vector-icons';
+import { SearchIcon } from '../components/icons';
 
 interface SearchProps {
   onSearch: (query: string) => void;
@@ -15,14 +15,14 @@ function Search(props: SearchProps) {
   }
 
   return (
-    <View className="flex-row items-center justify-center bg-white rounded-full flex-1 mx-2 px-2 py-3">
+    <View className="mx-2 flex-1 flex-row items-center justify-center rounded-full bg-white px-2 py-3">
       <TouchableOpacity onPress={handleSearch}>
-        <View className="mr-3 ml-1">
-          <AntDesign color="gray" name="search1" size={15} />
+        <View className="ml-1 mr-3">
+          <SearchIcon />
         </View>
       </TouchableOpacity>
       <TextInput
-        className="text-black w-10/12"
+        className="w-10/12 text-black"
         placeholder="Search for products"
         value={searchQuery}
         onChangeText={setSearchQuery}
