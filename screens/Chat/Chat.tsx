@@ -1,24 +1,18 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, ScrollView } from 'react-native';
-import ContentWrapper from '../../components/ContentWrapper';
-import ArrowIcon from '../../components/ArrowIcon';
-import EmojiIcon from '../Icons/components/EmojiIcon';
-import ReturnIcon from '../Icons/components/ReturnIcon';
+import ContentWrapper from '../icons/components/ContentWrapper';
+import ArrowIcon from '../icons/components/ArrowIcon';
+import EmojiIcon from '../icons/components/EmojiIcon';
+import ReturnIcon from '../icons/components/ReturnIcon';
+import { Message } from '../../messages/types';
+import { formatTime } from '../../helpers/date'
 
-interface Message {
-  _id: number;
-  text: string;
-  user: {
-    _id: number;
-  };
-  createdAt: Date;
-}
 
-const Chat: React.FC = () => {
+function Chat(): React.FC {
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputText, setInputText] = useState<string>('');
 
-  const onSend = () => {
+  function handleSend() {
     if (inputText.trim() === '') {
       return;
     }
@@ -32,17 +26,25 @@ const Chat: React.FC = () => {
 
     setMessages((prevMessages) => [...prevMessages, newMessage]);
     setInputText('');
-  };
+  }
 
-  const formatDate = (date: Date) => {
-    const options = {
-      hour: 'numeric',
-      minute: 'numeric',
-    };
 
-    return date.toLocaleString('en-US', options);
-  };
+  const renderMessages = messages.map((message) => {
+    const textBackground = message.user._id === 1 ? 'white' : 'blue-900';
+    const textAlign = message.user._id === 1 ? 'self-end' : 'self-start';
+    const messageStyle = message.user._id === 1 ? 'gray-900' : 'white';
+    const dateTextStyle = `text-${message.user._id === 1 ? 'gray-500' : 'gray-900'} text-xs self-end`;
 
+    return (
+      <View
+        key={message._id}
+        className={`bg-${textBackground} rounded-2xl p-4 mb-4 ${textAlign}`}
+      >
+        <Text className={`text-${messageStyle}`}>{message.text}</Text>
+        <Text className={dateTextStyle}>{formatTime(message.createdAt)}</Text>
+      </View>
+    );
+  });
 
   return (
     <ContentWrapper>
@@ -54,29 +56,11 @@ const Chat: React.FC = () => {
           <Text className="text-2xl font-bold text-gray-900">TedTeddy</Text>
         </View>
         <ScrollView className="flex-grow p-4" contentContainerClassName="pb-10" inverted={true}>
-          {messages.map((message) => (
-            <View
-              key={message._id}
-              className={`bg-${message.user._id === 1 ? 'white' : 'blue-900'} rounded-2xl p-4 mb-4 ${
-                message.user._id === 1 ? 'self-end' : 'self-start'
-              }`}
-            >
-              <Text
-                className={`text-${message.user._id === 1 ? 'gray-900' : 'white'}`}
-              >
-                {message.text}
-              </Text>
-              <Text
-                className={`text-${message.user._id === 1 ? 'gray-500' : 'gray-900'} text-xs self-end`}
-              >
-                {formatDate(message.createdAt)}
-              </Text>
-            </View>
-          ))}
+          {renderMessages}
         </ScrollView>
         <View className="flex-row items-center p-4 bg-white h-24">
           <View className="mr-4">
-            <TouchableOpacity >
+            <TouchableOpacity>
               <EmojiIcon />
             </TouchableOpacity>
           </View>
@@ -91,7 +75,7 @@ const Chat: React.FC = () => {
           <View className="ml-4">
             <TouchableOpacity
               className="bg-white w-10 h-10 rounded-full justify-center items-center"
-              onPress={onSend}
+              onPress={handleSend}
             >
               <ArrowIcon />
             </TouchableOpacity>
@@ -99,7 +83,7 @@ const Chat: React.FC = () => {
         </View>
       </View>
     </ContentWrapper>
-);
+  );
 }
 
-export default Chat
+export default Chat;
