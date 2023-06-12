@@ -1,8 +1,4 @@
-export enum ListingStatus {
-  OPEN = 'OPEN',
-  WAITING = 'WAITING',
-  IN_PROGRESS = 'IN_PROGRESS',
-}
+import { ListingStatus } from '../../enums/productListings';
 
 export interface ProductListings {
   image: string;

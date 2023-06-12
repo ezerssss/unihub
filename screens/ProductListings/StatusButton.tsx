@@ -1,7 +1,7 @@
 import { TouchableOpacity, Text } from 'react-native';
 import { match } from 'ts-pattern';
 
-import { ListingStatus } from './types';
+import { ListingStatus } from '../../enums/productListings';
 
 interface StatusButtonProps {
   status: ListingStatus;

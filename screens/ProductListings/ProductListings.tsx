@@ -6,7 +6,7 @@ import useGoBack from '../../hooks/useGoBack';
 import ContentWrapper from '../../components/ContentWrapper';
 import StatusButton from './StatusButton';
 
-import { ListingStatus } from './types';
+import { ListingStatus } from '../../enums/productListings';
 
 import type { ProductListings } from './types';
 
