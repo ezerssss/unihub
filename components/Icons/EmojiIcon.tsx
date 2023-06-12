@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Image } from 'react-native';
-import { emojiIconTintColor } from '../constants/Emojicolor';
+import { emojiIconTintColor } from '../../constants/color';
 
 function EmojiIcon() {
   return (
