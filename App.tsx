@@ -7,7 +7,7 @@ import Login from './screens/Login/Login';
 import Home from './screens/Home/Home';
 import Sell from './screens/Sell/Sell';
 import Chat from './screens/Chat/Chat';
-import BuyConfirm from './screens/Buy/BuyConfirmation';
+import SpecificProduct from './screens/SpecificProduct/SpecificProduct';
 import { Routes } from './enums/routes';
 
 const Stack = createNativeStackNavigator<RootStackParamsList>();
@@ -22,7 +22,7 @@ export default function App() {
           <Stack.Screen component={Home} name={Routes.HOME} />
           <Stack.Screen component={Sell} name={Routes.SELL} />
           <Stack.Screen component={Chat} name={Routes.CHAT} />
-          <Stack.Screen component={BuyConfirm} name={Routes.BUY} />
+          <Stack.Screen component={SpecificProduct} name={Routes.PRODUCT} />
         </Stack.Navigator>
       </NavigationContainer>
     </View>
