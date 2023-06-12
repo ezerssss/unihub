@@ -43,6 +43,16 @@ function Login({ navigation }: RootNavigationProps) {
               Sign in with your school email
             </Text>
           </TouchableOpacity>
+          {/* delete this */}
+          <TouchableOpacity>
+            <Text
+              onPress={function () {
+                navigation.navigate(Routes.BUY);
+              }}
+            >
+              go somewer
+            </Text>
+          </TouchableOpacity>
         </View>
       </View>
     </ContentWrapper>

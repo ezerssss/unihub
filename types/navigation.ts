@@ -5,7 +5,7 @@ export type RootStackParamsList = {
   Home: undefined;
   Chat: undefined;
   Sell: undefined;
-
+  Buy: undefined;
 };
 
 export type RootNavigationProps = NativeStackScreenProps<RootStackParamsList>;
