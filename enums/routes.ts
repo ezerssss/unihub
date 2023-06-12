@@ -3,5 +3,5 @@ export enum Routes {
   HOME = 'Home',
   SELL = 'Sell',
   CHAT = 'Chat',
-  PRODUCT = 'SpecificProduct',
+  PRODUCT = 'Product',
 }
