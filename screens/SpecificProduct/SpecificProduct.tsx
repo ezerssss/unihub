@@ -1,16 +1,17 @@
 import { View, Text, ScrollView, TouchableOpacity } from 'react-native';
 import React from 'react';
-import SpecificProductCarousel from '../../components/product-page-components/SpecificProductCarousel';
+import ProductCarousel from './ProductCarousel';
 import ContentWrapper from '../../components/ContentWrapper';
-import { featuredProducts, products } from '../../data/products';
-function SpecificProduct() {
+import { featuredProducts } from '../../data/products';
+import { formatTime } from '../../helpers/date';
 
+function SpecificProduct() {
   return (
     <ContentWrapper hasHeader={false}>
       <View className="pt-10">
         <ScrollView>
           <View className="px-2">
-            <SpecificProductCarousel productImages={featuredProducts} />
+            <ProductCarousel productImages={featuredProducts} />
           </View>
         </ScrollView>
         <View>
@@ -18,9 +19,7 @@ function SpecificProduct() {
             <Text className="pl-6 pt-6 text-2xl font-semibold">
               {featuredProducts[0].title}
             </Text>
-            <Text className="pl-6 pt-8 text-xs font-normal">
-              by SamSamilo
-            </Text>
+            <Text className="pl-6 pt-8 text-xs font-normal">by SamSamilo</Text>
           </View>
           <View className="h-12 items-center px-5 pt-3">
             <Text className="text-xs font-light text-slate-500">
@@ -48,7 +47,8 @@ function SpecificProduct() {
             </View>
             <View className="mx-4 mt-4 h-10 w-5/6 rounded-3xl bg-primary-100 ">
               <Text className="px-4 py-3 text-left text-xs font-normal text-white">
-                Preferred Time of Meetup: {featuredProducts[0].meetup.time}
+                Preferred Time of Meetup:{' '}
+                {formatTime(featuredProducts[0].meetup.time)}
               </Text>
             </View>
           </View>

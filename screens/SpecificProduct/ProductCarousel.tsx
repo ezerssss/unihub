@@ -8,17 +8,17 @@ interface CarouselProps {
   productImages: Product[];
 }
 
-function CarouselComponent(props: CarouselProps) {
+function ProductCarousel(props: CarouselProps) {
   const { productImages } = props;
 
   const renderProducts = productImages.map((product) => (
-    <View className="rounded-2xl overflow-hidden" key={product.images[0]}>
+    <View className="overflow-hidden rounded-2xl" key={product.images[0]}>
       <View className="relative">
-        <Image 
+        <Image
+          className="h-full w-full rounded-lg"
           source={{
             uri: product.images[0],
           }}
-          style={{ width: '100%', height: '100%', borderRadius: 8 }}
         />
       </View>
     </View>
@@ -27,8 +27,8 @@ function CarouselComponent(props: CarouselProps) {
   return (
     <View>
       <Swiper
-        activeDot={<View className="w-2 h-2 rounded-full bg-black mx-2" />}
-        dot={<View className="w-2 h-2 rounded-full bg-gray-400 mx-2" />}
+        activeDot={<View className="mx-2 h-2 w-2 rounded-full bg-black" />}
+        dot={<View className="mx-2 h-2 w-2 rounded-full bg-gray-400" />}
         style={{ height: 250 }}
       >
         {renderProducts}
@@ -37,4 +37,4 @@ function CarouselComponent(props: CarouselProps) {
   );
 }
 
-export default CarouselComponent;
+export default ProductCarousel;
