@@ -8,6 +8,7 @@ import Home from './screens/Home/Home';
 import Sell from './screens/Sell/Sell';
 import Chat from './screens/Chat/Chat';
 import SpecificProduct from './screens/SpecificProduct/SpecificProduct';
+import ProductListing from './screens/ProductListings/ProductListings';
 import { Routes } from './enums/routes';
 
 const Stack = createNativeStackNavigator<RootStackParamsList>();
@@ -23,6 +24,10 @@ export default function App() {
           <Stack.Screen component={Sell} name={Routes.SELL} />
           <Stack.Screen component={Chat} name={Routes.CHAT} />
           <Stack.Screen component={SpecificProduct} name={Routes.PRODUCT} />
+          <Stack.Screen
+            component={ProductListing}
+            name={Routes.PRODUCT_LISTINGS}
+          />
         </Stack.Navigator>
       </NavigationContainer>
     </View>
