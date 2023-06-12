@@ -18,7 +18,7 @@ import useGoBack from '../../hooks/useGoBack';
 import CategoryPicker from './CategoryPicker';
 import * as ImagePicker from 'expo-image-picker';
 import uuid from 'react-native-uuid';
-import { uploadBlob } from '../../helpers/upload';
+import { compressImage, uploadBlob } from '../../helpers/upload';
 import { Product } from '../../types/product';
 import { addDoc, collection } from 'firebase/firestore';
 import db from '../../firebase/db';
@@ -75,7 +75,7 @@ export default function Sell() {
       return;
     }
 
-    const uri = image.assets[0].uri;
+    const uri = await compressImage(image.assets[0].uri);
     const updatedImageURIs = imageURIs;
     updatedImageURIs[index] = uri;
 
