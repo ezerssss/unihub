@@ -1,25 +1,27 @@
 import React from 'react';
-import { View, Text, Image } from 'react-native';
+import { View, Text, Image, TouchableOpacity } from 'react-native';
 import Swiper from 'react-native-swiper';
 
 import type { Product } from '../../types/product';
 
 interface CarouselProps {
-  products: Product[];
+  product: Product;
 }
 
 function CarouselComponent(props: CarouselProps) {
-  const { products } = props;
+  const { product } = props;
 
-  const renderProducts = products.map((product) => (
-    <View className="overflow-hidden rounded-2xl" key={product.images[0]}>
+  const renderProductImages = product.images.map((image, idx) => (
+    <View className="overflow-hidden rounded-2xl" key={idx}>
       <View className="relative">
-        <Image
-          source={{
-            uri: product.images[0],
-          }}
-          style={{ width: '100%', height: '100%', borderRadius: 8 }}
-        />
+        <TouchableOpacity>
+          <Image
+            source={{
+              uri: image,
+            }}
+            style={{ width: '100%', height: '100%', borderRadius: 8 }}
+          />
+        </TouchableOpacity>
         <View className="absolute left-0 top-0 bg-opacity-70 p-4">
           <Text className="mb-2 text-lg text-black">Featured</Text>
         </View>
@@ -42,7 +44,7 @@ function CarouselComponent(props: CarouselProps) {
         dot={<View className="mx-2 h-2 w-2 rounded-full bg-gray-400" />}
         style={{ height: 250 }}
       >
-        {renderProducts}
+        {renderProductImages}
       </Swiper>
     </View>
   );

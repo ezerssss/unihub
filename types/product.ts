@@ -10,6 +10,7 @@ export interface Product {
     time: Date;
     location: string;
   };
+  isFeatured?: boolean;
 }
 
 export interface ProductListings extends Pick<Product, 'title' | 'price'> {
