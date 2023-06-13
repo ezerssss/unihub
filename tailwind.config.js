@@ -27,6 +27,7 @@ module.exports = {
         'light-yellow': '#FFFEDF',
         'pale-yellow': '#FDFDBA',
         'orange-yellow': '#EECE5E',
+        'light-silver': '#D9D9D9'
       },
     },
   },

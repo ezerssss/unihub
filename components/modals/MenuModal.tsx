@@ -49,6 +49,11 @@ function MenuModal(props: MenuModalProps) {
     navigation.navigate(Routes.SELL);
   }
 
+  function goToProductListings() {
+    onClose();
+    navigation.navigate(Routes.PRODUCT_LISTINGS);
+  }
+
   function signOut() {
     navigation.navigate(Routes.LOGIN);
   }
@@ -108,7 +113,10 @@ function MenuModal(props: MenuModalProps) {
               <Text className="text-primary-400">Sell Something</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity className="mb-4 flex flex-row items-center gap-4">
+            <TouchableOpacity
+              className="mb-4 flex flex-row items-center gap-4"
+              onPress={goToProductListings}
+            >
               <ProductIcon />
               <Text className="text-primary-400">Your Product List</Text>
             </TouchableOpacity>
