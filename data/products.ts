@@ -1,4 +1,5 @@
-import type { Product } from '../types/product';
+import type { Product, ProductListings } from '../types/product';
+import { ListingStatus } from '../enums/productListings';
 
 export const featuredProducts: Product[] = [
   {
@@ -92,5 +93,22 @@ export const products: Product[] = [
       time: new Date(),
       location: 'test',
     },
+  },
+];
+
+export const productListings: ProductListings[] = [
+  {
+    image:
+      'https://2f96be1b505f7f7a63c3-837c961929b51c21ec10b9658b068d6c.ssl.cf2.rackcdn.com/products/072177.jpg',
+    title: 'Old Math Textbook',
+    status: ListingStatus.OPEN,
+    price: 180,
+  },
+  {
+    image:
+      'https://media.sketchfab.com/models/dd7ef37c175945db9e11266e9f32c8c4/thumbnails/f33f649e975c4bd2a505cb0c46561f63/b552809abfdd435592090b1c5e68b3d3.jpeg',
+    title: 'Old School Uniform',
+    status: ListingStatus.WAITING,
+    price: 280,
   },
 ];

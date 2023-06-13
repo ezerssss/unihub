@@ -1,29 +1,68 @@
 import { View, Text, ScrollView, TouchableOpacity } from 'react-native';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import ProductCarousel from './ProductCarousel';
 import ContentWrapper from '../../components/ContentWrapper';
-import { featuredProducts } from '../../data/products';
 import { formatTime } from '../../helpers/date';
+import { ProductNavigationProps } from '../../types/navigation';
+import { Timestamp, doc, getDoc } from 'firebase/firestore';
+import db from '../../firebase/db';
+import { DB } from '../../enums/db';
+import { Product } from '../../types/product';
+import ProductLoading from '../../components/FullScreenLoading/Product';
 
-function SpecificProduct() {
+function SpecificProduct({ route }: ProductNavigationProps) {
+  const { product } = route.params;
+
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [fetchedProduct, setFetchedProduct] = useState<Product>();
+
+  async function handleGetProduct() {
+    try {
+      setIsLoading(true);
+      const docRef = doc(db, DB.PRODUCTS, product);
+      const result = await getDoc(docRef);
+
+      if (!result.exists()) {
+        alert('Product does not exist!');
+        return;
+      }
+
+      setFetchedProduct(result.data() as Product);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    handleGetProduct();
+  }, []);
+
+  if (isLoading || !fetchedProduct) {
+    return <ProductLoading />;
+  }
+
+  const { images, title, description, price, meetup } = fetchedProduct;
+  const { location, time } = meetup;
+  const dateObject = (time as unknown as Timestamp).toDate();
+
   return (
     <ContentWrapper hasHeader={false}>
       <View className="pt-10">
         <ScrollView>
           <View className="px-2">
-            <ProductCarousel productImages={featuredProducts} />
+            <ProductCarousel images={images} />
           </View>
         </ScrollView>
         <View>
           <View className="flex-row">
-            <Text className="pl-6 pt-6 text-2xl font-semibold">
-              {featuredProducts[0].title}
-            </Text>
-            <Text className="pl-6 pt-8 text-xs font-normal">by SamSamilo</Text>
+            <Text className="pl-6 pt-6 text-2xl font-semibold">{title}</Text>
+            <Text className="pl-6 pt-8 text-xs font-normal">by -</Text>
           </View>
           <View className="h-12 items-center px-5 pt-3">
             <Text className="text-xs font-light text-slate-500">
-              {featuredProducts[0].description}
+              {description}
             </Text>
             <TouchableOpacity className="h-6 w-16 rounded-3xl bg-primary-100 ">
               <Text className="items-center pt-1 text-center text-xs font-normal text-white">
@@ -33,7 +72,7 @@ function SpecificProduct() {
           </View>
           <View className="mt-12 h-24 w-screen bg-amber-300">
             <Text className="items-center py-9 pl-6 text-base font-medium">
-              ₱{featuredProducts[0].price}.00
+              ₱{price}
             </Text>
           </View>
           <View className="h-52 bg-white">
@@ -42,13 +81,12 @@ function SpecificProduct() {
             </Text>
             <View className="mx-4 mt-20 h-10 w-1/2 rounded-3xl bg-primary-100 ">
               <Text className="px-4 py-3 text-left text-xs font-normal text-white">
-                Meetup at {featuredProducts[0].meetup.location}
+                Meetup at {location}
               </Text>
             </View>
             <View className="mx-4 mt-4 h-10 w-5/6 rounded-3xl bg-primary-100 ">
               <Text className="px-4 py-3 text-left text-xs font-normal text-white">
-                Preferred Time of Meetup:{' '}
-                {formatTime(featuredProducts[0].meetup.time)}
+                Preferred Time of Meetup: {formatTime(new Date(dateObject))}
               </Text>
             </View>
           </View>

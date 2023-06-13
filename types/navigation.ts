@@ -5,7 +5,12 @@ export type RootStackParamsList = {
   Home: undefined;
   Chat: undefined;
   Sell: undefined;
-  Product: undefined;
+  Product: { product: string };
+  ProductListings: undefined;
 };
 
 export type RootNavigationProps = NativeStackScreenProps<RootStackParamsList>;
+export type ProductNavigationProps = NativeStackScreenProps<
+  RootStackParamsList,
+  'Product'
+>;

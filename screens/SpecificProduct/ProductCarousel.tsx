@@ -2,22 +2,20 @@ import React from 'react';
 import { View, Image } from 'react-native';
 import Swiper from 'react-native-swiper';
 
-import type { Product } from '../../types/product';
-
 interface CarouselProps {
-  productImages: Product[];
+  images: string[];
 }
 
 function ProductCarousel(props: CarouselProps) {
-  const { productImages } = props;
+  const { images } = props;
 
-  const renderProducts = productImages.map((product) => (
-    <View className="overflow-hidden rounded-2xl" key={product.images[0]}>
+  const renderProducts = images.map((image) => (
+    <View className="overflow-hidden rounded-2xl" key={image}>
       <View className="relative">
         <Image
           className="h-full w-full rounded-lg"
           source={{
-            uri: product.images[0],
+            uri: image,
           }}
         />
       </View>

@@ -8,6 +8,7 @@ import Home from './screens/Home/Home';
 import Sell from './screens/Sell/Sell';
 import Chat from './screens/Chat/Chat';
 import SpecificProduct from './screens/SpecificProduct/SpecificProduct';
+import ProductListing from './screens/ProductListings/ProductListings';
 import Buy from './screens/SpecificProduct/BuyConfirmation';
 import { Routes } from './enums/routes';
 
@@ -25,6 +26,10 @@ export default function App() {
           <Stack.Screen component={Chat} name={Routes.CHAT} />
           <Stack.Screen component={SpecificProduct} name={Routes.PRODUCT} />
           <Stack.Screen component={Buy} name={Routes.BUY} />
+          <Stack.Screen
+            component={ProductListing}
+            name={Routes.PRODUCT_LISTINGS}
+          />
         </Stack.Navigator>
       </NavigationContainer>
     </View>

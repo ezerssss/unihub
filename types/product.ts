@@ -1,3 +1,5 @@
+import { ListingStatus } from '../enums/productListings';
+
 export interface Product {
   images: string[];
   title: string;
@@ -8,4 +10,9 @@ export interface Product {
     time: Date;
     location: string;
   };
+}
+
+export interface ProductListings extends Pick<Product, 'title' | 'price'> {
+  image: string;
+  status: ListingStatus;
 }
