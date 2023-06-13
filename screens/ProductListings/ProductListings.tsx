@@ -5,33 +5,13 @@ import { formatNumber } from '../../helpers/number';
 import useGoBack from '../../hooks/useGoBack';
 import ContentWrapper from '../../components/ContentWrapper';
 import StatusButton from './StatusButton';
-
-import { ListingStatus } from '../../enums/productListings';
-
-import type { ProductListings } from './types';
-
-const productData: ProductListings[] = [
-  {
-    image:
-      'https://2f96be1b505f7f7a63c3-837c961929b51c21ec10b9658b068d6c.ssl.cf2.rackcdn.com/products/072177.jpg',
-    title: 'Old Math Textbook',
-    status: ListingStatus.OPEN,
-    price: 180,
-  },
-  {
-    image:
-      'https://media.sketchfab.com/models/dd7ef37c175945db9e11266e9f32c8c4/thumbnails/f33f649e975c4bd2a505cb0c46561f63/b552809abfdd435592090b1c5e68b3d3.jpeg',
-    title: 'Old School Uniform',
-    status: ListingStatus.WAITING,
-    price: 280,
-  },
-];
+import { productListings } from '../../data/products';
 
 function ProductListing() {
   const goBack = useGoBack();
   // Replace with actual product data
 
-  const renderProductListings = productData.map((product, index) => (
+  const renderProductListings = productListings.map((product, index) => (
     <View
       className="h-36 w-full flex-row border-b border-gray-300 bg-white"
       key={index}
