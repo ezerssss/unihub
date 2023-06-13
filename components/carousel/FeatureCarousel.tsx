@@ -1,6 +1,10 @@
 import React from 'react';
 import { View, Text, Image, TouchableOpacity } from 'react-native';
 import Swiper from 'react-native-swiper';
+import { useNavigation } from '@react-navigation/native';
+import { RootStackParamsList } from '../../types/navigation';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { Routes } from '../../enums/routes';
 
 import type { Product } from '../../types/product';
 
@@ -11,10 +15,19 @@ interface CarouselProps {
 function CarouselComponent(props: CarouselProps) {
   const { product } = props;
 
+  const navigation =
+    useNavigation<NativeStackNavigationProp<RootStackParamsList>>();
+
+  function goToSpecificProduct(productId: string) {
+    navigation.navigate(Routes.PRODUCT, {
+      product: productId,
+    });
+  }
+
   const renderProductImages = product.images.map((image, idx) => (
     <View className="overflow-hidden rounded-2xl" key={idx}>
       <View className="relative">
-        <TouchableOpacity>
+        <TouchableOpacity onPress={() => goToSpecificProduct(product.id)}>
           <Image
             source={{
               uri: image,

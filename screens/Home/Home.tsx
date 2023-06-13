@@ -32,7 +32,12 @@ function Home() {
         setFeaturedProduct(null);
       } else {
         const doc = querySnapshot.docs[0];
-        const featuredProduct = doc.data() as Product;
+
+        const featuredProduct = {
+          id: doc.id,
+          ...doc.data(),
+        } as Product;
+
         setFeaturedProduct(featuredProduct);
       }
     } catch (error) {
@@ -53,7 +58,11 @@ function Home() {
 
       querySnapshot.forEach((doc) => {
         if (doc.exists()) {
-          const product = doc.data() as Product;
+          const product = {
+            id: doc.id,
+            ...doc.data(),
+          } as Product;
+
           products.push(product);
         }
       });
