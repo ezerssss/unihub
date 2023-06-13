@@ -5,13 +5,17 @@ import ContentWrapper from '../../components/ContentWrapper';
 import { formatTime } from '../../helpers/date';
 import { ProductNavigationProps } from '../../types/navigation';
 import { Timestamp, doc, getDoc } from 'firebase/firestore';
+import { AntDesign } from '@expo/vector-icons';
 import db from '../../firebase/db';
 import { DB } from '../../enums/db';
 import { Product } from '../../types/product';
-import ProductLoading from '../../components/FullScreenLoading/Product';
+import useGoBack from '../../hooks/useGoBack';
+import { ProductLoading } from '../../components/FullScreenLoading';
 
 function SpecificProduct({ route }: ProductNavigationProps) {
   const { product } = route.params;
+
+  const goBack = useGoBack();
 
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [fetchedProduct, setFetchedProduct] = useState<Product>();
@@ -50,6 +54,12 @@ function SpecificProduct({ route }: ProductNavigationProps) {
   return (
     <ContentWrapper hasHeader={false}>
       <View className="pt-10">
+        <TouchableOpacity
+          className="absolute left-7 top-20 z-20"
+          onPress={goBack}
+        >
+          <AntDesign color="black" name="left" size={30} />
+        </TouchableOpacity>
         <ScrollView>
           <View className="px-2">
             <ProductCarousel images={images} />

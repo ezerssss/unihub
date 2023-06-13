@@ -4,6 +4,7 @@ import ContentWrapper from '../../components/ContentWrapper';
 import FeatureCarousel from '../../components/carousel/FeatureCarousel';
 import ProductsCarousel from '../../components/carousel/ProductsCarousel';
 import CategoriesCarousel from '../../components/carousel/CategoriesCarousel';
+import { HomeLoading } from '../../components/FullScreenLoading';
 import { categories } from '../../data/category';
 import { collection, getDocs, query, where } from 'firebase/firestore';
 import { DB } from '../../enums/db';
@@ -81,7 +82,7 @@ function Home() {
   }, []);
 
   if (isLoading || !featuredProduct) {
-    return <Text>Loading...</Text>;
+    return <HomeLoading />;
   }
 
   return (
