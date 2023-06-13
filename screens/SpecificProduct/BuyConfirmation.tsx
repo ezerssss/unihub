@@ -4,6 +4,7 @@ import useGoBack from '../../hooks/useGoBack';
 import ReturnIcon from '../../components/icons/ReturnIcon';
 import ContentWrapper from '../../components/ContentWrapper';
 import UniHubIcon from '../../components/icons/UniHubIcon';
+import ProgressBar from '../../components/progressbar/ProgressBar';
 
 function Buy() {
   const goBack = useGoBack();
@@ -20,7 +21,7 @@ function Buy() {
         <View className="h-28 w-28 items-center justify-center self-center rounded-full bg-white shadow shadow-primary-300">
           <UniHubIcon />
         </View>
-        <View></View>
+        <ProgressBar />
       </View>
     </ContentWrapper>
   );
