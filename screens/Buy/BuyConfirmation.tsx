@@ -20,6 +20,7 @@ function Buy() {
         <View className="h-28 w-28 items-center justify-center self-center rounded-full bg-white shadow shadow-primary-300">
           <UniHubIcon />
         </View>
+        <View></View>
       </View>
     </ContentWrapper>
   );
