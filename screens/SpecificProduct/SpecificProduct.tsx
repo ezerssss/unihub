@@ -1,55 +1,36 @@
 import { View, Text, ScrollView, TouchableOpacity } from 'react-native';
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import ProductCarousel from './ProductCarousel';
 import ContentWrapper from '../../components/ContentWrapper';
 import { formatTime } from '../../helpers/date';
 import { ProductNavigationProps } from '../../types/navigation';
-import { Timestamp, doc, getDoc } from 'firebase/firestore';
-import db from '../../firebase/db';
-import { DB } from '../../enums/db';
-import { Product } from '../../types/product';
-import ProductLoading from '../../components/FullScreenLoading/Product';
+import { Timestamp } from 'firebase/firestore';
+import { AntDesign } from '@expo/vector-icons';
+import useGoBack from '../../hooks/useGoBack';
+import { ProductLoading } from '../../components/loading';
 
 function SpecificProduct({ route }: ProductNavigationProps) {
   const { product } = route.params;
 
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [fetchedProduct, setFetchedProduct] = useState<Product>();
+  const goBack = useGoBack();
 
-  async function handleGetProduct() {
-    try {
-      setIsLoading(true);
-      const docRef = doc(db, DB.PRODUCTS, product);
-      const result = await getDoc(docRef);
-
-      if (!result.exists()) {
-        alert('Product does not exist!');
-        return;
-      }
-
-      setFetchedProduct(result.data() as Product);
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setIsLoading(false);
-    }
-  }
-
-  useEffect(() => {
-    handleGetProduct();
-  }, []);
-
-  if (isLoading || !fetchedProduct) {
+  if (!product) {
     return <ProductLoading />;
   }
 
-  const { images, title, description, price, meetup } = fetchedProduct;
+  const { images, title, description, price, meetup } = product;
   const { location, time } = meetup;
   const dateObject = (time as unknown as Timestamp).toDate();
 
   return (
     <ContentWrapper hasHeader={false}>
       <View className="pt-10">
+        <TouchableOpacity
+          className="absolute left-7 top-20 z-20"
+          onPress={goBack}
+        >
+          <AntDesign color="black" name="left" size={30} />
+        </TouchableOpacity>
         <ScrollView>
           <View className="px-2">
             <ProductCarousel images={images} />
