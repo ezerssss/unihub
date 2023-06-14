@@ -1,22 +1,21 @@
 import { View, Text } from 'react-native';
 import React from 'react';
-
-// currently no progress field in database
+import { Progress } from '../../enums/progress';
 
 function ProgressBar() {
   function progressMessage(progress: number): string {
     let msg = '';
-    if (progress === 1) {
+    if (progress === Progress.ORDER_CONFIRMATION) {
       msg = 'Waiting for seller to recieve order...';
-    } else if (progress === 2) {
+    } else if (progress === Progress.MEETUP) {
       msg = 'Waiting for a meetup...';
-    } else if (progress === 3) {
+    } else if (progress === Progress.SUCCESS) {
       msg = 'Order successful, enjoy!';
     }
     return msg;
   }
 
-  function checkProgress(bar: number, progress: number): string {
+  function generateStyle(bar: number, progress: number): string {
     if (bar <= progress) {
       return 'mx-3 h-2 w-24 rounded-3xl bg-primary-300';
     } else {
@@ -30,9 +29,9 @@ function ProgressBar() {
         {progressMessage(1)}
       </Text>
       <View className="flex-row items-center justify-center pt-4">
-        <View className={checkProgress(1, 1)} />
-        <View className={checkProgress(2, 1)} />
-        <View className={checkProgress(3, 1)} />
+        <View className={generateStyle(1, 1)} />
+        <View className={generateStyle(2, 1)} />
+        <View className={generateStyle(3, 1)} />
       </View>
     </View>
   );
