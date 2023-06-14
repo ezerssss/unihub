@@ -101,7 +101,7 @@ export default function Sell() {
       setIsUploading(true);
       const images: string[] = await handleUpload();
 
-      const product: Omit<Product, 'id'> = {
+      const product: Product = {
         images,
         title,
         price: parseFloat(price),

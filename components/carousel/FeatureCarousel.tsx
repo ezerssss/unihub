@@ -18,21 +18,21 @@ function CarouselComponent(props: CarouselProps) {
   const navigation =
     useNavigation<NativeStackNavigationProp<RootStackParamsList>>();
 
-  function goToSpecificProduct(productId: string) {
+  function goToSpecificProduct() {
     navigation.navigate(Routes.PRODUCT, {
-      product: productId,
+      product,
     });
   }
 
-  const renderProductImages = product.images.map((image, idx) => (
-    <View className="overflow-hidden rounded-2xl" key={idx}>
+  const renderProductImages = product.images.map((image) => (
+    <View className="overflow-hidden rounded-2xl" key={image}>
       <View className="relative">
-        <TouchableOpacity onPress={() => goToSpecificProduct(product.id)}>
+        <TouchableOpacity onPress={goToSpecificProduct}>
           <Image
+            className="h-full w-full rounded-lg"
             source={{
               uri: image,
             }}
-            style={{ width: '100%', height: '100%', borderRadius: 8 }}
           />
         </TouchableOpacity>
         <View className="absolute left-0 top-0 bg-opacity-70 p-4">

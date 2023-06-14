@@ -1,7 +1,6 @@
 import { ListingStatus } from '../enums/productListings';
 
 export interface Product {
-  id: string;
   images: string[];
   title: string;
   price: number;

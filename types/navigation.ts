@@ -1,11 +1,12 @@
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { Product } from './product';
 
 export type RootStackParamsList = {
   Login: undefined;
   Home: undefined;
   Chat: undefined;
   Sell: undefined;
-  Product: { product: string };
+  Product: { product: Product };
   ProductListings: undefined;
 };
 
