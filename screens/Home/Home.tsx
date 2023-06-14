@@ -1,4 +1,4 @@
-import { View, Text, ScrollView } from 'react-native';
+import { View, Text, ScrollView, RefreshControl } from 'react-native';
 import React, { useState, useEffect } from 'react';
 import ContentWrapper from '../../components/ContentWrapper';
 import FeatureCarousel from '../../components/carousel/FeatureCarousel';
@@ -104,7 +104,12 @@ function Home() {
 
   return (
     <ContentWrapper className="px-0">
-      <ScrollView className="bg-orange-yellow">
+      <ScrollView
+        className="bg-orange-yellow"
+        refreshControl={
+          <RefreshControl refreshing={isLoading} onRefresh={handleGetData} />
+        }
+      >
         <View className="rounded-lg px-4 py-8">
           <FeatureCarousel product={featuredProduct} />
         </View>
