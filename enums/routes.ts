@@ -3,6 +3,7 @@ export enum Routes {
   HOME = 'Home',
   SELL = 'Sell',
   CHAT = 'Chat',
+  BUY = 'Buy',
   PRODUCT = 'Product',
   PRODUCT_LISTINGS = 'ProductListings',
 }
