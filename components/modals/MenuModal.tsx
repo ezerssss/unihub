@@ -6,6 +6,7 @@ import {
   Dimensions,
   Text,
   View,
+  StatusBar,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { RootStackParamsList } from '../../types/navigation';
@@ -76,6 +77,7 @@ function MenuModal(props: MenuModalProps) {
 
   return (
     <Modal transparent visible={isOpen}>
+      <StatusBar barStyle={'dark-content'} />
       <BlurView
         intensity={10}
         style={{
