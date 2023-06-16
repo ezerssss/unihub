@@ -11,6 +11,7 @@ export interface Product {
     location: string;
   };
   isFeatured?: boolean;
+  seller: string;
 }
 
 export interface ProductListings extends Pick<Product, 'title' | 'price'> {

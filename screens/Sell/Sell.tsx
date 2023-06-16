@@ -5,7 +5,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import ContentWrapper from '../../components/ContentWrapper';
 import { AntDesign } from '@expo/vector-icons';
 import AddPhoto from './AddPhoto';
@@ -24,9 +24,15 @@ import { addDoc, collection } from 'firebase/firestore';
 import db from '../../firebase/db';
 import { DB } from '../../enums/db';
 import { Categories } from '../../enums/categories';
+import AuthWrapper from '../../components/AuthWrapper';
+import UserContext from '../../context/UserContext';
+import { RootNavigationProps } from '../../types/navigation';
+import { Routes } from '../../enums/routes';
 
-export default function Sell() {
+export default function Sell({ navigation }: RootNavigationProps) {
   const goBack = useGoBack();
+
+  const { user } = useContext(UserContext);
 
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
@@ -98,6 +104,10 @@ export default function Sell() {
 
   async function handleSell() {
     try {
+      if (!user) {
+        return;
+      }
+
       setIsUploading(true);
       const images: string[] = await handleUpload();
 
@@ -111,12 +121,16 @@ export default function Sell() {
           time,
           location,
         },
+        seller: user?.displayName ?? '-',
       };
 
       const productsRef = collection(db, DB.PRODUCTS);
+      const userRef = collection(db, DB.USERS, user.uid, DB.PRODUCTS);
 
       await addDoc(productsRef, product);
+      await addDoc(userRef, product);
       handleStateCleanUp();
+      navigation.navigate(Routes.PRODUCT, { product, isRedirect: true });
     } catch (error) {
       console.error(error);
       alert('Something went wrong with posting your product.');
@@ -157,94 +171,96 @@ export default function Sell() {
   );
 
   return (
-    <ContentWrapper hasHeader={false}>
-      <ScrollView
-        className="bg-light-yellow"
-        contentContainerStyle={{
-          flexGrow: 1,
-          justifyContent: 'space-between',
-          flexDirection: 'column',
-        }}
-      >
-        <View className="flex-1 justify-start">
-          <View className="relative flex-row items-center justify-center bg-primary-400 pb-10 pt-20">
-            <TouchableOpacity
-              className="absolute left-7 top-20"
-              onPress={goBack}
-            >
-              <AntDesign color="white" name="left" size={30} />
-            </TouchableOpacity>
-            <Text className="text-2xl font-bold text-white">Sell</Text>
-          </View>
-          <View className="flex-row bg-white py-5 pl-5">
-            <AddPhoto
-              image={imageURIs[0]}
-              text="+ Add Thumbnail Photo"
-              onPress={() => handleAddImage(0)}
-            />
-            <AddPhoto
-              image={imageURIs[1]}
-              text="+ Add Photo"
-              onPress={() => handleAddImage(1)}
-            />
-            <AddPhoto
-              image={imageURIs[2]}
-              text="+ Add Photo"
-              onPress={() => handleAddImage(2)}
-            />
-          </View>
-          <View className="mt-5 bg-white px-7 py-5">
-            <ProductDescription
-              placeholder="Enter product name..."
-              title="Product Name"
-              value={title}
-              onChange={setTitle}
-            />
-            <ProductDescription
-              placeholder="Enter product description..."
-              title="Product Description"
-              value={description}
-              onChange={setDescription}
-            />
-          </View>
-          <View className="mt-5 bg-white px-7 py-5">
-            <CategoryPicker
-              selectedCategory={selectedCategory}
-              onChange={handleCategoryChange}
-            />
-            <ProductDescription
-              isNumeric
-              placeholder="Enter product price..."
-              title="Price"
-              value={price}
-              onChange={setPrice}
-            />
-          </View>
-          <View className="my-5 bg-white px-7 py-5">
-            <TouchableOpacity
-              className="mb-6 flex-row items-center justify-between"
-              onPress={() => handleShowTimePicker(true)}
-            >
-              <Text className="text-lg font-bold">Preferred Meetup Time</Text>
-              {renderPreferredTime}
-            </TouchableOpacity>
-            {renderTimePicker}
-            <ProductDescription
-              placeholder="Enter preferred meetup location..."
-              title="Preferred Meetup Location"
-              value={location}
-              onChange={setLocation}
-            />
-          </View>
-        </View>
-        <TouchableOpacity
-          className="mt-10 items-center justify-center bg-secondary-100 py-7"
-          disabled={isUploading}
-          onPress={handleSell}
+    <AuthWrapper>
+      <ContentWrapper hasHeader={false}>
+        <ScrollView
+          className="bg-light-yellow"
+          contentContainerStyle={{
+            flexGrow: 1,
+            justifyContent: 'space-between',
+            flexDirection: 'column',
+          }}
         >
-          {renderSellButtonText}
-        </TouchableOpacity>
-      </ScrollView>
-    </ContentWrapper>
+          <View className="flex-1 justify-start">
+            <View className="relative flex-row items-center justify-center bg-primary-400 pb-10 pt-20">
+              <TouchableOpacity
+                className="absolute left-7 top-20"
+                onPress={goBack}
+              >
+                <AntDesign color="white" name="left" size={30} />
+              </TouchableOpacity>
+              <Text className="text-2xl font-bold text-white">Sell</Text>
+            </View>
+            <View className="flex-row bg-white py-5 pl-5">
+              <AddPhoto
+                image={imageURIs[0]}
+                text="+ Add Thumbnail Photo"
+                onPress={() => handleAddImage(0)}
+              />
+              <AddPhoto
+                image={imageURIs[1]}
+                text="+ Add Photo"
+                onPress={() => handleAddImage(1)}
+              />
+              <AddPhoto
+                image={imageURIs[2]}
+                text="+ Add Photo"
+                onPress={() => handleAddImage(2)}
+              />
+            </View>
+            <View className="mt-5 bg-white px-7 py-5">
+              <ProductDescription
+                placeholder="Enter product name..."
+                title="Product Name"
+                value={title}
+                onChange={setTitle}
+              />
+              <ProductDescription
+                placeholder="Enter product description..."
+                title="Product Description"
+                value={description}
+                onChange={setDescription}
+              />
+            </View>
+            <View className="mt-5 bg-white px-7 py-5">
+              <CategoryPicker
+                selectedCategory={selectedCategory}
+                onChange={handleCategoryChange}
+              />
+              <ProductDescription
+                isNumeric
+                placeholder="Enter product price..."
+                title="Price"
+                value={price}
+                onChange={setPrice}
+              />
+            </View>
+            <View className="my-5 bg-white px-7 py-5">
+              <TouchableOpacity
+                className="mb-6 flex-row items-center justify-between"
+                onPress={() => handleShowTimePicker(true)}
+              >
+                <Text className="text-lg font-bold">Preferred Meetup Time</Text>
+                {renderPreferredTime}
+              </TouchableOpacity>
+              {renderTimePicker}
+              <ProductDescription
+                placeholder="Enter preferred meetup location..."
+                title="Preferred Meetup Location"
+                value={location}
+                onChange={setLocation}
+              />
+            </View>
+          </View>
+          <TouchableOpacity
+            className="mt-10 items-center justify-center bg-secondary-100 py-7"
+            disabled={isUploading}
+            onPress={handleSell}
+          >
+            {renderSellButtonText}
+          </TouchableOpacity>
+        </ScrollView>
+      </ContentWrapper>
+    </AuthWrapper>
   );
 }

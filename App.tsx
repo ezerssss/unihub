@@ -11,27 +11,35 @@ import SpecificProduct from './screens/SpecificProduct/SpecificProduct';
 import ProductListing from './screens/ProductListings/ProductListings';
 import Buy from './screens/SpecificProduct/BuyConfirmation';
 import { Routes } from './enums/routes';
+import UserContext from './context/UserContext';
+import { useMemo, useState } from 'react';
+import { User } from 'firebase/auth';
 
 const Stack = createNativeStackNavigator<RootStackParamsList>();
 
 export default function App() {
+  const [user, setUser] = useState<User | null>(null);
+  const userContextValue = useMemo(() => ({ user, setUser }), [user, setUser]);
+
   return (
-    <View className="flex-1">
-      <StatusBar style="auto" />
-      <NavigationContainer>
-        <Stack.Navigator>
-          <Stack.Screen component={Login} name={Routes.LOGIN} />
-          <Stack.Screen component={Home} name={Routes.HOME} />
-          <Stack.Screen component={Sell} name={Routes.SELL} />
-          <Stack.Screen component={Chat} name={Routes.CHAT} />
-          <Stack.Screen component={SpecificProduct} name={Routes.PRODUCT} />
-          <Stack.Screen component={Buy} name={Routes.BUY} />
-          <Stack.Screen
-            component={ProductListing}
-            name={Routes.PRODUCT_LISTINGS}
-          />
-        </Stack.Navigator>
-      </NavigationContainer>
-    </View>
+    <UserContext.Provider value={userContextValue}>
+      <View className="flex-1">
+        <StatusBar style="auto" />
+        <NavigationContainer>
+          <Stack.Navigator>
+            <Stack.Screen component={Login} name={Routes.LOGIN} />
+            <Stack.Screen component={Home} name={Routes.HOME} />
+            <Stack.Screen component={Sell} name={Routes.SELL} />
+            <Stack.Screen component={Chat} name={Routes.CHAT} />
+            <Stack.Screen component={SpecificProduct} name={Routes.PRODUCT} />
+            <Stack.Screen component={Buy} name={Routes.BUY} />
+            <Stack.Screen
+              component={ProductListing}
+              name={Routes.PRODUCT_LISTINGS}
+            />
+          </Stack.Navigator>
+        </NavigationContainer>
+      </View>
+    </UserContext.Provider>
   );
 }

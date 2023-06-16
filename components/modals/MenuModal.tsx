@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import {
   TouchableOpacity,
   Modal,
@@ -16,6 +16,8 @@ import { ProfileIcon, ShopIcon, ProductIcon, SettingsIcon } from '../icons';
 import { BlurView } from 'expo-blur';
 
 import type { GestureResponderEvent, StyleProp, ViewStyle } from 'react-native';
+import UserContext from '../../context/UserContext';
+import auth from '../../firebase/auth';
 
 type AnimatedViewStyle = Animated.AnimatedProps<StyleProp<ViewStyle>>;
 
@@ -26,6 +28,7 @@ interface MenuModalProps {
 
 function MenuModal(props: MenuModalProps) {
   const { isOpen, onClose } = props;
+  const { user } = useContext(UserContext);
 
   const navigation =
     useNavigation<NativeStackNavigationProp<RootStackParamsList>>();
@@ -54,8 +57,8 @@ function MenuModal(props: MenuModalProps) {
     navigation.navigate(Routes.PRODUCT_LISTINGS);
   }
 
-  function signOut() {
-    navigation.navigate(Routes.LOGIN);
+  async function signOut() {
+    await auth.signOut();
   }
 
   const animatedViewStyle: AnimatedViewStyle = {
@@ -91,12 +94,16 @@ function MenuModal(props: MenuModalProps) {
             <View className="mb-10 flex flex-row items-center">
               <TouchableOpacity>
                 <View className="mr-3 flex h-16 w-16 items-center justify-center rounded-full bg-secondary-100">
-                  <Text className="text-4xl font-medium text-black">S</Text>
+                  <Text className="text-4xl font-medium text-black">
+                    {user?.displayName && user.displayName[0]}
+                  </Text>
                 </View>
               </TouchableOpacity>
               <View className="flex flex-col gap-1">
-                <Text className="font-semibold text-black">John Doe</Text>
-                <Text className="text-gray-500">johndoe@example.com</Text>
+                <Text className="font-semibold text-black">
+                  {user?.displayName}
+                </Text>
+                <Text className="text-gray-500">{user?.email}</Text>
               </View>
             </View>
 

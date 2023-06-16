@@ -1,5 +1,6 @@
 {
   "expo": {
+    "scheme": "com.unihubteam.unihub",
     "name": "unihub",
     "slug": "unihub",
     "version": "1.0.0",
@@ -11,17 +12,17 @@
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.unihubteam.unihub"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.unihubteam.unihub"
     },
     "web": {
       "favicon": "./assets/favicon.png"
