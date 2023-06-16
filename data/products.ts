@@ -15,6 +15,7 @@ export const featuredProduct: Product = {
     time: new Date(),
     location: 'test',
   },
+  seller: 'test',
 };
 
 export const products: Product[] = [
@@ -30,6 +31,7 @@ export const products: Product[] = [
       time: new Date(),
       location: 'test',
     },
+    seller: 'test',
   },
   {
     images: [
@@ -43,6 +45,7 @@ export const products: Product[] = [
       time: new Date(),
       location: 'test',
     },
+    seller: 'test',
   },
   {
     images: [
@@ -56,6 +59,7 @@ export const products: Product[] = [
       time: new Date(),
       location: 'test',
     },
+    seller: 'test',
   },
   {
     images: [
@@ -69,6 +73,7 @@ export const products: Product[] = [
       time: new Date(),
       location: 'test',
     },
+    seller: 'test',
   },
 ];
 

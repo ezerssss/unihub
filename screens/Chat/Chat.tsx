@@ -13,6 +13,7 @@ import ReturnIcon from '../../components/icons/ReturnIcon';
 import { Message } from '../../types/messages';
 import useGoBack from '../../hooks/useGoBack';
 import { formatTime } from '../../helpers/date';
+import AuthWrapper from '../../components/AuthWrapper';
 
 function Chat() {
   const goBack = useGoBack();
@@ -57,42 +58,44 @@ function Chat() {
   });
 
   return (
-    <ContentWrapper hasHeader={false}>
-      <View className="flex-1 bg-yellow-50">
-        <View className="mt-10 flex-row items-center justify-center bg-yellow-50 p-4">
-          <View className="absolute left-0">
-            <TouchableOpacity className="ml-4" onPress={goBack}>
-              <ReturnIcon />
-            </TouchableOpacity>
+    <AuthWrapper>
+      <ContentWrapper hasHeader={false}>
+        <View className="flex-1 bg-yellow-50">
+          <View className="mt-10 flex-row items-center justify-center bg-yellow-50 p-4">
+            <View className="absolute left-0">
+              <TouchableOpacity className="ml-4" onPress={goBack}>
+                <ReturnIcon />
+              </TouchableOpacity>
+            </View>
+            <Text className="text-2xl font-bold text-gray-900">TedTeddy</Text>
           </View>
-          <Text className="text-2xl font-bold text-gray-900">TedTeddy</Text>
+          <ScrollView className="flex-grow p-4">{renderMessages}</ScrollView>
+          <View className="h-24 flex-row items-center bg-white p-4">
+            <View className="mr-4">
+              <TouchableOpacity>
+                <EmojiIcon />
+              </TouchableOpacity>
+            </View>
+            <View className="flex-1">
+              <TextInput
+                className="h-10 rounded-lg bg-white px-4"
+                placeholder="Type a message..."
+                value={inputText}
+                onChangeText={setInputText}
+              />
+            </View>
+            <View className="ml-4">
+              <TouchableOpacity
+                className="h-10 w-10 items-center justify-center rounded-full bg-white"
+                onPress={handleSend}
+              >
+                <ArrowIcon />
+              </TouchableOpacity>
+            </View>
+          </View>
         </View>
-        <ScrollView className="flex-grow p-4">{renderMessages}</ScrollView>
-        <View className="h-24 flex-row items-center bg-white p-4">
-          <View className="mr-4">
-            <TouchableOpacity>
-              <EmojiIcon />
-            </TouchableOpacity>
-          </View>
-          <View className="flex-1">
-            <TextInput
-              className="h-10 rounded-lg bg-white px-4"
-              placeholder="Type a message..."
-              value={inputText}
-              onChangeText={setInputText}
-            />
-          </View>
-          <View className="ml-4">
-            <TouchableOpacity
-              className="h-10 w-10 items-center justify-center rounded-full bg-white"
-              onPress={handleSend}
-            >
-              <ArrowIcon />
-            </TouchableOpacity>
-          </View>
-        </View>
-      </View>
-    </ContentWrapper>
+      </ContentWrapper>
+    </AuthWrapper>
   );
 }
 
