@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, TextInput, TouchableOpacity } from 'react-native';
-import { SearchIcon } from '../components/icons';
+import { SearchIcon } from './icons';
 
 interface SearchProps {
   onSearch: (query: string) => void;
