@@ -105,7 +105,7 @@ function Home() {
 
   return (
     <AuthWrapper>
-      <ContentWrapper className="px-0">
+      <ContentWrapper className="px-0" hasLightStatusBar={true}>
         <ScrollView
           className="bg-orange-yellow"
           refreshControl={

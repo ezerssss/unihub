@@ -67,7 +67,7 @@ function Login() {
 
   return (
     <AuthWrapper>
-      <ContentWrapper hasHeader={false}>
+      <ContentWrapper hasHeader={false} hasLightStatusBar={true}>
         <View className="flex-1 items-center justify-center bg-primary-100">
           <View className="h-5/6 w-11/12 flex-none items-center justify-center rounded-3xl bg-white">
             <UniHubIcon />

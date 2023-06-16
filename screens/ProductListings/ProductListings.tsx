@@ -83,7 +83,7 @@ function ProductListing({ navigation }: RootNavigationProps) {
 
   return (
     <AuthWrapper>
-      <ContentWrapper hasHeader={false}>
+      <ContentWrapper hasHeader={false} hasLightStatusBar={true}>
         <View className="relative flex-row items-center justify-center bg-primary-400 pb-10 pt-20">
           <TouchableOpacity className="absolute left-7 top-20" onPress={goBack}>
             <AntDesign color="white" name="left" size={30} />
