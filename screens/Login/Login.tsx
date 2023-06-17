@@ -61,7 +61,7 @@ function Login() {
   ) : (
     <>
       <GoogleIcon />
-      <Text className="ml-2 text-white">Sign in with your school email</Text>
+      <Text className="ml-1 text-white font-medium">Sign in with your school email</Text>
     </>
   );
 
