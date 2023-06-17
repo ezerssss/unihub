@@ -1,5 +1,5 @@
 import { View, Text, ScrollView, TouchableOpacity } from 'react-native';
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import ProductCarousel from './ProductCarousel';
 import ContentWrapper from '../../components/ContentWrapper';
 import { formatTime } from '../../helpers/date';
@@ -12,7 +12,6 @@ import AuthWrapper from '../../components/AuthWrapper';
 
 function SpecificProduct({ route }: ProductNavigationProps) {
   const { product, isRedirect } = route.params;
-
   const goBack = useGoBack();
 
   if (!product) {
@@ -25,6 +24,26 @@ function SpecificProduct({ route }: ProductNavigationProps) {
     ? time
     : (time as unknown as Timestamp).toDate();
 
+  const [showFullDescription, setShowFullDescription] = useState(false);
+  const [descriptionLines, setDescriptionLines] = useState<number | undefined>(
+    undefined
+  );
+
+  useEffect(() => {
+    if (descriptionLines !== undefined && descriptionLines <= 2) {
+      setShowFullDescription(true);
+    }
+  }, [descriptionLines]);
+
+  const toggleDescription = () => {
+    setShowFullDescription(!showFullDescription);
+  };
+
+  const handleTextLayout = (event: any) => {
+    const { lines } = event.nativeEvent;
+    setDescriptionLines(lines.length);
+  };
+
   return (
     <AuthWrapper>
       <ContentWrapper hasHeader={false}>
@@ -35,50 +54,65 @@ function SpecificProduct({ route }: ProductNavigationProps) {
           >
             <AntDesign color="black" name="left" size={30} />
           </TouchableOpacity>
-          <ScrollView>
+          <ScrollView className="flex-grow">
             <View className="px-2">
               <ProductCarousel images={images} />
             </View>
-          </ScrollView>
-          <View>
-            <View className="flex-row">
-              <Text className="pl-6 pt-6 text-2xl font-semibold">{title}</Text>
-              <Text className="pl-6 pt-8 text-xs font-normal">by {seller}</Text>
-            </View>
-            <View className="h-12 items-center px-5 pt-3">
-              <Text className="text-xs font-light text-slate-500">
-                {description}
-              </Text>
-              <TouchableOpacity className="h-6 w-16 rounded-3xl bg-primary-100 ">
-                <Text className="items-center pt-1 text-center text-xs font-normal text-white">
-                  See More
+            <View className="pb-20">
+              <View className="flex-row">
+                <Text className="pl-6 pt-6 text-2xl font-semibold">
+                  {title}
                 </Text>
+                <Text className="absolute right-0 pr-6 pt-8 text-xs font-normal">
+                  by {seller}
+                </Text>
+              </View>
+              <View className="items-center px-5 pt-3 text-left">
+                <Text
+                  numberOfLines={showFullDescription ? undefined : 2}
+                  className="text-left text-xs font-light text-slate-500"
+                  onTextLayout={handleTextLayout}
+                >
+                  {description}
+                </Text>
+                {descriptionLines !== undefined && descriptionLines > 2 && (
+                  <TouchableOpacity
+                    className="mt-2 h-7 w-20 rounded-3xl bg-primary-100"
+                    onPress={toggleDescription}
+                  >
+                    <Text className="items-center pt-1 text-center text-xs font-normal text-white">
+                      {showFullDescription ? 'Read Less' : 'Read More'}
+                    </Text>
+                  </TouchableOpacity>
+                )}
+              </View>
+              <View className="h-5 w-20 bg-white"></View>
+              <View className="h-24 w-screen bg-amber-300">
+                <Text className="items-center py-9 pl-6 text-base font-semibold">
+                  ₱{price}
+                </Text>
+              </View>
+              <View className="h-52 bg-white">
+                <Text className="absolute pl-6 pt-8 text-base font-medium text-black">
+                  Meetup Details
+                </Text>
+                <View className="mx-4 mt-20 w-fit rounded-3xl bg-primary-100">
+                  <Text className="px-4 py-3 text-left text-xs font-normal text-white">
+                    Meetup at {location}
+                  </Text>
+                </View>
+                <View className="mx-4 mt-6 w-fit rounded-3xl bg-primary-100">
+                  <Text className="px-4 py-3 text-left text-xs font-normal text-white">
+                    Preferred Time of Meetup: {formatTime(dateObject)}
+                  </Text>
+                </View>
+              </View>
+              <View className="h-12 w-20 bg-white"></View>
+              <TouchableOpacity className="absolute bottom-0 left-0 right-0 h-20 items-center bg-amber-300">
+                <Text className="py-6 text-2xl font-bold text-white">BUY</Text>
               </TouchableOpacity>
             </View>
-            <View className="mt-12 h-24 w-screen bg-amber-300">
-              <Text className="items-center py-9 pl-6 text-base font-medium">
-                ₱{price}
-              </Text>
-            </View>
-            <View className="h-52 bg-white">
-              <Text className="absolute pl-6 pt-8 text-base font-medium text-black">
-                Meetup Details
-              </Text>
-              <View className="mx-4 mt-20 h-10 w-1/2 rounded-3xl bg-primary-100 ">
-                <Text className="px-4 py-3 text-left text-xs font-normal text-white">
-                  Meetup at {location}
-                </Text>
-              </View>
-              <View className="mx-4 mt-4 h-10 w-5/6 rounded-3xl bg-primary-100 ">
-                <Text className="px-4 py-3 text-left text-xs font-normal text-white">
-                  Preferred Time of Meetup: {formatTime(dateObject)}
-                </Text>
-              </View>
-            </View>
-            <TouchableOpacity className=" bottom-0 h-20 items-center bg-amber-300">
-              <Text className="bottom-0 py-6 text-2xl text-white">BUY</Text>
-            </TouchableOpacity>
-          </View>
+          </ScrollView>
         </View>
       </ContentWrapper>
     </AuthWrapper>
