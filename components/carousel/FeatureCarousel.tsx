@@ -35,17 +35,19 @@ function CarouselComponent(props: CarouselProps) {
             }}
           />
         </TouchableOpacity>
-        <View className="absolute left-0 top-0 bg-opacity-70 p-4">
-          <Text className="mb-2 text-lg text-black">Featured</Text>
-        </View>
-        <View className="absolute bottom-0 left-0 right-0 bg-opacity-70 p-4">
-          <Text className="mb-2 text-2xl font-extrabold text-black">
-            {product.title}
-          </Text>
-          <Text className="text-2xl font-medium text-secondary-100">
-            ₱{product.price}
+        <View className="absolute left-3 top-2 rounded-3xl bg-secondary-100">
+          <Text className="px-2 py-1 text-lg font-medium text-white">
+            Featured
           </Text>
         </View>
+      </View>
+      <View className="absolute bottom-0 left-0 rounded-3xl bg-primary-200 p-4">
+        <Text className="mb-2 text-2xl font-extrabold text-white">
+          {product.title}
+        </Text>
+        <Text className="text-2xl font-medium text-secondary-100">
+          ₱{product.price}
+        </Text>
       </View>
     </View>
   ));
