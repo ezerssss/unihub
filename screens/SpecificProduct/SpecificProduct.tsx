@@ -58,7 +58,7 @@ function SpecificProduct({ route }: ProductNavigationProps) {
             <View className="px-2">
               <ProductCarousel images={images} />
             </View>
-            <View className="flex-grow pb-20">
+            <View className="pb-20">
               <View className="flex-row">
                 <Text className="pl-6 pt-6 text-2xl font-semibold">
                   {title}
