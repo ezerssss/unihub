@@ -172,7 +172,7 @@ export default function Sell({ navigation }: RootNavigationProps) {
 
   return (
     <AuthWrapper>
-      <ContentWrapper hasHeader={false}>
+      <ContentWrapper hasHeader={false} hasLightStatusBar={true}>
         <ScrollView
           className="bg-light-yellow"
           contentContainerStyle={{
