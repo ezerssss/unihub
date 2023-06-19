@@ -60,7 +60,7 @@ function Chat() {
   return (
     <AuthWrapper>
       <ContentWrapper hasHeader={false}>
-        <View className="flex-1 bg-yellow-50">
+        <View className="flex-1 bg-secondary-400">
           <View className="mt-10 flex-row items-center justify-center bg-yellow-50 p-4">
             <View className="absolute left-0">
               <TouchableOpacity className="ml-4" onPress={goBack}>

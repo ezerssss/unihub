@@ -17,9 +17,9 @@ function ProgressBar() {
 
   function generateStyle(bar: number, progress: number): string {
     if (bar <= progress) {
-      return 'mx-3 h-2 w-24 rounded-3xl bg-primary-300';
+      return 'mx-3 h-2 w-24 rounded-3xl bg-primary-400';
     } else {
-      return 'mx-3 h-2 w-24 rounded-3xl bg-gray-200';
+      return 'mx-3 h-2 w-24 rounded-3xl bg-light-silver';
     }
   }
 

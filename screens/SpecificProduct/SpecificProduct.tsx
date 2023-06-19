@@ -87,7 +87,7 @@ function SpecificProduct({ route }: ProductNavigationProps) {
                 )}
               </View>
               <View className="h-5 w-20 bg-white"></View>
-              <View className="h-24 w-screen bg-amber-300">
+              <View className="h-24 w-screen bg-secondary-400">
                 <Text className="items-center py-9 pl-6 text-base font-semibold">
                   ₱{price}
                 </Text>
@@ -96,12 +96,12 @@ function SpecificProduct({ route }: ProductNavigationProps) {
                 <Text className="absolute pl-6 pt-8 text-base font-medium text-black">
                   Meetup Details
                 </Text>
-                <View className="mx-4 mt-20 w-fit rounded-3xl bg-primary-100">
+                <View className="mx-4 mt-20 w-fit rounded-3xl bg-primary-400">
                   <Text className="px-4 py-3 text-left text-xs font-normal text-white">
                     Meetup at {location}
                   </Text>
                 </View>
-                <View className="mx-4 mt-6 w-fit rounded-3xl bg-primary-100">
+                <View className="mx-4 mt-6 w-fit rounded-3xl bg-primary-400">
                   <Text className="px-4 py-3 text-left text-xs font-normal text-white">
                     Preferred Time of Meetup: {formatTime(dateObject)}
                   </Text>
@@ -109,7 +109,9 @@ function SpecificProduct({ route }: ProductNavigationProps) {
               </View>
               <View className="h-12 w-20 bg-white"></View>
               <TouchableOpacity className="absolute bottom-0 left-0 right-0 h-20 items-center bg-amber-300">
-                <Text className="py-6 text-2xl font-bold text-white">BUY</Text>
+                <Text className="py-6 text-2xl font-extrabold text-white">
+                  Buy
+                </Text>
               </TouchableOpacity>
             </View>
           </ScrollView>
