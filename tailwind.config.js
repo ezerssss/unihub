@@ -18,6 +18,7 @@ module.exports = {
           100: '#FFD700',
           200: '#BFA300',
           300: '#403600',
+          400: '#FFFADA',
         },
         dark: '#01010E',
         'unihub-gray': {
@@ -27,7 +28,7 @@ module.exports = {
         'light-yellow': '#FFFEDF',
         'pale-yellow': '#FDFDBA',
         'orange-yellow': '#EECE5E',
-        'light-silver': '#D9D9D9'
+        'light-silver': '#D9D9D9',
       },
     },
   },

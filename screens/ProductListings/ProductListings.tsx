@@ -56,7 +56,7 @@ function ProductListing({ navigation }: RootNavigationProps) {
 
   const renderProductListings = products.map((product) => (
     <TouchableOpacity
-      className="h-36 w-full flex-row border-b border-gray-300 bg-white p-2"
+      className="h-36 w-full flex-row border-b border-gray-300 bg-secondary-400 p-2"
       key={product.images[0]}
       onPress={() => handleClick(product)}
     >

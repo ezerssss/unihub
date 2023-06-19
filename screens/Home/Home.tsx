@@ -107,12 +107,12 @@ function Home() {
     <AuthWrapper>
       <ContentWrapper className="px-0" hasLightStatusBar={true}>
         <ScrollView
-          className="bg-orange-yellow"
+          className="bg-white"
           refreshControl={
             <RefreshControl refreshing={isLoading} onRefresh={handleGetData} />
           }
         >
-          <View className="rounded-lg px-4 py-8">
+          <View className="bg-secondary-400 px-4 py-8">
             <FeatureCarousel product={featuredProduct} />
           </View>
           <View className="max-h-max bg-white">

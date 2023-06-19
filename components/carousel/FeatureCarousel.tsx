@@ -36,12 +36,12 @@ function CarouselComponent(props: CarouselProps) {
           />
         </TouchableOpacity>
         <View className="absolute left-3 top-2 rounded-3xl bg-secondary-100">
-          <Text className="px-2 py-1 text-lg font-medium text-white">
+          <Text className="px-2 py-1 text-lg font-medium text-primary-400">
             Featured
           </Text>
         </View>
       </View>
-      <View className="absolute bottom-0 left-0 rounded-3xl bg-primary-200 p-4">
+      <View className="absolute bottom-0 left-0 rounded-3xl bg-primary-400 p-4">
         <Text className="mb-2 text-2xl font-extrabold text-white">
           {product.title}
         </Text>

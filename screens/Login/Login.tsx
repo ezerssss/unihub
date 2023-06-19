@@ -61,24 +61,26 @@ function Login() {
   ) : (
     <>
       <GoogleIcon />
-      <Text className="ml-1 text-white font-semibold">Sign in with your school email</Text>
+      <Text className="ml-1 font-semibold text-white">
+        Sign in with your school email
+      </Text>
     </>
   );
 
   return (
     <AuthWrapper>
       <ContentWrapper hasHeader={false} hasLightStatusBar={true}>
-        <View className="flex-1 items-center justify-center bg-primary-100">
+        <View className="flex-1 items-center justify-center bg-primary-400">
           <View className="h-5/6 w-11/12 flex-none items-center justify-center rounded-3xl bg-white">
             <UniHubIcon />
-            <Text className="t mt-7 text-xl font-bold text-primary-100">
+            <Text className="t mt-7 text-xl font-bold text-primary-400">
               Welcome
             </Text>
             <View className="flex h-14 w-64">
               <Text className="text-center">
                 By signing in you are agreeing to our{'\n'}
                 <Text
-                  className="color-primary-100 text-center"
+                  className="color-primary-400 text-center"
                   onPress={openTermsOfService}
                 >
                   terms and privacy policies
@@ -86,7 +88,7 @@ function Login() {
               </Text>
             </View>
             <TouchableOpacity
-              className="my-28 h-12 w-64 flex-row items-center justify-center rounded-3xl border bg-primary-100 p-2"
+              className="my-28 h-12 w-64 flex-row items-center justify-center rounded-3xl border bg-primary-400 p-2"
               disabled={!request || isLoading}
               onPress={handleLogin}
             >

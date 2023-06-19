@@ -34,7 +34,7 @@ function Header() {
   }
 
   return (
-    <View className="bg-primary-100 pb-8 pt-14">
+    <View className="bg-primary-400 pb-8 pt-14">
       <View className="flex-row items-center justify-between px-4">
         <View className="w-1/6">
           <TouchableOpacity onPress={openMenu}>

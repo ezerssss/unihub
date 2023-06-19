@@ -174,7 +174,7 @@ export default function Sell({ navigation }: RootNavigationProps) {
     <AuthWrapper>
       <ContentWrapper hasHeader={false} hasLightStatusBar={true}>
         <ScrollView
-          className="bg-light-yellow"
+          className="bg-secondary-400"
           contentContainerStyle={{
             flexGrow: 1,
             justifyContent: 'space-between',

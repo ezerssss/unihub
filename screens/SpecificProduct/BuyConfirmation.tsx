@@ -30,7 +30,7 @@ function Buy({ navigation }: RootNavigationProps) {
           <UniHubIcon />
         </View>
         <ProgressBar />
-        <View className="h-24 w-full flex-row items-center justify-center bg-yellow-100">
+        <View className="h-24 w-full flex-row items-center justify-center bg-secondary-400">
           <Text className="absolute left-8 text-base font-medium">
             Chat your seller
           </Text>
