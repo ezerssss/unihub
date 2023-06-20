@@ -6,6 +6,7 @@ import { formatTime } from '../../helpers/date';
 import { ProductNavigationProps } from '../../types/navigation';
 import { Timestamp } from 'firebase/firestore';
 import { AntDesign } from '@expo/vector-icons';
+import { formatNumber } from '../../helpers/number';
 import useGoBack from '../../hooks/useGoBack';
 import { ProductLoading } from '../../components/loading';
 import AuthWrapper from '../../components/AuthWrapper';
@@ -89,7 +90,7 @@ function SpecificProduct({ route }: ProductNavigationProps) {
               <View className="h-5 w-20 bg-white"></View>
               <View className="h-24 w-screen bg-secondary-400">
                 <Text className="items-center py-9 pl-6 text-base font-semibold">
-                  ₱{price}
+                  ₱{formatNumber(product.price)}
                 </Text>
               </View>
               <View className="h-52 bg-white">
