@@ -31,4 +31,10 @@ export const categories: Category[] = [
       'https://www.thetechedvocate.org/wp-content/uploads/2019/05/photo-1519389950473-47ba0277781c-660x400@2x.jpg',
     name: 'Devices',
   },
+  {
+    id: '6',
+    image:
+      'https://images.unsplash.com/photo-1555664424-778a1e5e1b48?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1740&q=80',
+    name: 'Electronics',
+  },
 ];

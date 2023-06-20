@@ -5,6 +5,7 @@ import { useNavigation } from '@react-navigation/native';
 import { RootStackParamsList } from '../../types/navigation';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { Routes } from '../../enums/routes';
+import { formatNumber } from '../../helpers/number';
 
 import type { Product } from '../../types/product';
 
@@ -46,7 +47,7 @@ function CarouselComponent(props: CarouselProps) {
           {product.title}
         </Text>
         <Text className="text-2xl font-medium text-secondary-100">
-          ₱{product.price}
+          ₱{formatNumber(product.price)}
         </Text>
       </View>
     </View>
