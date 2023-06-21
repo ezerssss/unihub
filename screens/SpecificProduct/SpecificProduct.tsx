@@ -97,19 +97,19 @@ function SpecificProduct({ route }: ProductNavigationProps) {
                 <Text className="absolute pl-6 pt-8 text-base font-medium text-black">
                   Meetup Details
                 </Text>
-                <View className="mx-4 mt-20 w-fit rounded-3xl bg-primary-400">
+                <View className="mx-4 mt-20 w-fit self-start rounded-3xl bg-primary-400">
                   <Text className="px-4 py-3 text-left text-xs font-normal text-white">
                     Meetup at {location}
                   </Text>
                 </View>
-                <View className="mx-4 mt-6 w-fit rounded-3xl bg-primary-400">
+                <View className="mx-4 mt-6 w-fit self-start rounded-3xl bg-primary-400">
                   <Text className="px-4 py-3 text-left text-xs font-normal text-white">
                     Preferred Time of Meetup: {formatTime(dateObject)}
                   </Text>
                 </View>
               </View>
               <View className="h-12 w-20 bg-white"></View>
-              <TouchableOpacity className="absolute bottom-0 left-0 right-0 h-20 items-center bg-amber-300">
+              <TouchableOpacity className="absolute bottom-0 left-0 right-0 h-20 items-center bg-secondary-100">
                 <Text className="py-6 text-2xl font-extrabold text-white">
                   Buy
                 </Text>
