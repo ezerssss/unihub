@@ -98,12 +98,12 @@ function SpecificProduct({ route }: ProductNavigationProps) {
                   Meetup Details
                 </Text>
                 <View className="mx-4 mt-20 w-fit self-start rounded-3xl bg-primary-400">
-                  <Text className="px-4 py-3 text-xs font-normal text-white">
+                  <Text className="px-4 py-3 text-left text-xs font-normal text-white">
                     Meetup at {location}
                   </Text>
                 </View>
                 <View className="mx-4 mt-6 w-fit self-start rounded-3xl bg-primary-400">
-                  <Text className="px-4 py-3 text-xs font-normal text-white">
+                  <Text className="px-4 py-3 text-left text-xs font-normal text-white">
                     Preferred Time of Meetup: {formatTime(dateObject)}
                   </Text>
                 </View>
