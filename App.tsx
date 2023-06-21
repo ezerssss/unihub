@@ -14,6 +14,7 @@ import { Routes } from './enums/routes';
 import UserContext from './context/UserContext';
 import { useMemo, useState } from 'react';
 import { User } from 'firebase/auth';
+import Category from './screens/Category/Category';
 
 const Stack = createNativeStackNavigator<RootStackParamsList>();
 
@@ -33,11 +34,13 @@ export default function App() {
             <Stack.Screen component={Chat} name={Routes.CHAT} />
             <Stack.Screen component={SpecificProduct} name={Routes.PRODUCT} />
             <Stack.Screen component={Buy} name={Routes.BUY} />
+            <Stack.Screen component={Category} name={Routes.CATEGORY} />
             <Stack.Screen
               component={ProductListing}
               name={Routes.PRODUCT_LISTINGS}
             />
           </Stack.Navigator>
+          
         </NavigationContainer>
       </View>
     </UserContext.Provider>
