@@ -5,6 +5,7 @@ import { RootStackParamsList } from '../../types/navigation';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { Routes } from '../../enums/routes';
 import type { Category } from '../../types/category';
+import { Categories } from '../../enums/categories';
 
 interface CategoriesCarouselProps {
   categories: Category[];
@@ -12,18 +13,18 @@ interface CategoriesCarouselProps {
 
 function CategoriesCarousel(props: CategoriesCarouselProps) {
   const { categories } = props;
-  
+
   const navigation =
     useNavigation<NativeStackNavigationProp<RootStackParamsList>>();
 
-  function goToCategoryPage() {
-    navigation.navigate(Routes.CATEGORY);
+  function goToCategoryPage(category: Categories) {
+    navigation.navigate(Routes.CATEGORY, { category: category });
   }
 
   const renderCategories = categories.map((category) => (
     <View className="mx-3 mt-5" key={category.id}>
       <View className="overflow-hidden rounded-lg">
-        <TouchableOpacity onPress={goToCategoryPage}>
+        <TouchableOpacity onPress={goToCategoryPage(category.name)}>
           <Image
             className="h-24 w-24"
             resizeMode="cover"
