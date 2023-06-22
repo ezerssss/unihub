@@ -15,7 +15,6 @@ export interface Transaction {
   buyerEmail: string;
   isSeen: boolean;
   lastMessage: string;
-  chat: Chat[];
 }
 
 export interface Chat {

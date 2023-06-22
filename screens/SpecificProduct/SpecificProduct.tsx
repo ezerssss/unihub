@@ -15,7 +15,7 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamsList } from '../../types/navigation';
 import { Routes } from '../../enums/routes';
 import UserContext from '../../context/UserContext';
-import { collection, getDocs, query, where, doc } from 'firebase/firestore';
+import { collection, getDocs, query, where } from 'firebase/firestore';
 import db from '../../firebase/db';
 import { DB } from '../../enums/db';
 
@@ -26,6 +26,17 @@ function SpecificProduct({ route }: ProductNavigationProps) {
   const { product, isRedirect } = route.params;
 
   const { user } = useContext(UserContext);
+
+  const [showFullDescription, setShowFullDescription] = useState(false);
+  const [descriptionLines, setDescriptionLines] = useState<number | undefined>(
+    undefined
+  );
+
+  useEffect(() => {
+    if (descriptionLines !== undefined && descriptionLines <= 2) {
+      setShowFullDescription(true);
+    }
+  }, [descriptionLines]);
 
   const navigation =
     useNavigation<NativeStackNavigationProp<RootStackParamsList>>();
@@ -51,7 +62,6 @@ function SpecificProduct({ route }: ProductNavigationProps) {
         const transaction: Transaction = {
           buyer: buyer.displayName ?? '',
           buyerEmail: buyer?.email ?? '',
-          chat: [],
           date: new Date(),
           isSeen: false,
           lastMessage: `${buyer.displayName ?? ''} has sent a buy request.`,
@@ -105,22 +115,11 @@ function SpecificProduct({ route }: ProductNavigationProps) {
     return <ProductLoading />;
   }
 
-  const { images, title, description, price, meetup, seller } = product;
+  const { images, title, description, meetup, seller } = product;
   const { location, time } = meetup;
   const dateObject = isRedirect
     ? time
     : (time as unknown as Timestamp).toDate();
-
-  const [showFullDescription, setShowFullDescription] = useState(false);
-  const [descriptionLines, setDescriptionLines] = useState<number | undefined>(
-    undefined
-  );
-
-  useEffect(() => {
-    if (descriptionLines !== undefined && descriptionLines <= 2) {
-      setShowFullDescription(true);
-    }
-  }, [descriptionLines]);
 
   function toggleDescription() {
     setShowFullDescription(!showFullDescription);
