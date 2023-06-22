@@ -4,7 +4,6 @@ import type { Product } from '../../types/product';
 import { formatNumber } from '../../helpers/number';
 import UserContext from '../../context/UserContext';
 import { Categories } from '../../enums/categories';
-import type { Category } from '../../types/category';
 import db from '../../firebase/db';
 import { DB } from '../../enums/db';
 import { collection, getDocs } from 'firebase/firestore';
@@ -13,10 +12,19 @@ import { RootStackParamsList } from '../../types/navigation';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { Routes } from '../../enums/routes';
 
-function CategorySwiper(category: Categories) {
+interface SwiperProps {
+  category: Categories;
+}
+
+function CategorySwiper(props: SwiperProps) {
+  const { category } = props;
   const { user } = useContext(UserContext);
 
   const [products, setProducts] = useState<Product[]>([]);
+
+  function filterByCategory(current: Product): boolean {
+    return current.category === category;
+  }
 
   useEffect(() => {
     (async () => {
@@ -36,10 +44,7 @@ function CategorySwiper(category: Categories) {
         querySnapshot.forEach((doc) => {
           fetchedProducts.push(doc.data() as Product);
         });
-        const filteredProducts = fetchedProducts.filter(
-          (fetchedProduct) => fetchedProduct.category === category
-        );
-        setProducts(filteredProducts);
+        setProducts(fetchedProducts.filter(filterByCategory));
       } catch (error) {
         console.error(error);
         alert('Something went wrong with fetching your products.');

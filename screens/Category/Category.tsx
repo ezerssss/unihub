@@ -1,7 +1,6 @@
 import React from 'react';
 import { View, Text, ScrollView, TouchableOpacity } from 'react-native';
 import CategorySwiper from './CategorySwiper';
-import { Categories } from '../../enums/categories';
 import { CategoryNavigationProps } from '../../types/navigation';
 import AuthWrapper from '../../components/AuthWrapper';
 import ContentWrapper from '../../components/ContentWrapper';
