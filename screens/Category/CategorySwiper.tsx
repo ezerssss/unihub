@@ -13,7 +13,7 @@ import { RootStackParamsList } from '../../types/navigation';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { Routes } from '../../enums/routes';
 
-function CategorySwiper(category: Category) {
+function CategorySwiper(category: Categories) {
   const { user } = useContext(UserContext);
 
   const [products, setProducts] = useState<Product[]>([]);
@@ -36,7 +36,10 @@ function CategorySwiper(category: Category) {
         querySnapshot.forEach((doc) => {
           fetchedProducts.push(doc.data() as Product);
         });
-        setProducts(fetchedProducts);
+        const filteredProducts = fetchedProducts.filter(
+          (fetchedProduct) => fetchedProduct.category === category
+        );
+        setProducts(filteredProducts);
       } catch (error) {
         console.error(error);
         alert('Something went wrong with fetching your products.');
@@ -47,7 +50,7 @@ function CategorySwiper(category: Category) {
   const navigation =
     useNavigation<NativeStackNavigationProp<RootStackParamsList>>();
 
-  function goToSpecificProduct(product: Product[]) {
+  function goToSpecificProduct(product: Product) {
     navigation.navigate(Routes.PRODUCT, {
       product,
     });

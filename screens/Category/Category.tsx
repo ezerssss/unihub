@@ -2,14 +2,15 @@ import React from 'react';
 import { View, Text, ScrollView, TouchableOpacity } from 'react-native';
 import CategorySwiper from './CategorySwiper';
 import { Categories } from '../../enums/categories';
-import { RootNavigationProps } from '../../types/navigation';
+import { CategoryNavigationProps } from '../../types/navigation';
 import AuthWrapper from '../../components/AuthWrapper';
 import ContentWrapper from '../../components/ContentWrapper';
 import useGoBack from '../../hooks/useGoBack';
 import { AntDesign } from '@expo/vector-icons';
 
-function Category({ route }: RootNavigationProps) {
+function Category({ route }: CategoryNavigationProps) {
   const { category } = route.params;
+
   const goBack = useGoBack();
   return (
     <AuthWrapper>
@@ -22,7 +23,7 @@ function Category({ route }: RootNavigationProps) {
             >
               <AntDesign color="black" name="left" size={30} />
             </TouchableOpacity>
-            <Text className="py-4 text-xl font-semibold">All Products</Text>
+            <Text className="py-4 text-xl font-semibold">{category}</Text>
           </View>
           <View className="flex-1 bg-secondary-400">
             <CategorySwiper category={category} />
