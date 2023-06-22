@@ -131,6 +131,15 @@ function SpecificProduct({ route }: ProductNavigationProps) {
     setDescriptionLines(lines.length);
   }
 
+  let indexEnd = 16;
+  if (product.title.length > indexEnd) {
+    while (indexEnd > 0 && product.title[indexEnd] !== ' ') {
+      indexEnd--;
+    }
+  }
+  const firstCut = product.title.slice(0, indexEnd);
+  const otherCut = product.title.slice(indexEnd).trim();
+
   return (
     <AuthWrapper>
       <ContentWrapper hasHeader={false}>
@@ -146,12 +155,15 @@ function SpecificProduct({ route }: ProductNavigationProps) {
               <ProductCarousel images={images} />
             </View>
             <View className="pb-20">
-              <View className="flex-row">
+              <View>
                 <Text className="pl-6 pt-6 text-2xl font-semibold">
-                  {title}
+                  {firstCut}
                 </Text>
                 <Text className="absolute right-0 pr-6 pt-8 text-xs font-normal">
                   by {seller}
+                </Text>
+                <Text className="pl-6 text-2xl font-semibold">
+                  {otherCut}
                 </Text>
               </View>
               <View className="items-center px-5 pt-3 text-left">

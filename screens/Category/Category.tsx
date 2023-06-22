@@ -21,7 +21,7 @@ function Category() {
           </TouchableOpacity>
             <Text className='py-4 text-xl font-semibold'>All Products</Text>
           </View>
-          <View className='bg-secondary-400 flex-1'>
+          <View className='bg-primary-400 flex-1'>
           <CategorySwiper products={products} />
           </View>
         </View>
