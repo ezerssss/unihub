@@ -1,29 +1,31 @@
 import { View, Text, ScrollView, TouchableOpacity } from 'react-native';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import ProductCarousel from './ProductCarousel';
 import ContentWrapper from '../../components/ContentWrapper';
 import { formatTime } from '../../helpers/date';
 import { ProductNavigationProps } from '../../types/navigation';
-import { Timestamp } from 'firebase/firestore';
+import { Timestamp, addDoc } from 'firebase/firestore';
 import { AntDesign } from '@expo/vector-icons';
 import { formatNumber } from '../../helpers/number';
 import useGoBack from '../../hooks/useGoBack';
 import { ProductLoading } from '../../components/loading';
 import AuthWrapper from '../../components/AuthWrapper';
+import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { RootStackParamsList } from '../../types/navigation';
+import { Routes } from '../../enums/routes';
+import UserContext from '../../context/UserContext';
+import { collection, getDocs, query, where } from 'firebase/firestore';
+import db from '../../firebase/db';
+import { DB } from '../../enums/db';
+
+import type { User } from 'firebase/auth';
+import { type Transaction, StatusEnum } from '../../types/transaction';
 
 function SpecificProduct({ route }: ProductNavigationProps) {
   const { product, isRedirect } = route.params;
-  const goBack = useGoBack();
 
-  if (!product) {
-    return <ProductLoading />;
-  }
-
-  const { images, title, description, price, meetup, seller } = product;
-  const { location, time } = meetup;
-  const dateObject = isRedirect
-    ? time
-    : (time as unknown as Timestamp).toDate();
+  const { user } = useContext(UserContext);
 
   const [showFullDescription, setShowFullDescription] = useState(false);
   const [descriptionLines, setDescriptionLines] = useState<number | undefined>(
@@ -36,14 +38,97 @@ function SpecificProduct({ route }: ProductNavigationProps) {
     }
   }, [descriptionLines]);
 
-  const toggleDescription = () => {
-    setShowFullDescription(!showFullDescription);
-  };
+  const navigation =
+    useNavigation<NativeStackNavigationProp<RootStackParamsList>>();
 
-  const handleTextLayout = (event: any) => {
+  async function handleBuyOrder() {
+    try {
+      if (!user) {
+        return;
+      }
+
+      const userRef = collection(db, DB.USERS);
+      const sellerQuery = query(
+        userRef,
+        where('displayName', '==', product.seller)
+      );
+
+      const sellerSnapshot = await getDocs(sellerQuery);
+      if (!sellerSnapshot.empty) {
+        const seller = sellerSnapshot.docs[0].data() as User;
+        const sellerUid = sellerSnapshot.docs[0].id;
+        const buyer = user;
+
+        const transaction: Transaction = {
+          buyer: buyer.displayName ?? '',
+          buyerEmail: buyer?.email ?? '',
+          date: new Date(),
+          isSeen: false,
+          lastMessage: `${buyer.displayName ?? ''} has sent a buy request.`,
+          product: product,
+          sellerEmail: seller.email ?? '',
+          status: StatusEnum.CONFIRM,
+        };
+
+        // upload each transaction as field reference
+        const buyerRef = collection(db, DB.USERS, buyer.uid, DB.TRANSACTIONS);
+        const sellerRef = collection(db, DB.USERS, sellerUid, DB.TRANSACTIONS);
+        const transactionsRef = collection(db, DB.TRANSACTIONS);
+
+        // if there is a pending transaction, do not add
+        const pendingTransactionQuery = query(
+          transactionsRef,
+          where('status', '==', StatusEnum.CONFIRM),
+          where('product.title', '==', product.title),
+          where('sellerEmail', '==', seller.email ?? ''),
+          where('buyerEmail', '==', buyer.email ?? '')
+        );
+
+        const pendingTransactionSnapshot = await getDocs(
+          pendingTransactionQuery
+        );
+
+        if (!pendingTransactionSnapshot.empty) {
+          alert('You already have a pending transaction for this product.');
+          return;
+        }
+
+        await addDoc(transactionsRef, transaction);
+        await addDoc(buyerRef, transaction);
+        await addDoc(sellerRef, transaction);
+
+        navigation.navigate(Routes.BUY, {
+          product,
+        });
+      } else {
+        throw new Error('Seller not found');
+      }
+    } catch (error) {
+      console.error(error);
+      alert('Something went wrong with posting your product.');
+    }
+  }
+
+  const goBack = useGoBack();
+
+  if (!product) {
+    return <ProductLoading />;
+  }
+
+  const { images, title, description, meetup, seller } = product;
+  const { location, time } = meetup;
+  const dateObject = isRedirect
+    ? time
+    : (time as unknown as Timestamp).toDate();
+
+  function toggleDescription() {
+    setShowFullDescription(!showFullDescription);
+  }
+
+  function handleTextLayout(event: any) {
     const { lines } = event.nativeEvent;
     setDescriptionLines(lines.length);
-  };
+  }
 
   return (
     <AuthWrapper>
@@ -70,8 +155,8 @@ function SpecificProduct({ route }: ProductNavigationProps) {
               </View>
               <View className="items-center px-5 pt-3 text-left">
                 <Text
-                  numberOfLines={showFullDescription ? undefined : 2}
                   className="text-left text-xs font-light text-slate-500"
+                  numberOfLines={showFullDescription ? undefined : 2}
                   onTextLayout={handleTextLayout}
                 >
                   {description}
@@ -109,7 +194,10 @@ function SpecificProduct({ route }: ProductNavigationProps) {
                 </View>
               </View>
               <View className="h-12 w-20 bg-white"></View>
-              <TouchableOpacity className="absolute bottom-0 left-0 right-0 h-20 items-center bg-secondary-100">
+              <TouchableOpacity
+                className="absolute bottom-0 left-0 right-0 h-20 items-center bg-amber-300"
+                onPress={handleBuyOrder}
+              >
                 <Text className="py-6 text-2xl font-extrabold text-white">
                   Buy
                 </Text>

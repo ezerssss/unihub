@@ -7,10 +7,16 @@ import Footer from '../../components/OrderConfirmationFooter/footer';
 import UniHubIcon from '../../components/icons/UniHubIcon';
 import ProgressBar from '../../components/progressbar/ProgressBar';
 import ChatIcon from '../../components/icons/ChatIcon';
+import { formatTime } from '../../helpers/date';
+import { Timestamp } from 'firebase/firestore';
 import { Routes } from '../../enums/routes';
-import { RootNavigationProps } from '../../types/navigation';
+import { BuyNavigationProps } from '../../types/navigation';
 
-function Buy({ navigation }: RootNavigationProps) {
+function Buy({ route, navigation }: BuyNavigationProps) {
+  const { product } = route.params;
+
+  const dateObject = (product.meetup.time as unknown as Timestamp).toDate();
+
   const goBack = useGoBack();
 
   function goToChat() {
@@ -44,11 +50,15 @@ function Buy({ navigation }: RootNavigationProps) {
           </Text>
           <View className="flex-row">
             <Text className="pt-2 text-xs">Meetup Location:</Text>
-            <Text className="absolute right-8 text-xs">idk</Text>
+            <Text className="absolute right-8 text-xs">
+              {product.meetup.location}
+            </Text>
           </View>
           <View className="flex-row">
             <Text className="pt-2 text-xs">Preferred Meetup Times</Text>
-            <Text className="absolute right-8 text-xs">idk 2</Text>
+            <Text className="absolute right-8 text-xs">
+              {formatTime(dateObject)}
+            </Text>
           </View>
         </View>
       </View>

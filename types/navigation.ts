@@ -9,7 +9,7 @@ export type RootStackParamsList = {
   Sell: undefined;
   Product: { product: Product; isRedirect?: boolean };
   ProductListings: undefined;
-  Buy: undefined;
+  Buy: { product: Product };
   Category: { category: Categories };
 };
 
@@ -21,4 +21,8 @@ export type CategoryNavigationProps = NativeStackScreenProps<
 export type ProductNavigationProps = NativeStackScreenProps<
   RootStackParamsList,
   'Product'
+>;
+export type BuyNavigationProps = NativeStackScreenProps<
+  RootStackParamsList,
+  'Buy'
 >;
