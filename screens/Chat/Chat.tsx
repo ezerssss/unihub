@@ -5,6 +5,7 @@ import {
   TextInput,
   TouchableOpacity,
   ScrollView,
+  KeyboardAvoidingView,
 } from 'react-native';
 import ContentWrapper from '../../components/ContentWrapper';
 import ArrowIcon from '../../components/icons/ArrowIcon';
@@ -69,7 +70,9 @@ function Chat() {
             </View>
             <Text className="text-2xl font-bold text-gray-900">TedTeddy</Text>
           </View>
-          <ScrollView className="flex-grow p-4">{renderMessages}</ScrollView>
+          <KeyboardAvoidingView behavior="padding" className="flex-grow p-4">
+            <ScrollView>{renderMessages}</ScrollView>
+          </KeyboardAvoidingView>
           <View className="h-24 flex-row items-center bg-white p-4">
             <View className="mr-4">
               <TouchableOpacity>
