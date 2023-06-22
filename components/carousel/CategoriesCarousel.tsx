@@ -1,6 +1,9 @@
 import React from 'react';
 import { View, Text, Image, ScrollView, TouchableOpacity } from 'react-native';
-
+import { useNavigation } from '@react-navigation/native';
+import { RootStackParamsList } from '../../types/navigation';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { Routes } from '../../enums/routes';
 import type { Category } from '../../types/category';
 
 interface CategoriesCarouselProps {
@@ -9,11 +12,18 @@ interface CategoriesCarouselProps {
 
 function CategoriesCarousel(props: CategoriesCarouselProps) {
   const { categories } = props;
+  
+  const navigation =
+    useNavigation<NativeStackNavigationProp<RootStackParamsList>>();
+
+  function goToCategoryPage() {
+    navigation.navigate(Routes.CATEGORY);
+  }
 
   const renderCategories = categories.map((category) => (
     <View className="mx-3 mt-5" key={category.id}>
       <View className="overflow-hidden rounded-lg">
-        <TouchableOpacity>
+        <TouchableOpacity onPress={goToCategoryPage}>
           <Image
             className="h-24 w-24"
             resizeMode="cover"

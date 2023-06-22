@@ -6,6 +6,7 @@ import { formatTime } from '../../helpers/date';
 import { ProductNavigationProps } from '../../types/navigation';
 import { Timestamp, addDoc } from 'firebase/firestore';
 import { AntDesign } from '@expo/vector-icons';
+import { formatNumber } from '../../helpers/number';
 import useGoBack from '../../hooks/useGoBack';
 import { ProductLoading } from '../../components/loading';
 import AuthWrapper from '../../components/AuthWrapper';
@@ -175,19 +176,19 @@ function SpecificProduct({ route }: ProductNavigationProps) {
               <View className="h-5 w-20 bg-white"></View>
               <View className="h-24 w-screen bg-secondary-400">
                 <Text className="items-center py-9 pl-6 text-base font-semibold">
-                  ₱{price}
+                  ₱{formatNumber(product.price)}
                 </Text>
               </View>
               <View className="h-52 bg-white">
                 <Text className="absolute pl-6 pt-8 text-base font-medium text-black">
                   Meetup Details
                 </Text>
-                <View className="mx-4 mt-20 w-fit rounded-3xl bg-primary-400">
+                <View className="mx-4 mt-20 w-fit self-start rounded-3xl bg-primary-400">
                   <Text className="px-4 py-3 text-left text-xs font-normal text-white">
                     Meetup at {location}
                   </Text>
                 </View>
-                <View className="mx-4 mt-6 w-fit rounded-3xl bg-primary-400">
+                <View className="mx-4 mt-6 w-fit self-start rounded-3xl bg-primary-400">
                   <Text className="px-4 py-3 text-left text-xs font-normal text-white">
                     Preferred Time of Meetup: {formatTime(dateObject)}
                   </Text>

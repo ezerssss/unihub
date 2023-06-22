@@ -37,7 +37,7 @@ function ProductsCarousel(props: ProductsCarouselProps) {
       </View>
       <Text className="mt-3 text-lg">{product.title}</Text>
       <Text className="text-lg font-bold">
-        PHP {formatNumber(product.price)}
+      ₱{formatNumber(product.price)}
       </Text>
     </View>
   ));
