@@ -55,7 +55,6 @@ export default function AuthWrapper(props: PropsInterface) {
     const userDocument: UserInterface = {
       displayName: user.displayName ?? '-',
       email: user.email ?? '-',
-      transactions: [],
     };
     await setDoc(docRef, userDocument, {
       merge: true,
