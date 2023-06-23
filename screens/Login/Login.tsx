@@ -5,7 +5,7 @@ import {
   Linking,
   ActivityIndicator,
 } from 'react-native';
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import ContentWrapper from '../../components/ContentWrapper';
 import UniHubIcon from '../../components/icons/UniHubIcon';
 import GoogleIcon from '../../components/icons/GoogleIcon';
@@ -18,10 +18,13 @@ import {
 import auth from '../../firebase/auth';
 import * as WebBrowser from 'expo-web-browser';
 import AuthWrapper from '../../components/AuthWrapper';
+import UserContext from '../../context/UserContext';
 
 WebBrowser.maybeCompleteAuthSession();
 
 function Login() {
+  const { user } = useContext(UserContext);
+
   const [request, response, promptAsync] = Google.useIdTokenAuthRequest({
     clientId:
       '1008577757913-o6a7v8l3ieur5ig8qlqsbq19j1unj9e9.apps.googleusercontent.com',
@@ -33,6 +36,12 @@ function Login() {
   }
 
   useEffect(() => {
+    if (!user) {
+      setIsLoading(false);
+    }
+  }, [user]);
+
+  useEffect(() => {
     async function handleSignIn(credential: OAuthCredential) {
       await signInWithCredential(auth, credential);
     }
@@ -41,6 +50,8 @@ function Login() {
       const { id_token } = response.params;
       const credential = GoogleAuthProvider.credential(id_token);
       handleSignIn(credential);
+    } else {
+      setIsLoading(false);
     }
   }, [response]);
 
@@ -51,8 +62,6 @@ function Login() {
     } catch (error) {
       console.error(error);
       alert('Something went wrong with logging in.');
-    } finally {
-      setIsLoading(false);
     }
   }
 
