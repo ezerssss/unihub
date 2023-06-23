@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, ScrollView, TouchableOpacity } from 'react-native';
+import { View, Text, TouchableOpacity } from 'react-native';
 import CategorySwiper from './CategorySwiper';
 import { CategoryNavigationProps } from '../../types/navigation';
 import AuthWrapper from '../../components/AuthWrapper';
@@ -15,7 +15,7 @@ function Category({ route }: CategoryNavigationProps) {
     <AuthWrapper>
       <ContentWrapper hasHeader={false}>
         <View className=" flex-1 pt-10">
-          <View className="h-14 items-center bg-white">
+          <View className="h-15 items-center bg-white">
             <TouchableOpacity
               className="absolute bottom-3 left-0 z-20 pl-3"
               onPress={goBack}
@@ -24,7 +24,7 @@ function Category({ route }: CategoryNavigationProps) {
             </TouchableOpacity>
             <Text className="py-4 text-xl font-semibold">{category}</Text>
           </View>
-          <View className="flex-1 bg-secondary-400">
+          <View className="flex-1 bg-primary-400">
             <CategorySwiper category={category} />
           </View>
         </View>
