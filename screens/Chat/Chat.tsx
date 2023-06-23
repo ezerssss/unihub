@@ -14,14 +14,16 @@ import { Message } from '../../types/messages';
 import useGoBack from '../../hooks/useGoBack';
 import { formatTime } from '../../helpers/date';
 import AuthWrapper from '../../components/AuthWrapper';
+import { Transaction } from '../../types/transaction';
+import { sendMessage } from '../../interactors/sendMessage';
 
-function Chat() {
+function Chat(transaction: Transaction) {
   const goBack = useGoBack();
 
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputText, setInputText] = useState<string>('');
 
-  function handleSend() {
+  async function handleSend() {
     if (inputText.trim() === '') {
       return;
     }
@@ -32,6 +34,12 @@ function Chat() {
       user: { _id: 1 },
       createdAt: new Date(),
     };
+
+    try {
+      await sendMessage(transaction, newMessage);
+    } catch (error) {
+      alert((error as Error).message);
+    }
 
     setMessages((prevMessages) => [...prevMessages, newMessage]);
     setInputText('');
