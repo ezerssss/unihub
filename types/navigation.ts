@@ -1,5 +1,6 @@
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { Product } from './product';
+import { Categories } from '../enums/categories';
 
 export type RootStackParamsList = {
   Login: undefined;
@@ -9,10 +10,14 @@ export type RootStackParamsList = {
   Product: { product: Product; isRedirect?: boolean };
   ProductListings: undefined;
   Buy: { product: Product };
-  Category: undefined;
+  Category: { category: Categories };
 };
 
 export type RootNavigationProps = NativeStackScreenProps<RootStackParamsList>;
+export type CategoryNavigationProps = NativeStackScreenProps<
+  RootStackParamsList,
+  'Category'
+>;
 export type ProductNavigationProps = NativeStackScreenProps<
   RootStackParamsList,
   'Product'

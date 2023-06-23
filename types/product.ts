@@ -1,11 +1,12 @@
 import { ListingStatus } from '../enums/productListings';
+import { Categories } from '../enums/categories';
 
 export interface Product {
   images: string[];
   title: string;
   price: number;
   description: string;
-  category: string;
+  category: Categories;
   meetup: {
     time: Date;
     location: string;
