@@ -26,8 +26,8 @@ function ProductsCarousel(props: ProductsCarouselProps) {
     });
   }
 
-  function goToCategoryPage(category: Categories) {
-    navigation.navigate(Routes.CATEGORY, { category });
+  function goToCategoryPage() {
+    navigation.navigate(Routes.CATEGORY, { category: Categories.ALL });
   }
 
   const renderProducts = products.map((product) => (
@@ -52,7 +52,7 @@ function ProductsCarousel(props: ProductsCarouselProps) {
       <TouchableOpacity
         className="items-center justify-center"
         onPress={() => {
-          goToCategoryPage(Categories.ALL);
+          goToCategoryPage();
         }}
       >
         <Text className="text-s to-unihub-gray-200">See all products</Text>
