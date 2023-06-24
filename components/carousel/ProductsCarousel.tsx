@@ -5,6 +5,8 @@ import { useNavigation } from '@react-navigation/native';
 import { RootStackParamsList } from '../../types/navigation';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { Routes } from '../../enums/routes';
+import SeeAllProductsArrow from '../icons/SeeAllProductsArrow';
+import { Categories } from '../../enums/categories';
 
 import type { Product } from '../../types/product';
 
@@ -24,6 +26,10 @@ function ProductsCarousel(props: ProductsCarouselProps) {
     });
   }
 
+  function goToCategoryPage(category: Categories) {
+    navigation.navigate(Routes.CATEGORY, { category });
+  }
+
   const renderProducts = products.map((product) => (
     <View className="mx-3 mt-5" key={product.images[0]}>
       <View className="overflow-hidden rounded-lg">
@@ -36,15 +42,22 @@ function ProductsCarousel(props: ProductsCarouselProps) {
         </TouchableOpacity>
       </View>
       <Text className="mt-3 text-lg">{product.title}</Text>
-      <Text className="text-lg font-bold">
-      ₱{formatNumber(product.price)}
-      </Text>
+      <Text className="text-lg font-bold">₱{formatNumber(product.price)}</Text>
     </View>
   ));
 
   return (
     <ScrollView horizontal showsHorizontalScrollIndicator={false}>
       {renderProducts}
+      <TouchableOpacity
+        className="items-center justify-center"
+        onPress={() => {
+          goToCategoryPage(Categories.ALL);
+        }}
+      >
+        <Text className="text-s to-unihub-gray-200">See all products</Text>
+        <SeeAllProductsArrow />
+      </TouchableOpacity>
     </ScrollView>
   );
 }

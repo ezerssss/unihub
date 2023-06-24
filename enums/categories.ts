@@ -1,4 +1,5 @@
 export enum Categories {
+  ALL = 'All',
   BOOKS = 'Books',
   CLOTHING = 'Clothing',
   SCHOOL_SUPPLIES = 'School Supplies',
