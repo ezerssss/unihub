@@ -44,11 +44,11 @@ function CategorySwiper(props: SwiperProps) {
         querySnapshot.forEach((doc) => {
           fetchedProducts.push(doc.data() as Product);
         });
-        setProducts(
+        const filteredProducts =
           category === Categories.ALL
             ? fetchedProducts
-            : fetchedProducts.filter(filterByCategory)
-        );
+            : fetchedProducts.filter(filterByCategory);
+        setProducts(filteredProducts);
       } catch (error) {
         console.error(error);
         alert('Something went wrong with fetching your products.');
