@@ -28,6 +28,7 @@ import AuthWrapper from '../../components/AuthWrapper';
 import UserContext from '../../context/UserContext';
 import { RootNavigationProps } from '../../types/navigation';
 import { Routes } from '../../enums/routes';
+import { Alert } from 'react-native';
 
 export default function Sell({ navigation }: RootNavigationProps) {
   const goBack = useGoBack();
@@ -102,9 +103,51 @@ export default function Sell({ navigation }: RootNavigationProps) {
     return photoURLs;
   }
 
+  function showErrorPopup(message: string) {
+    Alert.alert('Error', message);
+  }
+
   async function handleSell() {
     try {
       if (!user) {
+        return;
+      }
+
+      if (
+        imageURIs.filter(Boolean).length !== 3 ||
+        !title ||
+        !description ||
+        !price ||
+        !location ||
+        !time
+      ) {
+        let errorMessage = '';
+
+        if (imageURIs.filter(Boolean).length !== 3) {
+          errorMessage += 'Must upload 3 images\n';
+        }
+
+        if (!title) {
+          errorMessage += 'Product Name is not set\n';
+        }
+
+        if (!description) {
+          errorMessage += 'Product Description is not set\n';
+        }
+
+        if (!price) {
+          errorMessage += 'Product Price is not set\n';
+        }
+
+        if (!location) {
+          errorMessage += 'Meetup Location is not set\n';
+        }
+
+        if (!time) {
+          errorMessage += 'Meetup Time is not set\n';
+        }
+
+        showErrorPopup(errorMessage);
         return;
       }
 
@@ -133,7 +176,7 @@ export default function Sell({ navigation }: RootNavigationProps) {
       navigation.navigate(Routes.PRODUCT, { product, isRedirect: true });
     } catch (error) {
       console.error(error);
-      alert('Something went wrong with posting your product.');
+      showErrorPopup('Something went wrong with posting your product.');
     } finally {
       setIsUploading(false);
     }
