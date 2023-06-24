@@ -14,10 +14,12 @@ import { Message } from '../../types/messages';
 import useGoBack from '../../hooks/useGoBack';
 import { formatTime } from '../../helpers/date';
 import AuthWrapper from '../../components/AuthWrapper';
-import { Transaction } from '../../types/transaction';
-import { sendMessage } from '../../interactors/sendMessage';
+import { sendMessage } from '../../helpers/sendMessage';
+import { ChatNavigationProps } from '../../types/navigation';
 
-function Chat(transaction: Transaction) {
+function Chat({ route }: ChatNavigationProps) {
+  const { transaction } = route.params;
+
   const goBack = useGoBack();
 
   const [messages, setMessages] = useState<Message[]>([]);

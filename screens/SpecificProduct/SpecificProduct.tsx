@@ -99,6 +99,7 @@ function SpecificProduct({ route }: ProductNavigationProps) {
 
         navigation.navigate(Routes.BUY, {
           product,
+          transaction,
         });
       } else {
         throw new Error('Seller not found');
