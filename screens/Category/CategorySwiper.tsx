@@ -75,13 +75,18 @@ function CategorySwiper(props: SwiperProps) {
           />
         </TouchableOpacity>
       </View>
-      <View className="ml-3 h-5/6 w-3/4 overflow-hidden rounded-lg bg-white pl-5">
-        <Text className="mt-2 text-xl font-medium">{product.title}</Text>
-        <Text className="text-base font-medium">by {product.seller}</Text>
-        <Text className="pt-1 text-lg font-extrabold text-secondary-100">
+      <View className="ml-3 h-28 w-3/4 overflow-hidden rounded-lg bg-white pl-5">
+        <Text className="mt-3 text-xl font-semibold text-black">
+          {product.title}
+        </Text>
+        <Text className="text-base font-medium text-black">
+          by {product.seller}
+        </Text>
+        <Text className="pt-1 text-lg font-extrabold text-primary-100">
           ₱{formatNumber(product.price)}
         </Text>
       </View>
+      
     </View>
   ));
 
