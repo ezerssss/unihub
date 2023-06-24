@@ -25,11 +25,6 @@ function ProductsCarousel(props: ProductsCarouselProps) {
   }
 
   const renderProducts = products.map((product) => {
-    let formattedTitle = product.title;
-    if (formattedTitle.length > 18) {
-      formattedTitle = formattedTitle.slice(0, 15) + '...';
-    }
-
     return (
       <View className="mx-3 mt-5" key={product.images[0]}>
         <View className="overflow-hidden rounded-lg">
@@ -41,7 +36,7 @@ function ProductsCarousel(props: ProductsCarouselProps) {
             />
           </TouchableOpacity>
         </View>
-        <Text className="mt-3 text-lg">{formattedTitle}</Text>
+        <Text className="mt-3 text-lg w-40" numberOfLines={1}>{product.title}</Text>
         <Text className="text-lg font-bold">
           ₱{formatNumber(product.price)}
         </Text>

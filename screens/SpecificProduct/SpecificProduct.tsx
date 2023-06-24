@@ -115,7 +115,7 @@ function SpecificProduct({ route }: ProductNavigationProps) {
     return <ProductLoading />;
   }
 
-  const { images, description, meetup, seller } = product;
+  const { images, description, meetup, seller, title } = product;
   const { location, time } = meetup;
   const dateObject = isRedirect
     ? time
@@ -129,15 +129,6 @@ function SpecificProduct({ route }: ProductNavigationProps) {
     const { lines } = event.nativeEvent;
     setDescriptionLines(lines.length);
   }
-
-  let indexEnd = 16;
-  if (product.title.length > indexEnd) {
-    while (indexEnd > 0 && product.title[indexEnd] !== ' ') {
-      indexEnd--;
-    }
-  }
-  const firstCut = product.title.slice(0, indexEnd);
-  const otherCut = product.title.slice(indexEnd).trim();
 
   return (
     <AuthWrapper>
@@ -155,13 +146,12 @@ function SpecificProduct({ route }: ProductNavigationProps) {
             </View>
             <View className="pb-20">
               <View>
-                <Text className="pl-6 pt-6 text-2xl font-semibold">
-                  {firstCut}
+                <Text className="pl-6 pt-6 text-2xl font-semibold w-2/3">
+                  {title}
                 </Text>
                 <Text className="absolute right-0 pr-6 pt-8 text-xs font-normal">
                   by {seller}
                 </Text>
-                <Text className="pl-6 text-2xl font-semibold">{otherCut}</Text>
               </View>
               <View className="items-center px-5 pt-3 text-left">
                 <Text
