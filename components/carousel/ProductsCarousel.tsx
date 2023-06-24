@@ -30,21 +30,27 @@ function ProductsCarousel(props: ProductsCarouselProps) {
     navigation.navigate(Routes.CATEGORY, { category: Categories.ALL });
   }
 
-  const renderProducts = products.map((product) => (
-    <View className="mx-3 mt-5" key={product.images[0]}>
-      <View className="overflow-hidden rounded-lg">
-        <TouchableOpacity onPress={() => goToSpecificProduct(product)}>
-          <Image
-            className="h-40 w-40"
-            resizeMode="cover"
-            source={{ uri: product.images[0] }}
-          />
-        </TouchableOpacity>
+  const renderProducts = products.map((product) => {
+    return (
+      <View className="mx-3 mt-5" key={product.images[0]}>
+        <View className="overflow-hidden rounded-lg">
+          <TouchableOpacity onPress={() => goToSpecificProduct(product)}>
+            <Image
+              className="h-40 w-40"
+              resizeMode="cover"
+              source={{ uri: product.images[0] }}
+            />
+          </TouchableOpacity>
+        </View>
+        <Text className="mt-3 w-40 text-lg" numberOfLines={1}>
+          {product.title}
+        </Text>
+        <Text className="text-lg font-bold">
+          ₱{formatNumber(product.price)}
+        </Text>
       </View>
-      <Text className="mt-3 text-lg">{product.title}</Text>
-      <Text className="text-lg font-bold">₱{formatNumber(product.price)}</Text>
-    </View>
-  ));
+    );
+  });
 
   return (
     <ScrollView horizontal showsHorizontalScrollIndicator={false}>
