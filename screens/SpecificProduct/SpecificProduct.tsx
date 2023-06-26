@@ -22,9 +22,10 @@ import UserContext from '../../context/UserContext';
 import db from '../../firebase/db';
 import { DB } from '../../enums/db';
 
-import type { User } from 'firebase/auth';
-import { type Transaction, StatusEnum } from '../../types/transaction';
+import { User } from 'firebase/auth';
+import { Transaction } from '../../types/transaction';
 import { Message } from '../../types/messages';
+import { StatusEnum } from '../../enums/status';
 
 function SpecificProduct({ route, navigation }: ProductNavigationProps) {
   const { product, isRedirect } = route.params;
@@ -116,12 +117,10 @@ function SpecificProduct({ route, navigation }: ProductNavigationProps) {
       // upload each transaction as field reference
       const buyerRef = collection(db, DB.USERS, buyer.uid, DB.TRANSACTIONS);
       const sellerRef = collection(db, DB.USERS, sellerUid, DB.TRANSACTIONS);
-      const transactionsRef = collection(db, DB.TRANSACTIONS);
 
       // if there is a pending transaction, do not add
       const pendingTransactionQuery = query(
-        transactionsRef,
-        where('status', '==', StatusEnum.CONFIRM),
+        sellerRef,
         where('product.title', '==', product.title),
         where('sellerEmail', '==', sellerEmail),
         where('buyerEmail', '==', buyerEmail)
@@ -134,7 +133,6 @@ function SpecificProduct({ route, navigation }: ProductNavigationProps) {
         return;
       }
 
-      await addDoc(transactionsRef, transaction);
       const buyerTransactionDoc = await addDoc(buyerRef, transaction);
       const sellerTransactionDoc = await addDoc(sellerRef, transaction);
 
@@ -194,7 +192,7 @@ function SpecificProduct({ route, navigation }: ProductNavigationProps) {
             </View>
             <View className="pb-20">
               <View>
-                <Text className="pl-6 pt-6 text-2xl font-semibold w-2/3">
+                <Text className="w-2/3 pl-6 pt-6 text-2xl font-semibold">
                   {title}
                 </Text>
                 <Text className="absolute right-0 pr-6 pt-8 text-xs font-normal">

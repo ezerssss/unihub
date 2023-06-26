@@ -13,6 +13,7 @@ export type RootStackParamsList = {
   Buy: { product: Product; transaction: Transaction };
   Category: { category: Categories };
   ProductSold: undefined;
+  Transactions: undefined;
 };
 
 export type RootNavigationProps = NativeStackScreenProps<RootStackParamsList>;

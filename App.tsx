@@ -16,6 +16,7 @@ import { useMemo, useState } from 'react';
 import { User } from 'firebase/auth';
 import Category from './screens/Category/Category';
 import ProductSold from './screens/SpecificProduct/ProductSold';
+import Transactions from './screens/Transactions/Transactions';
 
 const Stack = createNativeStackNavigator<RootStackParamsList>();
 
@@ -41,6 +42,7 @@ export default function App() {
               component={ProductListing}
               name={Routes.PRODUCT_LISTINGS}
             />
+            <Stack.Screen component={Transactions} name={Routes.TRANSACTIONS} />
           </Stack.Navigator>
         </NavigationContainer>
       </View>

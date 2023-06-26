@@ -4,9 +4,16 @@ import Search from './Search';
 import { MaterialIcons } from '@expo/vector-icons';
 import { BagIcon } from './icons';
 import { MenuModal } from './modals';
+import { useNavigation } from '@react-navigation/native';
+import { RootStackParamsList } from '../types/navigation';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { Routes } from '../enums/routes';
 
 function Header() {
   const [isMenuOpen, setMenuOpen] = useState<boolean>(false);
+
+  const navigation =
+    useNavigation<NativeStackNavigationProp<RootStackParamsList>>();
 
   function openMenu() {
     setMenuOpen(true);
@@ -21,6 +28,10 @@ function Header() {
     console.log(query);
   }
 
+  function handleToTransactions() {
+    navigation.navigate(Routes.TRANSACTIONS);
+  }
+
   return (
     <View className="bg-primary-400 pb-8 pt-14">
       <View className="flex-row items-center justify-between px-4">
@@ -31,7 +42,7 @@ function Header() {
         </View>
         <Search onSearch={onSearch} />
         <View className="w-1/6 flex-row justify-end">
-          <TouchableOpacity>
+          <TouchableOpacity onPress={handleToTransactions}>
             <BagIcon />
           </TouchableOpacity>
         </View>
