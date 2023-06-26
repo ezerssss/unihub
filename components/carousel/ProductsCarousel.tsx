@@ -5,6 +5,8 @@ import { useNavigation } from '@react-navigation/native';
 import { RootStackParamsList } from '../../types/navigation';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { Routes } from '../../enums/routes';
+import SeeAllProductsArrow from '../icons/SeeAllProductsArrow';
+import { Categories } from '../../enums/categories';
 
 import type { Product } from '../../types/product';
 
@@ -24,6 +26,10 @@ function ProductsCarousel(props: ProductsCarouselProps) {
     });
   }
 
+  function goToCategoryPage() {
+    navigation.navigate(Routes.CATEGORY, { category: Categories.ALL });
+  }
+
   const renderProducts = products.map((product) => {
     return (
       <View className="mx-3 mt-5" key={product.images[0]}>
@@ -36,7 +42,9 @@ function ProductsCarousel(props: ProductsCarouselProps) {
             />
           </TouchableOpacity>
         </View>
-        <Text className="mt-3 text-lg w-40" numberOfLines={1}>{product.title}</Text>
+        <Text className="mt-3 w-40 text-lg" numberOfLines={1}>
+          {product.title}
+        </Text>
         <Text className="text-lg font-bold">
           ₱{formatNumber(product.price)}
         </Text>
@@ -47,6 +55,13 @@ function ProductsCarousel(props: ProductsCarouselProps) {
   return (
     <ScrollView horizontal showsHorizontalScrollIndicator={false}>
       {renderProducts}
+      <TouchableOpacity
+        className="items-center justify-center"
+        onPress={goToCategoryPage}
+      >
+        <Text className="text-s to-unihub-gray-200">See all products</Text>
+        <SeeAllProductsArrow />
+      </TouchableOpacity>
     </ScrollView>
   );
 }
