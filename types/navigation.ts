@@ -1,8 +1,6 @@
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { Product } from './product';
-import { Chat, Transaction } from './transaction';
-import { Routes } from '../enums/routes';
-import { Message } from './messages';
+import { Transaction } from './transaction';
 
 export type RootStackParamsList = {
   Login: undefined;
