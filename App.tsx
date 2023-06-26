@@ -28,8 +28,8 @@ export default function App() {
         <StatusBar style="auto" />
         <NavigationContainer>
           <Stack.Navigator>
-            <Stack.Screen component={Login} name={Routes.LOGIN} />
             <Stack.Screen component={Home} name={Routes.HOME} />
+            <Stack.Screen component={Login} name={Routes.LOGIN} />
             <Stack.Screen component={Sell} name={Routes.SELL} />
             <Stack.Screen component={Chat} name={Routes.CHAT} />
             <Stack.Screen component={SpecificProduct} name={Routes.PRODUCT} />

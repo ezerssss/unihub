@@ -1,5 +1,7 @@
+import { Categories } from '../enums/categories';
+
 export interface Category {
   id: string;
-  name: string;
+  name: Categories;
   image: string;
 }
