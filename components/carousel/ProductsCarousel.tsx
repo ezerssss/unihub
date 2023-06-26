@@ -57,9 +57,7 @@ function ProductsCarousel(props: ProductsCarouselProps) {
       {renderProducts}
       <TouchableOpacity
         className="items-center justify-center"
-        onPress={() => {
-          goToCategoryPage();
-        }}
+        onPress={goToCategoryPage}
       >
         <Text className="text-s to-unihub-gray-200">See all products</Text>
         <SeeAllProductsArrow />
