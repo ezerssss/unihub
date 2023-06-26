@@ -1,15 +1,16 @@
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { Product } from './product';
+import { Transaction } from './transaction';
 import { Categories } from '../enums/categories';
 
 export type RootStackParamsList = {
   Login: undefined;
   Home: undefined;
-  Chat: undefined;
+  Chat: { transaction: Transaction };
   Sell: undefined;
   Product: { product: Product; isRedirect?: boolean };
   ProductListings: undefined;
-  Buy: { product: Product };
+  Buy: { product: Product; transaction: Transaction };
   Category: { category: Categories };
   ProductSold: undefined;
 };
@@ -26,4 +27,9 @@ export type ProductNavigationProps = NativeStackScreenProps<
 export type BuyNavigationProps = NativeStackScreenProps<
   RootStackParamsList,
   'Buy'
+>;
+
+export type ChatNavigationProps = NativeStackScreenProps<
+  RootStackParamsList,
+  'Chat'
 >;

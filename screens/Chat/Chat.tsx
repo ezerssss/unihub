@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import {
   View,
   Text,
   TextInput,
   TouchableOpacity,
-  ScrollView,
+  ActivityIndicator,
+  FlatList,
 } from 'react-native';
 import ContentWrapper from '../../components/ContentWrapper';
 import ArrowIcon from '../../components/icons/ArrowIcon';
@@ -14,48 +15,157 @@ import { Message } from '../../types/messages';
 import useGoBack from '../../hooks/useGoBack';
 import { formatTime } from '../../helpers/date';
 import AuthWrapper from '../../components/AuthWrapper';
+import { getTransactionDocID, sendMessage } from '../../helpers/message';
+import { ChatNavigationProps } from '../../types/navigation';
+import UserContext from '../../context/UserContext';
+import {
+  Timestamp,
+  Unsubscribe,
+  collection,
+  doc,
+  onSnapshot,
+  orderBy,
+  query,
+  updateDoc,
+} from 'firebase/firestore';
+import db from '../../firebase/db';
+import { DB } from '../../enums/db';
 
-function Chat() {
+function Chat({ route }: ChatNavigationProps) {
+  const { user } = useContext(UserContext);
+  const { transaction } = route.params;
+  const { product } = transaction;
+  const { seller } = product;
+
   const goBack = useGoBack();
 
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputText, setInputText] = useState<string>('');
+  const [transactionID, setTransactionID] = useState<string>('');
+  const [isSending, setIsSending] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
-  function handleSend() {
-    if (inputText.trim() === '') {
+  useEffect(() => {
+    if (!user) {
+      return;
+    }
+
+    (async () => {
+      if (!user.email) {
+        return;
+      }
+
+      const transactID = await getTransactionDocID(user.email, transaction);
+      setTransactionID(transactID);
+    })();
+  }, [user]);
+
+  async function handleSeenMessages(unsubscribe: Unsubscribe) {
+    try {
+      if (!user?.email) {
+        return;
+      }
+
+      const transactionDocID = await getTransactionDocID(
+        user.email,
+        transaction
+      );
+
+      const transactionDocRef = doc(
+        db,
+        DB.USERS,
+        user.uid,
+        DB.TRANSACTIONS,
+        transactionDocID
+      );
+
+      await updateDoc(transactionDocRef, { isSeen: true });
+    } catch (error) {
+      console.error(error);
+    } finally {
+      unsubscribe();
+    }
+  }
+
+  useEffect(() => {
+    if (!user || !transactionID) {
+      return;
+    }
+
+    const chatsCollectionRef = collection(
+      db,
+      DB.USERS,
+      user.uid,
+      DB.TRANSACTIONS,
+      transactionID,
+      DB.CHATS
+    );
+
+    const q = query(chatsCollectionRef, orderBy('date', 'desc'));
+
+    const unsubscribe = onSnapshot(q, (querySnapshot) => {
+      const chatArray: Message[] = [];
+
+      querySnapshot.forEach((doc) => {
+        chatArray.push(doc.data() as Message);
+      });
+
+      setMessages(chatArray);
+      setIsLoading(false);
+    });
+
+    return () => {
+      handleSeenMessages(unsubscribe);
+    };
+  }, [user, transactionID]);
+
+  async function handleSend() {
+    setIsSending(true);
+    if (inputText.trim() === '' || !user?.email) {
       return;
     }
 
     const newMessage: Message = {
-      _id: messages.length + 1,
-      text: inputText,
-      user: { _id: 1 },
-      createdAt: new Date(),
+      content: inputText,
+      from: user.email,
+      date: new Date(),
     };
 
-    setMessages((prevMessages) => [...prevMessages, newMessage]);
-    setInputText('');
+    try {
+      setInputText('');
+      await sendMessage(transaction, newMessage, user);
+    } catch (error) {
+      alert((error as Error).message);
+    } finally {
+      setIsSending(false);
+    }
   }
 
-  const renderMessages = messages.map((message) => {
-    const textBackground = message.user._id === 1 ? 'bg-white' : 'bg-blue-900';
-    const textAlign = message.user._id === 1 ? 'self-end' : 'self-start';
-    const messageStyle =
-      message.user._id === 1 ? 'text-gray-900' : 'text-white';
+  function handleRender(message: Message) {
+    const { content, from, date } = message;
+    const textBackground = from === user?.email ? 'bg-white' : 'bg-blue-900';
+    const textAlign = from === user?.email ? 'self-end' : 'self-start';
+    const messageStyle = from === user?.email ? 'text-gray-900' : 'text-white';
     const dateTextStyle = `text-${
-      message.user._id === 1 ? 'gray-500' : 'gray-900'
+      from === user?.email ? 'gray-500' : 'gray-900'
     } text-xs self-end`;
+    const dateObject = (date as unknown as Timestamp).toDate();
 
     return (
       <View
         className={`${textBackground} mb-4 rounded-2xl p-4 ${textAlign}`}
-        key={message._id}
+        key={content}
       >
-        <Text className={messageStyle}>{message.text}</Text>
-        <Text className={dateTextStyle}>{formatTime(message.createdAt)}</Text>
+        <Text className={messageStyle}>{content}</Text>
+        <Text className={dateTextStyle}>{formatTime(dateObject)}</Text>
       </View>
     );
-  });
+  }
+
+  const renderLoading = isLoading && (
+    <ActivityIndicator className="mt-5" size="large" />
+  );
+  const renderButton = isSending ? <ActivityIndicator /> : <ArrowIcon />;
 
   return (
     <AuthWrapper>
@@ -67,9 +177,15 @@ function Chat() {
                 <ReturnIcon />
               </TouchableOpacity>
             </View>
-            <Text className="text-2xl font-bold text-gray-900">TedTeddy</Text>
+            <Text className="text-2xl font-bold text-gray-900">{seller}</Text>
           </View>
-          <ScrollView className="flex-grow p-4">{renderMessages}</ScrollView>
+          {renderLoading}
+          <FlatList
+            inverted
+            className="p-4"
+            data={messages}
+            renderItem={({ item }) => handleRender(item)}
+          />
           <View className="h-24 flex-row items-center bg-white p-4">
             <View className="mr-4">
               <TouchableOpacity>
@@ -87,9 +203,10 @@ function Chat() {
             <View className="ml-4">
               <TouchableOpacity
                 className="h-10 w-10 items-center justify-center rounded-full bg-white"
+                disabled={isSending}
                 onPress={handleSend}
               >
-                <ArrowIcon />
+                {renderButton}
               </TouchableOpacity>
             </View>
           </View>

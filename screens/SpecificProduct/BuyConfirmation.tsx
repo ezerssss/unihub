@@ -13,14 +13,14 @@ import { Routes } from '../../enums/routes';
 import { BuyNavigationProps } from '../../types/navigation';
 
 function Buy({ route, navigation }: BuyNavigationProps) {
-  const { product } = route.params;
+  const { product, transaction } = route.params;
 
   const dateObject = (product.meetup.time as unknown as Timestamp).toDate();
 
   const goBack = useGoBack();
 
   function goToChat() {
-    navigation.navigate(Routes.CHAT);
+    navigation.navigate(Routes.CHAT, { transaction: transaction });
   }
 
   return (
