@@ -1,5 +1,5 @@
 import { View, Text, ScrollView, RefreshControl } from 'react-native';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import ContentWrapper from '../../components/ContentWrapper';
 import FeatureCarousel from '../../components/carousel/FeatureCarousel';
 import ProductsCarousel from '../../components/carousel/ProductsCarousel';
@@ -20,8 +20,13 @@ import db from '../../firebase/db';
 import type { Product } from '../../types/product';
 import { checkThisOutLimit } from '../../constants/products';
 import AuthWrapper from '../../components/AuthWrapper';
+import UserContext from '../../context/UserContext';
+import { RootNavigationProps } from '../../types/navigation';
+import { Routes } from '../../enums/routes';
 
-function Home() {
+function Home({ navigation }: RootNavigationProps) {
+  const { user } = useContext(UserContext);
+
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [featuredProduct, setFeaturedProduct] = useState<Product | null>(null);
   const [products, setProducts] = useState<Product[]>([]);
@@ -96,8 +101,13 @@ function Home() {
   }
 
   useEffect(() => {
+    if (!user) {
+      navigation.push(Routes.LOGIN);
+      return;
+    }
+
     handleGetData();
-  }, []);
+  }, [user]);
 
   if (isLoading || !featuredProduct) {
     return <HomeLoading />;

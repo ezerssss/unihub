@@ -163,7 +163,7 @@ function SpecificProduct({ route, navigation }: ProductNavigationProps) {
     return <ProductLoading />;
   }
 
-  const { images, title, description, meetup, seller } = product;
+  const { images, description, meetup, seller, title } = product;
   const { location, time } = meetup;
   const dateObject = isRedirect
     ? time
@@ -193,8 +193,8 @@ function SpecificProduct({ route, navigation }: ProductNavigationProps) {
               <ProductCarousel images={images} />
             </View>
             <View className="pb-20">
-              <View className="flex-row">
-                <Text className="pl-6 pt-6 text-2xl font-semibold">
+              <View>
+                <Text className="pl-6 pt-6 text-2xl font-semibold w-2/3">
                   {title}
                 </Text>
                 <Text className="absolute right-0 pr-6 pt-8 text-xs font-normal">
