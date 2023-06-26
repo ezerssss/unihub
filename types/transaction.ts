@@ -16,9 +16,3 @@ export interface Transaction {
   isSeen: boolean;
   lastMessage: string;
 }
-
-export interface Chat {
-  content: string;
-  from: string;
-  date: Date;
-}

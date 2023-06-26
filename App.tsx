@@ -40,7 +40,6 @@ export default function App() {
               name={Routes.PRODUCT_LISTINGS}
             />
           </Stack.Navigator>
-          
         </NavigationContainer>
       </View>
     </UserContext.Provider>

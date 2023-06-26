@@ -4,25 +4,29 @@ import ProductCarousel from './ProductCarousel';
 import ContentWrapper from '../../components/ContentWrapper';
 import { formatTime } from '../../helpers/date';
 import { ProductNavigationProps } from '../../types/navigation';
-import { Timestamp, addDoc } from 'firebase/firestore';
+import {
+  Timestamp,
+  addDoc,
+  collection,
+  getDocs,
+  query,
+  where,
+} from 'firebase/firestore';
 import { AntDesign } from '@expo/vector-icons';
 import { formatNumber } from '../../helpers/number';
 import useGoBack from '../../hooks/useGoBack';
 import { ProductLoading } from '../../components/loading';
 import AuthWrapper from '../../components/AuthWrapper';
-import { useNavigation } from '@react-navigation/native';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { RootStackParamsList } from '../../types/navigation';
 import { Routes } from '../../enums/routes';
 import UserContext from '../../context/UserContext';
-import { collection, getDocs, query, where } from 'firebase/firestore';
 import db from '../../firebase/db';
 import { DB } from '../../enums/db';
 
 import type { User } from 'firebase/auth';
 import { type Transaction, StatusEnum } from '../../types/transaction';
+import { Message } from '../../types/messages';
 
-function SpecificProduct({ route }: ProductNavigationProps) {
+function SpecificProduct({ route, navigation }: ProductNavigationProps) {
   const { product, isRedirect } = route.params;
 
   const { user } = useContext(UserContext);
@@ -38,8 +42,40 @@ function SpecificProduct({ route }: ProductNavigationProps) {
     }
   }, [descriptionLines]);
 
-  const navigation =
-    useNavigation<NativeStackNavigationProp<RootStackParamsList>>();
+  async function handleChatSetup(
+    buyerName: string,
+    buyerEmail: string,
+    buyerUid: string,
+    buyerTransactionID: string,
+    sellerUid: string,
+    sellerTransactionID: string
+  ) {
+    const firstMessage: Message = {
+      content: `${buyerName} has sent a buy request.`,
+      from: buyerEmail,
+      date: new Date(),
+    };
+
+    const buyerChatRef = collection(
+      db,
+      DB.USERS,
+      buyerUid,
+      DB.TRANSACTIONS,
+      buyerTransactionID,
+      DB.CHATS
+    );
+    const sellerChatRef = collection(
+      db,
+      DB.USERS,
+      sellerUid,
+      DB.TRANSACTIONS,
+      sellerTransactionID,
+      DB.CHATS
+    );
+
+    await addDoc(buyerChatRef, firstMessage);
+    await addDoc(sellerChatRef, firstMessage);
+  }
 
   async function handleBuyOrder() {
     try {
@@ -54,56 +90,67 @@ function SpecificProduct({ route }: ProductNavigationProps) {
       );
 
       const sellerSnapshot = await getDocs(sellerQuery);
-      if (!sellerSnapshot.empty) {
-        const seller = sellerSnapshot.docs[0].data() as User;
-        const sellerUid = sellerSnapshot.docs[0].id;
-        const buyer = user;
-
-        const transaction: Transaction = {
-          buyer: buyer.displayName ?? '',
-          buyerEmail: buyer?.email ?? '',
-          date: new Date(),
-          isSeen: false,
-          lastMessage: `${buyer.displayName ?? ''} has sent a buy request.`,
-          product: product,
-          sellerEmail: seller.email ?? '',
-          status: StatusEnum.CONFIRM,
-        };
-
-        // upload each transaction as field reference
-        const buyerRef = collection(db, DB.USERS, buyer.uid, DB.TRANSACTIONS);
-        const sellerRef = collection(db, DB.USERS, sellerUid, DB.TRANSACTIONS);
-        const transactionsRef = collection(db, DB.TRANSACTIONS);
-
-        // if there is a pending transaction, do not add
-        const pendingTransactionQuery = query(
-          transactionsRef,
-          where('status', '==', StatusEnum.CONFIRM),
-          where('product.title', '==', product.title),
-          where('sellerEmail', '==', seller.email ?? ''),
-          where('buyerEmail', '==', buyer.email ?? '')
-        );
-
-        const pendingTransactionSnapshot = await getDocs(
-          pendingTransactionQuery
-        );
-
-        if (!pendingTransactionSnapshot.empty) {
-          alert('You already have a pending transaction for this product.');
-          return;
-        }
-
-        await addDoc(transactionsRef, transaction);
-        await addDoc(buyerRef, transaction);
-        await addDoc(sellerRef, transaction);
-
-        navigation.navigate(Routes.BUY, {
-          product,
-          transaction,
-        });
-      } else {
+      if (sellerSnapshot.empty) {
         throw new Error('Seller not found');
       }
+
+      const seller = sellerSnapshot.docs[0].data() as User;
+      const sellerEmail = seller.email ?? '';
+      const sellerUid = sellerSnapshot.docs[0].id;
+
+      const buyer = user;
+      const buyerDisplayName = buyer.displayName ?? '';
+      const buyerEmail = buyer?.email ?? '';
+
+      const transaction: Transaction = {
+        buyer: buyerDisplayName,
+        buyerEmail: buyerEmail,
+        date: new Date(),
+        isSeen: false,
+        lastMessage: `${buyerDisplayName} has sent a buy request.`,
+        product: product,
+        sellerEmail,
+        status: StatusEnum.CONFIRM,
+      };
+
+      // upload each transaction as field reference
+      const buyerRef = collection(db, DB.USERS, buyer.uid, DB.TRANSACTIONS);
+      const sellerRef = collection(db, DB.USERS, sellerUid, DB.TRANSACTIONS);
+      const transactionsRef = collection(db, DB.TRANSACTIONS);
+
+      // if there is a pending transaction, do not add
+      const pendingTransactionQuery = query(
+        transactionsRef,
+        where('status', '==', StatusEnum.CONFIRM),
+        where('product.title', '==', product.title),
+        where('sellerEmail', '==', sellerEmail),
+        where('buyerEmail', '==', buyerEmail)
+      );
+
+      const pendingTransactionSnapshot = await getDocs(pendingTransactionQuery);
+
+      if (!pendingTransactionSnapshot.empty) {
+        alert('You already have a pending transaction for this product.');
+        return;
+      }
+
+      await addDoc(transactionsRef, transaction);
+      const buyerTransactionDoc = await addDoc(buyerRef, transaction);
+      const sellerTransactionDoc = await addDoc(sellerRef, transaction);
+
+      await handleChatSetup(
+        buyerDisplayName,
+        buyerEmail,
+        buyer.uid,
+        buyerTransactionDoc.id,
+        sellerUid,
+        sellerTransactionDoc.id
+      );
+
+      navigation.navigate(Routes.BUY, {
+        product,
+        transaction,
+      });
     } catch (error) {
       console.error(error);
       alert('Something went wrong with posting your product.');
