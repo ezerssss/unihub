@@ -4,8 +4,8 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
-  ScrollView,
   ActivityIndicator,
+  FlatList,
 } from 'react-native';
 import ContentWrapper from '../../components/ContentWrapper';
 import ArrowIcon from '../../components/icons/ArrowIcon';
@@ -42,7 +42,8 @@ function Chat({ route }: ChatNavigationProps) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputText, setInputText] = useState<string>('');
   const [transactionID, setTransactionID] = useState<string>('');
-  const [isLoading, setIsLoading] = useState(false);
+  const [isSending, setIsSending] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     if (!user) {
@@ -100,7 +101,7 @@ function Chat({ route }: ChatNavigationProps) {
       DB.CHATS
     );
 
-    const q = query(chatsCollectionRef, orderBy('date', 'asc'));
+    const q = query(chatsCollectionRef, orderBy('date', 'desc'));
 
     const unsubscribe = onSnapshot(q, (querySnapshot) => {
       const chatArray: Message[] = [];
@@ -119,7 +120,7 @@ function Chat({ route }: ChatNavigationProps) {
   }, [user, transactionID]);
 
   async function handleSend() {
-    setIsLoading(true);
+    setIsSending(true);
     if (inputText.trim() === '' || !user?.email) {
       return;
     }
@@ -136,22 +137,17 @@ function Chat({ route }: ChatNavigationProps) {
     } catch (error) {
       alert((error as Error).message);
     } finally {
-      setIsLoading(false);
+      setIsSending(false);
     }
   }
 
-  const renderMessages = messages.map((message) => {
-    if (!user) {
-      return;
-    }
-
-    const { email } = user;
+  function handleRender(message: Message) {
     const { content, from, date } = message;
-    const textBackground = from === email ? 'bg-white' : 'bg-blue-900';
-    const textAlign = from === email ? 'self-end' : 'self-start';
-    const messageStyle = from === email ? 'text-gray-900' : 'text-white';
+    const textBackground = from === user?.email ? 'bg-white' : 'bg-blue-900';
+    const textAlign = from === user?.email ? 'self-end' : 'self-start';
+    const messageStyle = from === user?.email ? 'text-gray-900' : 'text-white';
     const dateTextStyle = `text-${
-      from === email ? 'gray-500' : 'gray-900'
+      from === user?.email ? 'gray-500' : 'gray-900'
     } text-xs self-end`;
     const dateObject = (date as unknown as Timestamp).toDate();
 
@@ -164,9 +160,12 @@ function Chat({ route }: ChatNavigationProps) {
         <Text className={dateTextStyle}>{formatTime(dateObject)}</Text>
       </View>
     );
-  });
+  }
 
-  const renderButton = isLoading ? <ActivityIndicator /> : <ArrowIcon />;
+  const renderLoading = isLoading && (
+    <ActivityIndicator className="mt-5" size="large" />
+  );
+  const renderButton = isSending ? <ActivityIndicator /> : <ArrowIcon />;
 
   return (
     <AuthWrapper>
@@ -180,7 +179,13 @@ function Chat({ route }: ChatNavigationProps) {
             </View>
             <Text className="text-2xl font-bold text-gray-900">{seller}</Text>
           </View>
-          <ScrollView className="flex-grow p-4">{renderMessages}</ScrollView>
+          {renderLoading}
+          <FlatList
+            inverted
+            className="p-4"
+            data={messages}
+            renderItem={({ item }) => handleRender(item)}
+          />
           <View className="h-24 flex-row items-center bg-white p-4">
             <View className="mr-4">
               <TouchableOpacity>
@@ -198,7 +203,7 @@ function Chat({ route }: ChatNavigationProps) {
             <View className="ml-4">
               <TouchableOpacity
                 className="h-10 w-10 items-center justify-center rounded-full bg-white"
-                disabled={isLoading}
+                disabled={isSending}
                 onPress={handleSend}
               >
                 {renderButton}
