@@ -108,12 +108,12 @@ export default function TransactionButton(props: PropsInterface) {
       const userProductsRef = collection(db, DB.USERS, user.uid, DB.PRODUCTS);
       const qProducts = query(
         productsRef,
-        where('product.title', '==', product.title),
+        where('title', '==', product.title),
         where('seller', '==', product.seller)
       );
       const qUsers = query(
         userProductsRef,
-        where('product.title', '==', product.title),
+        where('title', '==', product.title),
         where('seller', '==', product.seller)
       );
 
