@@ -30,7 +30,7 @@ export default function App() {
       <SafeAreaProvider className="flex-1">
         <StatusBar style="auto" />
         <NavigationContainer>
-          <Stack.Navigator>
+          <Stack.Navigator initialRouteName={Routes.HOME}>
             <Stack.Screen component={Home} name={Routes.HOME} />
             <Stack.Screen component={Login} name={Routes.LOGIN} />
             <Stack.Screen component={Sell} name={Routes.SELL} />
