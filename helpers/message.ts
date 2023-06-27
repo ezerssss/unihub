@@ -93,7 +93,7 @@ export async function sendMessage(
   chat: Message,
   user: User
 ) {
-  const { sellerEmail } = transaction;
+  const { sellerEmail, buyerEmail } = transaction;
 
   try {
     if (!user.email) {
@@ -102,8 +102,12 @@ export async function sendMessage(
 
     await handleDBUpdate(transaction, chat, user.email, user.uid, true);
 
-    const sellersUID = await getUserDocID(sellerEmail);
-    await handleDBUpdate(transaction, chat, sellerEmail, sellersUID, false);
+    let otherEmail = sellerEmail;
+    if (otherEmail === user.email) {
+      otherEmail = buyerEmail;
+    }
+    const otherUID = await getUserDocID(otherEmail);
+    await handleDBUpdate(transaction, chat, sellerEmail, otherUID, false);
   } catch (error) {
     console.error(error);
     throw new Error('Something went wrong with sending your message.');
