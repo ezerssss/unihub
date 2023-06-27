@@ -65,22 +65,25 @@ function CategorySwiper(props: SwiperProps) {
     });
   }
   const renderProducts = products.map((product) => (
-    <View className="mx-3 mt-5 flex-row items-center" key={product.images[0]}>
+    <TouchableOpacity
+      className="mx-3 mt-5 flex-row items-center"
+      key={product.images[0]}
+      onPress={() => {
+        goToSpecificProduct(product);
+      }}
+    >
       <View className="overflow-hidden rounded-lg ">
-        <TouchableOpacity
-          onPress={() => {
-            goToSpecificProduct(product);
-          }}
-        >
-          <Image
-            className="h-28 w-28"
-            resizeMode="cover"
-            source={{ uri: product.images[0] }}
-          />
-        </TouchableOpacity>
+        <Image
+          className="h-28 w-28"
+          resizeMode="cover"
+          source={{ uri: product.images[0] }}
+        />
       </View>
       <View className="ml-3 h-28 w-3/4 overflow-hidden rounded-lg bg-white pl-5">
-        <Text className="mt-3 text-xl font-semibold text-black">
+        <Text
+          className="mt-3 w-3/4 text-xl font-semibold text-black"
+          numberOfLines={1}
+        >
           {product.title}
         </Text>
         <Text className="text-base font-medium text-black">
@@ -90,8 +93,7 @@ function CategorySwiper(props: SwiperProps) {
           ₱{formatNumber(product.price)}
         </Text>
       </View>
-      
-    </View>
+    </TouchableOpacity>
   ));
 
   return (
