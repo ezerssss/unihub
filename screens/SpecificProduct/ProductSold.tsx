@@ -10,7 +10,7 @@ function ProductSold({ navigation }: RootNavigationProps) {
     const timer = setTimeout(() => {
       navigation.navigate(Routes.HOME);
     }, 2500);
-    return clearTimeout(timer);
+    return () => clearTimeout(timer);
   }, []);
 
   return (
