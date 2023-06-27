@@ -90,7 +90,7 @@ export default function TransactionButton(props: PropsInterface) {
       );
 
       await updateDoc(sellerDocRef, { status: newStatus });
-      await updateDoc(buyerDocRef, { status: newStatus });
+      await updateDoc(buyerDocRef, { status: newStatus, isSeen: false });
 
       setCurrentStatus(newStatus);
     } catch (error) {

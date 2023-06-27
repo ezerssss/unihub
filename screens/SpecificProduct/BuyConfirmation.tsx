@@ -69,6 +69,10 @@ function Buy({ route, navigation }: BuyNavigationProps) {
     return () => unsubscribe();
   }, [user, transactionID]);
 
+  const renderNotificationBubble = !transactionState.isSeen && (
+    <View className="absolute right-0 top-0 z-20 rounded-full bg-red-600 p-2" />
+  );
+
   return (
     <ContentWrapper hasHeader={false}>
       <View className="flex-1">
@@ -82,11 +86,10 @@ function Buy({ route, navigation }: BuyNavigationProps) {
           <UniHubIcon />
         </View>
         <ProgressBar transaction={transactionState} />
-        <View className="h-24 w-full flex-row items-center justify-center bg-secondary-400">
-          <Text className="absolute left-8 text-base font-medium">
-            Chat your seller
-          </Text>
-          <TouchableOpacity className="absolute right-6" onPress={goToChat}>
+        <View className="h-24 w-full flex-row items-center justify-between bg-secondary-400 px-8">
+          <Text className="font-medium">Chat your seller</Text>
+          <TouchableOpacity className="relative" onPress={goToChat}>
+            {renderNotificationBubble}
             <ChatIcon />
           </TouchableOpacity>
         </View>

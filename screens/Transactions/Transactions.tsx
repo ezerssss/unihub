@@ -20,6 +20,7 @@ import { Product } from '../../types/product';
 import { RootNavigationProps } from '../../types/navigation';
 import { Routes } from '../../enums/routes';
 import { formatNumber } from '../../helpers/number';
+import StatusText from './StatusText';
 
 export default function Transactions({ navigation }: RootNavigationProps) {
   const { user } = useContext(UserContext);
@@ -76,26 +77,36 @@ export default function Transactions({ navigation }: RootNavigationProps) {
   }
 
   function handleRender(transaction: Transaction) {
-    const { product, status } = transaction;
+    const { product, status, isSeen, lastMessage } = transaction;
     const { title, images, price } = product;
+
+    const messagesStyle = !isSeen && 'font-bold';
+    const borderStyle = !isSeen && 'border-primary-100';
+    const titleStyle = !isSeen && 'text-primary-100';
 
     return (
       <TouchableOpacity
-        className="h-36 w-full flex-row border-b border-gray-300 p-2"
+        className="relative h-36 w-full flex-row border-b border-gray-300 p-2"
         key={title}
         onPress={() => handleClick(product, transaction)}
       >
-        <View className="aspect-square border">
-          <Image className="h-full w-full border" source={{ uri: images[0] }} />
+        <View className={`aspect-square border ${borderStyle}`}>
+          <Image className="h-full w-full" source={{ uri: images[0] }} />
         </View>
         <View className="flex-1 justify-center p-4">
-          <Text className="mb-2 text-xl font-semibold text-primary-100">
+          <Text className={`mb-2 text-xl font-semibold ${titleStyle}`}>
             {product.title}
           </Text>
           <Text className="text-gray-500">₱{formatNumber(price)}</Text>
-          <View className="mt-3 flex-row">
+          <View className="mt-3 flex-row flex-wrap">
             <Text className="font-bold">Status: </Text>
-            <Text>{status}</Text>
+            <StatusText status={status} />
+          </View>
+          <View className="flex-row">
+            <Text className="font-bold">Messages: </Text>
+            <Text className={`flex-1 ${messagesStyle}`} numberOfLines={1}>
+              {lastMessage}
+            </Text>
           </View>
         </View>
       </TouchableOpacity>
@@ -123,14 +134,23 @@ export default function Transactions({ navigation }: RootNavigationProps) {
           </TouchableOpacity>
           <Text className="text-2xl font-bold text-white">Transactions</Text>
         </View>
-        <Text className="mx-3 my-5 text-lg font-semibold">Orders</Text>
+        <Text className="mx-3 mt-5 text-center text-lg font-bold">
+          MY ORDERS
+        </Text>
         <>{renderLoading}</>
         <>{renderNoOrders}</>
-        <FlatList data={orders} renderItem={({ item }) => handleRender(item)} />
-        <Text className="mx-3 my-5 text-lg font-semibold">Listings</Text>
+        <FlatList
+          className="mb-5"
+          data={orders}
+          renderItem={({ item }) => handleRender(item)}
+        />
+        <Text className="mx-3 border-t pt-2 text-center text-lg font-bold">
+          MY LISTINGS
+        </Text>
         <>{renderLoading}</>
         <>{renderNoListings}</>
         <FlatList
+          className="py-5"
           data={listings}
           renderItem={({ item }) => handleRender(item)}
         />
