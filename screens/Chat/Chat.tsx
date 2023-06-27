@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   FlatList,
+  KeyboardAvoidingView,
 } from 'react-native';
 import ContentWrapper from '../../components/ContentWrapper';
 import ArrowIcon from '../../components/icons/ArrowIcon';
@@ -198,30 +199,32 @@ function Chat({ route }: ChatNavigationProps) {
             renderItem={({ item }) => handleRender(item)}
           />
           {renderTransactionButton}
-          <View className="h-24 flex-row items-center bg-white p-4">
-            <View className="mr-4">
-              <TouchableOpacity>
-                <EmojiIcon />
-              </TouchableOpacity>
+          <KeyboardAvoidingView behavior="padding">
+            <View className="h-24 flex-row items-center bg-white p-4">
+              <View className="mr-4">
+                <TouchableOpacity>
+                  <EmojiIcon />
+                </TouchableOpacity>
+              </View>
+              <View className="flex-1">
+                <TextInput
+                  className="h-10 rounded-lg bg-white px-4"
+                  placeholder="Type a message..."
+                  value={inputText}
+                  onChangeText={setInputText}
+                />
+              </View>
+              <View className="ml-4">
+                <TouchableOpacity
+                  className="h-10 w-10 items-center justify-center rounded-full bg-white"
+                  disabled={isSending}
+                  onPress={handleSend}
+                >
+                  {renderButton}
+                </TouchableOpacity>
+              </View>
             </View>
-            <View className="flex-1">
-              <TextInput
-                className="h-10 rounded-lg bg-white px-4"
-                placeholder="Type a message..."
-                value={inputText}
-                onChangeText={setInputText}
-              />
-            </View>
-            <View className="ml-4">
-              <TouchableOpacity
-                className="h-10 w-10 items-center justify-center rounded-full bg-white"
-                disabled={isSending}
-                onPress={handleSend}
-              >
-                {renderButton}
-              </TouchableOpacity>
-            </View>
-          </View>
+          </KeyboardAvoidingView>
         </View>
       </ContentWrapper>
     </AuthWrapper>
