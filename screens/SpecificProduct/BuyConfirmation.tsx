@@ -30,13 +30,16 @@ function Buy({ route, navigation }: BuyNavigationProps) {
   function handleBack() {
     const { index, routes } = navigation.getState();
 
-    if (index > 0 && routes[index - 1].name === Routes.TRANSACTIONS) {
-      navigation.goBack();
-      return true;
+    if (index > 0) {
+      const previousScreenName = routes[index - 1].name;
+
+      if (previousScreenName === Routes.TRANSACTIONS) {
+        navigation.goBack();
+        return true;
+      }
     }
 
     navigation.navigate(Routes.HOME);
-
     return true;
   }
 
