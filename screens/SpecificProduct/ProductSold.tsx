@@ -1,19 +1,17 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { View, Text } from 'react-native';
 import ContentWrapper from '../../components/ContentWrapper';
 import UniHubIcon from '../../components/icons/UniHubIcon';
-import { useNavigation } from '@react-navigation/native';
-import { RootStackParamsList } from '../../types/navigation';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { RootNavigationProps } from '../../types/navigation';
 import { Routes } from '../../enums/routes';
 
-function ProductSold() {
-  const navigation =
-    useNavigation<NativeStackNavigationProp<RootStackParamsList>>();
-
-  setTimeout(() => {
-    navigation.navigate(Routes.HOME);
-  }, 2500);
+function ProductSold({ navigation }: RootNavigationProps) {
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      navigation.navigate(Routes.HOME);
+    }, 2500);
+    return clearTimeout(timer);
+  }, []);
 
   return (
     <ContentWrapper hasHeader={false} hasLightStatusBar={true}>
