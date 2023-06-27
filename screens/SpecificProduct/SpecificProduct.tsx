@@ -182,15 +182,15 @@ function SpecificProduct({ route, navigation }: ProductNavigationProps) {
               <ProductCarousel images={images} />
             </View>
             <View className="pb-20">
-              <View>
-                <Text className="w-2/3 pl-6 pt-6 text-2xl font-semibold">
+              <View className="relative pl-6 pt-6">
+                <Text className="max-w-[66%] text-2xl font-semibold">
                   {title}
                 </Text>
-                <Text className="absolute right-0 pr-6 pt-8 text-xs font-normal">
+                <Text className="absolute right-6 top-8 text-xs">
                   by {seller}
                 </Text>
               </View>
-              <View className="items-center px-5 pt-3">
+              <View className="px-6 pt-3">
                 <Text
                   className="text-left text-xs font-light text-slate-500"
                   numberOfLines={showFullDescription ? undefined : 2}
