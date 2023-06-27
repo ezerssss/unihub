@@ -21,12 +21,12 @@ function Search(props: SearchProps) {
   }
 
   return (
-    <View className="flex-1 flex-row items-center justify-center rounded-full bg-white px-3 py-1">
-      <View className="ml-3">
+    <View className="mb-6 mt-8 flex-1 flex-row items-center justify-center rounded-full bg-white px-3 py-1">
+      <View className="ml-5">
         <SearchIcon />
       </View>
       <TextInput
-        className="w-full text-black"
+        className="w-full py-2 pl-3 text-black"
         placeholder="Search for products"
         value={searchQuery}
         onChangeText={setSearchQuery}
