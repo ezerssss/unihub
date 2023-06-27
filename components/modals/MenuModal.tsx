@@ -19,6 +19,9 @@ import { BlurView } from 'expo-blur';
 import type { GestureResponderEvent, StyleProp, ViewStyle } from 'react-native';
 import UserContext from '../../context/UserContext';
 import auth from '../../firebase/auth';
+import { Svg, SvgXml } from 'react-native-svg';
+import { createAvatar } from '@dicebear/core';
+import { initials } from '@dicebear/collection';
 
 type AnimatedViewStyle = Animated.AnimatedProps<StyleProp<ViewStyle>>;
 
@@ -75,6 +78,16 @@ function MenuModal(props: MenuModalProps) {
     ],
   };
 
+  const avatar = createAvatar(initials, {
+    seed: user?.displayName as string,
+    radius: 50,
+    fontSize: 36,
+    backgroundColor: [],
+    textColor: ['000000'],
+  });
+
+  const avatarSvg = avatar.toString();
+
   return (
     <Modal transparent visible={isOpen}>
       <StatusBar barStyle={'dark-content'} />
@@ -96,9 +109,9 @@ function MenuModal(props: MenuModalProps) {
             <View className="mb-10 flex flex-row items-center">
               <TouchableOpacity>
                 <View className="mr-3 flex h-16 w-16 items-center justify-center rounded-full bg-secondary-100">
-                  <Text className="text-4xl font-medium text-black">
-                    {user?.displayName && user.displayName[0]}
-                  </Text>
+                  <Svg>
+                    <SvgXml xml={avatarSvg} />
+                  </Svg>
                 </View>
               </TouchableOpacity>
               <View className="flex flex-col gap-1">
