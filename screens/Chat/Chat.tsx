@@ -7,6 +7,7 @@ import {
   ActivityIndicator,
   FlatList,
   KeyboardAvoidingView,
+  Platform,
 } from 'react-native';
 import ContentWrapper from '../../components/ContentWrapper';
 import ArrowIcon from '../../components/icons/ArrowIcon';
@@ -199,7 +200,9 @@ function Chat({ route }: ChatNavigationProps) {
             renderItem={({ item }) => handleRender(item)}
           />
           {renderTransactionButton}
-          <KeyboardAvoidingView behavior="padding">
+          <KeyboardAvoidingView
+            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          >
             <View className="h-24 flex-row items-center bg-white p-4">
               <View className="mr-4">
                 <TouchableOpacity>
