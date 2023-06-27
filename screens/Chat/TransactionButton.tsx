@@ -2,7 +2,7 @@ import { View, Text, TouchableOpacity, ActivityIndicator } from 'react-native';
 import React, { useContext, useState } from 'react';
 import { Transaction } from '../../types/transaction';
 import { StatusEnum } from '../../enums/status';
-import { getTransactionDocID } from '../../helpers/message';
+import { getTransactionDocID, sendMessage } from '../../helpers/message';
 import {
   collection,
   deleteDoc,
@@ -20,6 +20,8 @@ import { RootStackParamsList } from '../../types/navigation';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { Routes } from '../../enums/routes';
+import { Message } from '../../types/messages';
+import { getStatusSellerText } from '../../helpers/status';
 
 interface PropsInterface {
   transaction: Transaction;
@@ -71,6 +73,14 @@ export default function TransactionButton(props: PropsInterface) {
 
       await updateDoc(sellerDocRef, { status: newStatus });
       await updateDoc(buyerDocRef, { status: newStatus, isSeen: false });
+
+      const message: Message = {
+        content: getStatusSellerText(newStatus, user.displayName ?? '-'),
+        from: user.email ?? '-',
+        date: new Date(),
+      };
+
+      await sendMessage(transaction, message, user);
 
       setCurrentStatus(newStatus);
     } catch (error) {
