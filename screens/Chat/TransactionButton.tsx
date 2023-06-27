@@ -121,8 +121,6 @@ export default function TransactionButton(props: PropsInterface) {
       const qUsersSnapshot = await getDocs(qUsers);
 
       if (qProductsSnapshot.empty || qUsersSnapshot.empty) {
-        // eslint-disable-next-line no-console
-        console.log('bitch');
         return;
       }
 
