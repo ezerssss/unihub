@@ -1,10 +1,5 @@
+import { StatusEnum } from '../enums/status';
 import type { Product } from './product';
-
-export enum StatusEnum {
-  CONFIRM = 'CONFIRM',
-  MEETUP = 'MEETUP',
-  SUCCESS = 'SUCCESS',
-}
 
 export interface Transaction {
   product: Product;

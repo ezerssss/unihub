@@ -1,5 +1,5 @@
 import { View, Text, ScrollView, TouchableOpacity } from 'react-native';
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useContext } from 'react';
 import ProductCarousel from './ProductCarousel';
 import ContentWrapper from '../../components/ContentWrapper';
 import { formatTime } from '../../helpers/date';
@@ -22,9 +22,10 @@ import UserContext from '../../context/UserContext';
 import db from '../../firebase/db';
 import { DB } from '../../enums/db';
 
-import type { User } from 'firebase/auth';
-import { type Transaction, StatusEnum } from '../../types/transaction';
+import { User } from 'firebase/auth';
+import { Transaction } from '../../types/transaction';
 import { Message } from '../../types/messages';
+import { StatusEnum } from '../../enums/status';
 
 function SpecificProduct({ route, navigation }: ProductNavigationProps) {
   const { product, isRedirect } = route.params;
@@ -32,15 +33,6 @@ function SpecificProduct({ route, navigation }: ProductNavigationProps) {
   const { user } = useContext(UserContext);
 
   const [showFullDescription, setShowFullDescription] = useState(false);
-  const [descriptionLines, setDescriptionLines] = useState<number | undefined>(
-    undefined
-  );
-
-  useEffect(() => {
-    if (descriptionLines !== undefined && descriptionLines <= 2) {
-      setShowFullDescription(true);
-    }
-  }, [descriptionLines]);
 
   async function handleChatSetup(
     buyerName: string,
@@ -83,6 +75,11 @@ function SpecificProduct({ route, navigation }: ProductNavigationProps) {
         return;
       }
 
+      if (user.displayName === product.seller) {
+        alert("You can't buy your own product.");
+        return;
+      }
+
       const userRef = collection(db, DB.USERS);
       const sellerQuery = query(
         userRef,
@@ -116,12 +113,10 @@ function SpecificProduct({ route, navigation }: ProductNavigationProps) {
       // upload each transaction as field reference
       const buyerRef = collection(db, DB.USERS, buyer.uid, DB.TRANSACTIONS);
       const sellerRef = collection(db, DB.USERS, sellerUid, DB.TRANSACTIONS);
-      const transactionsRef = collection(db, DB.TRANSACTIONS);
 
       // if there is a pending transaction, do not add
       const pendingTransactionQuery = query(
-        transactionsRef,
-        where('status', '==', StatusEnum.CONFIRM),
+        sellerRef,
         where('product.title', '==', product.title),
         where('sellerEmail', '==', sellerEmail),
         where('buyerEmail', '==', buyerEmail)
@@ -134,7 +129,6 @@ function SpecificProduct({ route, navigation }: ProductNavigationProps) {
         return;
       }
 
-      await addDoc(transactionsRef, transaction);
       const buyerTransactionDoc = await addDoc(buyerRef, transaction);
       const sellerTransactionDoc = await addDoc(sellerRef, transaction);
 
@@ -173,11 +167,6 @@ function SpecificProduct({ route, navigation }: ProductNavigationProps) {
     setShowFullDescription(!showFullDescription);
   }
 
-  function handleTextLayout(event: any) {
-    const { lines } = event.nativeEvent;
-    setDescriptionLines(lines.length);
-  }
-
   return (
     <AuthWrapper>
       <ContentWrapper hasHeader={false}>
@@ -193,32 +182,29 @@ function SpecificProduct({ route, navigation }: ProductNavigationProps) {
               <ProductCarousel images={images} />
             </View>
             <View className="pb-20">
-              <View>
-                <Text className="pl-6 pt-6 text-2xl font-semibold w-2/3">
+              <View className="relative pl-6 pt-6">
+                <Text className="max-w-[66%] text-2xl font-semibold">
                   {title}
                 </Text>
-                <Text className="absolute right-0 pr-6 pt-8 text-xs font-normal">
+                <Text className="absolute right-6 top-8 text-xs">
                   by {seller}
                 </Text>
               </View>
-              <View className="items-center px-5 pt-3 text-left">
+              <View className="px-6 pt-3">
                 <Text
                   className="text-left text-xs font-light text-slate-500"
                   numberOfLines={showFullDescription ? undefined : 2}
-                  onTextLayout={handleTextLayout}
                 >
                   {description}
                 </Text>
-                {descriptionLines !== undefined && descriptionLines > 2 && (
-                  <TouchableOpacity
-                    className="mt-2 h-7 w-20 rounded-3xl bg-primary-100"
-                    onPress={toggleDescription}
-                  >
-                    <Text className="items-center pt-1 text-center text-xs font-normal text-white">
-                      {showFullDescription ? 'Read Less' : 'Read More'}
-                    </Text>
-                  </TouchableOpacity>
-                )}
+                <TouchableOpacity
+                  className="mt-2 h-7 w-20 rounded-3xl bg-primary-100"
+                  onPress={toggleDescription}
+                >
+                  <Text className="items-center pt-1 text-center text-xs font-normal text-white">
+                    {showFullDescription ? 'Read Less' : 'Read More'}
+                  </Text>
+                </TouchableOpacity>
               </View>
               <View className="h-5 w-20 bg-white"></View>
               <View className="h-24 w-screen bg-secondary-400">

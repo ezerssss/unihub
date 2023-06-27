@@ -30,6 +30,7 @@ import {
 } from 'firebase/firestore';
 import db from '../../firebase/db';
 import { DB } from '../../enums/db';
+import TransactionButton from './TransactionButton';
 
 function Chat({ route }: ChatNavigationProps) {
   const { user } = useContext(UserContext);
@@ -166,6 +167,9 @@ function Chat({ route }: ChatNavigationProps) {
     <ActivityIndicator className="mt-5" size="large" />
   );
   const renderButton = isSending ? <ActivityIndicator /> : <ArrowIcon />;
+  const renderTransactionButton = user?.email === transaction.sellerEmail && (
+    <TransactionButton transaction={transaction} />
+  );
 
   return (
     <AuthWrapper>
@@ -186,6 +190,7 @@ function Chat({ route }: ChatNavigationProps) {
             data={messages}
             renderItem={({ item }) => handleRender(item)}
           />
+          {renderTransactionButton}
           <View className="h-24 flex-row items-center bg-white p-4">
             <View className="mr-4">
               <TouchableOpacity>

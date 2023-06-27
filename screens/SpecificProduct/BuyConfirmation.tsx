@@ -1,5 +1,5 @@
 import { View, Text, TouchableOpacity } from 'react-native';
-import React from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import useGoBack from '../../hooks/useGoBack';
 import ReturnIcon from '../../components/icons/ReturnIcon';
 import ContentWrapper from '../../components/ContentWrapper';
@@ -8,20 +8,70 @@ import UniHubIcon from '../../components/icons/UniHubIcon';
 import ProgressBar from '../../components/progressbar/ProgressBar';
 import ChatIcon from '../../components/icons/ChatIcon';
 import { formatTime } from '../../helpers/date';
-import { Timestamp } from 'firebase/firestore';
+import { Timestamp, doc, onSnapshot } from 'firebase/firestore';
 import { Routes } from '../../enums/routes';
 import { BuyNavigationProps } from '../../types/navigation';
+import UserContext from '../../context/UserContext';
+import db from '../../firebase/db';
+import { DB } from '../../enums/db';
+import { getTransactionDocID } from '../../helpers/message';
+import { Transaction } from '../../types/transaction';
 
 function Buy({ route, navigation }: BuyNavigationProps) {
   const { product, transaction } = route.params;
+
+  const { user } = useContext(UserContext);
+
+  const [transactionState, setTransactionState] =
+    useState<Transaction>(transaction);
+  const [transactionID, setTransactionID] = useState('');
 
   const dateObject = (product.meetup.time as unknown as Timestamp).toDate();
 
   const goBack = useGoBack();
 
   function goToChat() {
-    navigation.navigate(Routes.CHAT, { transaction: transaction });
+    navigation.navigate(Routes.CHAT, { transaction: transactionState });
   }
+
+  useEffect(() => {
+    if (!user) {
+      return;
+    }
+
+    (async () => {
+      if (!user.email) {
+        return;
+      }
+
+      const transactID = await getTransactionDocID(user.email, transaction);
+      setTransactionID(transactID);
+    })();
+  }, [user]);
+
+  useEffect(() => {
+    if (!user || !transactionID) {
+      return;
+    }
+
+    const transactionDocRef = doc(
+      db,
+      DB.USERS,
+      user.uid,
+      DB.TRANSACTIONS,
+      transactionID
+    );
+
+    const unsubscribe = onSnapshot(transactionDocRef, (doc) => {
+      setTransactionState(doc.data() as Transaction);
+    });
+
+    return () => unsubscribe();
+  }, [user, transactionID]);
+
+  const renderNotificationBubble = !transactionState.isSeen && (
+    <View className="absolute right-0 top-0 z-20 rounded-full bg-red-600 p-2" />
+  );
 
   return (
     <ContentWrapper hasHeader={false}>
@@ -35,12 +85,11 @@ function Buy({ route, navigation }: BuyNavigationProps) {
         <View className="h-28 w-28 items-center justify-center self-center rounded-full bg-white shadow shadow-primary-300">
           <UniHubIcon />
         </View>
-        <ProgressBar />
-        <View className="h-24 w-full flex-row items-center justify-center bg-secondary-400">
-          <Text className="absolute left-8 text-base font-medium">
-            Chat your seller
-          </Text>
-          <TouchableOpacity className="absolute right-6" onPress={goToChat}>
+        <ProgressBar transaction={transactionState} />
+        <View className="h-24 w-full flex-row items-center justify-between bg-secondary-400 px-8">
+          <Text className="font-medium">Chat your seller</Text>
+          <TouchableOpacity className="relative" onPress={goToChat}>
+            {renderNotificationBubble}
             <ChatIcon />
           </TouchableOpacity>
         </View>
