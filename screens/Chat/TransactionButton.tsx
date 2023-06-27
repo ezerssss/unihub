@@ -75,7 +75,7 @@ export default function TransactionButton(props: PropsInterface) {
       await updateDoc(buyerDocRef, { status: newStatus, isSeen: false });
 
       const message: Message = {
-        content: getStatusSellerText(newStatus, transaction.product.seller),
+        content: getStatusSellerText(newStatus, user.displayName ?? '-'),
         from: user.email ?? '-',
         date: new Date(),
       };
