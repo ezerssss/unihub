@@ -28,7 +28,6 @@ interface PropsInterface {
 export default function TransactionButton(props: PropsInterface) {
   const { transaction } = props;
   const { status, buyerEmail, sellerEmail, product } = transaction;
-  const { title } = product;
   const { user } = useContext(UserContext);
 
   const [isLoading, setIsLoading] = useState(false);
@@ -44,25 +43,6 @@ export default function TransactionButton(props: PropsInterface) {
 
     try {
       setIsLoading(true);
-
-      const transactionCollectionRef = collection(db, DB.TRANSACTIONS);
-      const transactionQuery = query(
-        transactionCollectionRef,
-        where('buyerEmail', '==', buyerEmail),
-        where('sellerEmail', '==', sellerEmail),
-        where('product.title', '==', title)
-      );
-
-      const querySnapshot = await getDocs(transactionQuery);
-
-      if (querySnapshot.empty) {
-        return;
-      }
-
-      const transactionID = querySnapshot.docs[0].id;
-      const transactionRef = doc(db, DB.TRANSACTIONS, transactionID);
-
-      await updateDoc(transactionRef, { status: newStatus });
 
       const sellerTransactionDocID = await getTransactionDocID(
         sellerEmail,
