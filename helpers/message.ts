@@ -107,7 +107,7 @@ export async function sendMessage(
       otherEmail = buyerEmail;
     }
     const otherUID = await getUserDocID(otherEmail);
-    await handleDBUpdate(transaction, chat, sellerEmail, otherUID, false);
+    await handleDBUpdate(transaction, chat, otherEmail, otherUID, false);
   } catch (error) {
     console.error(error);
     throw new Error('Something went wrong with sending your message.');
