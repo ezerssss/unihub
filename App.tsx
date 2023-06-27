@@ -17,6 +17,7 @@ import { User } from 'firebase/auth';
 import Category from './screens/Category/Category';
 import ProductSold from './screens/SpecificProduct/ProductSold';
 import Transactions from './screens/Transactions/Transactions';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 const Stack = createNativeStackNavigator<RootStackParamsList>();
 
@@ -26,7 +27,7 @@ export default function App() {
 
   return (
     <UserContext.Provider value={userContextValue}>
-      <View className="flex-1">
+      <SafeAreaProvider className="flex-1">
         <StatusBar style="auto" />
         <NavigationContainer>
           <Stack.Navigator>
@@ -45,7 +46,7 @@ export default function App() {
             <Stack.Screen component={Transactions} name={Routes.TRANSACTIONS} />
           </Stack.Navigator>
         </NavigationContainer>
-      </View>
+      </SafeAreaProvider>
     </UserContext.Provider>
   );
 }
