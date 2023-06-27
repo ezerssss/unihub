@@ -108,12 +108,12 @@ export default function TransactionButton(props: PropsInterface) {
       const userProductsRef = collection(db, DB.USERS, user.uid, DB.PRODUCTS);
       const qProducts = query(
         productsRef,
-        where('product.title', '==', product.title),
+        where('title', '==', product.title),
         where('seller', '==', product.seller)
       );
       const qUsers = query(
         userProductsRef,
-        where('product.title', '==', product.title),
+        where('title', '==', product.title),
         where('seller', '==', product.seller)
       );
 
@@ -121,6 +121,8 @@ export default function TransactionButton(props: PropsInterface) {
       const qUsersSnapshot = await getDocs(qUsers);
 
       if (qProductsSnapshot.empty || qUsersSnapshot.empty) {
+        // eslint-disable-next-line no-console
+        console.log('bitch');
         return;
       }
 
