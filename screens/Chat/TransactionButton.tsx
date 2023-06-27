@@ -109,12 +109,12 @@ export default function TransactionButton(props: PropsInterface) {
       const qProducts = query(
         productsRef,
         where('product.title', '==', product.title),
-        where('sellerEmail', '==', sellerEmail)
+        where('seller', '==', product.seller)
       );
       const qUsers = query(
         userProductsRef,
         where('product.title', '==', product.title),
-        where('sellerEmail', '==', sellerEmail)
+        where('seller', '==', product.seller)
       );
 
       const qProductsSnapshot = await getDocs(qProducts);
