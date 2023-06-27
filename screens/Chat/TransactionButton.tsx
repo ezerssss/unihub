@@ -138,7 +138,13 @@ export default function TransactionButton(props: PropsInterface) {
       const productRef = doc(db, DB.PRODUCTS, productsDocID);
 
       const userProductsDocId = qUsersSnapshot.docs[0].id;
-      const userProductRef = doc(db, DB.USERS, user.uid, userProductsDocId);
+      const userProductRef = doc(
+        db,
+        DB.USERS,
+        user.uid,
+        DB.PRODUCTS,
+        userProductsDocId
+      );
 
       await deleteDoc(productRef);
       await deleteDoc(userProductRef);
