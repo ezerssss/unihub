@@ -1,5 +1,11 @@
 import React, { useState } from 'react';
-import { View, TextInput, TouchableOpacity } from 'react-native';
+import {
+  View,
+  TextInput,
+  TouchableOpacity,
+  NativeSyntheticEvent,
+  TextInputKeyPressEventData,
+} from 'react-native';
 import { SearchIcon } from './icons';
 
 interface SearchProps {
@@ -15,14 +21,12 @@ function Search(props: SearchProps) {
   }
 
   return (
-    <View className="mx-2 flex-1 flex-row items-center justify-center rounded-full bg-white px-2 py-3">
-      <TouchableOpacity onPress={handleSearch}>
-        <View className="ml-1 mr-3">
-          <SearchIcon />
-        </View>
-      </TouchableOpacity>
+    <View className="flex-1 flex-row items-center justify-center rounded-full bg-white px-3 py-1">
+      <View className="ml-3">
+        <SearchIcon />
+      </View>
       <TextInput
-        className="w-10/12 text-black"
+        className="w-full text-black"
         placeholder="Search for products"
         value={searchQuery}
         onChangeText={setSearchQuery}
