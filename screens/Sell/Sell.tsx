@@ -167,7 +167,7 @@ export default function Sell({ navigation }: RootNavigationProps) {
         title,
         price: parseFloat(price),
         description,
-        category: selectedCategory,
+        category: selectedCategory as Categories,
         meetup: {
           time,
           location,

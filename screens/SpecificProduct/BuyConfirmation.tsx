@@ -1,6 +1,5 @@
-import { View, Text, TouchableOpacity } from 'react-native';
+import { View, Text, TouchableOpacity, BackHandler } from 'react-native';
 import React, { useContext, useEffect, useState } from 'react';
-import useGoBack from '../../hooks/useGoBack';
 import ReturnIcon from '../../components/icons/ReturnIcon';
 import ContentWrapper from '../../components/ContentWrapper';
 import Footer from '../../components/OrderConfirmationFooter/footer';
@@ -28,11 +27,31 @@ function Buy({ route, navigation }: BuyNavigationProps) {
 
   const dateObject = (product.meetup.time as unknown as Timestamp).toDate();
 
-  const goBack = useGoBack();
+  function handleBack() {
+    const { index, routes } = navigation.getState();
+
+    if (index > 0 && routes[index - 1].name === Routes.TRANSACTIONS) {
+      navigation.goBack();
+      return true;
+    }
+
+    navigation.navigate(Routes.HOME);
+
+    return true;
+  }
 
   function goToChat() {
     navigation.navigate(Routes.CHAT, { transaction: transactionState });
   }
+
+  useEffect(() => {
+    const backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      handleBack
+    );
+
+    return () => backHandler.remove();
+  }, []);
 
   useEffect(() => {
     if (!user) {
@@ -77,7 +96,7 @@ function Buy({ route, navigation }: BuyNavigationProps) {
     <ContentWrapper hasHeader={false}>
       <View className="flex-1">
         <View className="mx-3 flex-row items-center justify-center py-12">
-          <TouchableOpacity className="absolute left-0" onPress={goBack}>
+          <TouchableOpacity className="absolute left-0" onPress={handleBack}>
             <ReturnIcon />
           </TouchableOpacity>
           <Text className="text-xl font-semibold">Order Update</Text>
