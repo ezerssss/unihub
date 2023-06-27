@@ -20,7 +20,7 @@ import { Product } from '../../types/product';
 import { RootNavigationProps } from '../../types/navigation';
 import { Routes } from '../../enums/routes';
 import { formatNumber } from '../../helpers/number';
-import { getStatusColor, getStatusText } from '../../helpers/status';
+import TransactionStatus from './TransactionStatus';
 
 export default function Transactions({ navigation }: RootNavigationProps) {
   const { user } = useContext(UserContext);
@@ -100,9 +100,7 @@ export default function Transactions({ navigation }: RootNavigationProps) {
           <Text className="text-gray-500">₱{formatNumber(price)}</Text>
           <View className="mt-3 flex-row flex-wrap">
             <Text className="font-bold">Status: </Text>
-            <Text className={`${getStatusColor(status)}`}>
-              {getStatusText(status)}
-            </Text>
+            <TransactionStatus status={status} />
           </View>
           <View className="flex-row">
             <Text className="font-bold">Messages: </Text>
