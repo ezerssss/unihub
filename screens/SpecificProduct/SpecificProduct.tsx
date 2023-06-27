@@ -1,5 +1,5 @@
 import { View, Text, ScrollView, TouchableOpacity } from 'react-native';
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useContext } from 'react';
 import ProductCarousel from './ProductCarousel';
 import ContentWrapper from '../../components/ContentWrapper';
 import { formatTime } from '../../helpers/date';
@@ -33,15 +33,6 @@ function SpecificProduct({ route, navigation }: ProductNavigationProps) {
   const { user } = useContext(UserContext);
 
   const [showFullDescription, setShowFullDescription] = useState(false);
-  const [descriptionLines, setDescriptionLines] = useState<number | undefined>(
-    undefined
-  );
-
-  useEffect(() => {
-    if (descriptionLines !== undefined && descriptionLines <= 2) {
-      setShowFullDescription(true);
-    }
-  }, [descriptionLines]);
 
   async function handleChatSetup(
     buyerName: string,
@@ -81,6 +72,11 @@ function SpecificProduct({ route, navigation }: ProductNavigationProps) {
   async function handleBuyOrder() {
     try {
       if (!user) {
+        return;
+      }
+
+      if (user.displayName === product.seller) {
+        alert("You can't buy your own product.");
         return;
       }
 
@@ -171,11 +167,6 @@ function SpecificProduct({ route, navigation }: ProductNavigationProps) {
     setShowFullDescription(!showFullDescription);
   }
 
-  function handleTextLayout(event: any) {
-    const { lines } = event.nativeEvent;
-    setDescriptionLines(lines.length);
-  }
-
   return (
     <AuthWrapper>
       <ContentWrapper hasHeader={false}>
@@ -199,24 +190,21 @@ function SpecificProduct({ route, navigation }: ProductNavigationProps) {
                   by {seller}
                 </Text>
               </View>
-              <View className="items-center px-5 pt-3 text-left">
+              <View className="items-center px-5 pt-3">
                 <Text
                   className="text-left text-xs font-light text-slate-500"
                   numberOfLines={showFullDescription ? undefined : 2}
-                  onTextLayout={handleTextLayout}
                 >
                   {description}
                 </Text>
-                {descriptionLines !== undefined && descriptionLines > 2 && (
-                  <TouchableOpacity
-                    className="mt-2 h-7 w-20 rounded-3xl bg-primary-100"
-                    onPress={toggleDescription}
-                  >
-                    <Text className="items-center pt-1 text-center text-xs font-normal text-white">
-                      {showFullDescription ? 'Read Less' : 'Read More'}
-                    </Text>
-                  </TouchableOpacity>
-                )}
+                <TouchableOpacity
+                  className="mt-2 h-7 w-20 rounded-3xl bg-primary-100"
+                  onPress={toggleDescription}
+                >
+                  <Text className="items-center pt-1 text-center text-xs font-normal text-white">
+                    {showFullDescription ? 'Read Less' : 'Read More'}
+                  </Text>
+                </TouchableOpacity>
               </View>
               <View className="h-5 w-20 bg-white"></View>
               <View className="h-24 w-screen bg-secondary-400">
