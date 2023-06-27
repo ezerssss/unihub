@@ -19,10 +19,11 @@ import auth from '../../firebase/auth';
 import * as WebBrowser from 'expo-web-browser';
 import AuthWrapper from '../../components/AuthWrapper';
 import UserContext from '../../context/UserContext';
+import { RootNavigationProps } from '../../types/navigation';
 
 WebBrowser.maybeCompleteAuthSession();
 
-function Login() {
+function Login({ navigation }: RootNavigationProps) {
   const { user } = useContext(UserContext);
 
   const [request, response, promptAsync] = Google.useIdTokenAuthRequest({
@@ -38,6 +39,8 @@ function Login() {
   useEffect(() => {
     if (!user) {
       setIsLoading(false);
+    } else {
+      navigation.popToTop();
     }
   }, [user]);
 
