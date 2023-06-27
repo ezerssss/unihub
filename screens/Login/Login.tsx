@@ -39,7 +39,7 @@ function Login({ navigation }: RootNavigationProps) {
   useEffect(() => {
     if (!user) {
       setIsLoading(false);
-    } else {
+    } else if (user && navigation.getState().index > 0) {
       navigation.popToTop();
     }
   }, [user]);
