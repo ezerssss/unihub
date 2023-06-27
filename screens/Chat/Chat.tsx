@@ -171,6 +171,11 @@ function Chat({ route }: ChatNavigationProps) {
     <TransactionButton transaction={transaction} />
   );
 
+  let otherName = seller;
+  if (otherName === user?.displayName) {
+    otherName = transaction.buyer;
+  }
+
   return (
     <AuthWrapper>
       <ContentWrapper hasHeader={false}>
@@ -181,7 +186,9 @@ function Chat({ route }: ChatNavigationProps) {
                 <ReturnIcon />
               </TouchableOpacity>
             </View>
-            <Text className="text-2xl font-bold text-gray-900">{seller}</Text>
+            <Text className="text-2xl font-bold text-gray-900">
+              {otherName}
+            </Text>
           </View>
           {renderLoading}
           <FlatList
