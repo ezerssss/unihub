@@ -1,4 +1,11 @@
-import { View, Text, ScrollView, TouchableOpacity } from 'react-native';
+import {
+  View,
+  Text,
+  ScrollView,
+  TouchableOpacity,
+  NativeSyntheticEvent,
+  TextLayoutEventData,
+} from 'react-native';
 import React, { useState, useContext } from 'react';
 import ProductCarousel from './ProductCarousel';
 import ContentWrapper from '../../components/ContentWrapper';
@@ -33,6 +40,7 @@ function SpecificProduct({ route, navigation }: ProductNavigationProps) {
   const { user } = useContext(UserContext);
 
   const [showFullDescription, setShowFullDescription] = useState(false);
+  const [showSeeMore, setShowSeeMore] = useState(false);
 
   async function handleChatSetup(
     buyerName: string,
@@ -167,78 +175,92 @@ function SpecificProduct({ route, navigation }: ProductNavigationProps) {
     setShowFullDescription(!showFullDescription);
   }
 
+  function handleTextLayout(event: NativeSyntheticEvent<TextLayoutEventData>) {
+    const numberOfLines = event.nativeEvent.lines.length;
+
+    if (numberOfLines > 2) {
+      setShowSeeMore(true);
+    }
+  }
+
+  const renderSeeMore = showSeeMore && (
+    <TouchableOpacity
+      className="mt-2 h-7 w-20 rounded-3xl bg-primary-100"
+      onPress={toggleDescription}
+    >
+      <Text className="items-center pt-1 text-center text-xs font-normal text-white">
+        {showFullDescription ? 'Read Less' : 'Read More'}
+      </Text>
+    </TouchableOpacity>
+  );
+
   return (
     <AuthWrapper>
       <ContentWrapper hasHeader={false}>
-        <View className="pt-10">
-          <TouchableOpacity
-            className="absolute left-7 top-20 z-20"
-            onPress={goBack}
-          >
-            <AntDesign color="black" name="left" size={30} />
-          </TouchableOpacity>
-          <ScrollView className="flex-grow">
+        <ScrollView
+          contentContainerStyle={{
+            flexGrow: 1,
+            justifyContent: 'space-between',
+            flexDirection: 'column',
+          }}
+        >
+          <View className="flex-1 justify-start pt-10">
+            <TouchableOpacity
+              className="absolute left-5 top-14 z-20 rounded-full bg-primary-100 p-2"
+              onPress={goBack}
+            >
+              <AntDesign color="white" name="left" size={30} />
+            </TouchableOpacity>
             <View className="px-2">
               <ProductCarousel images={images} />
             </View>
-            <View className="pb-20">
-              <View className="relative pl-6 pt-6">
-                <Text className="max-w-[66%] text-2xl font-semibold">
-                  {title}
-                </Text>
-                <Text className="absolute right-6 top-8 text-xs">
-                  by {seller}
-                </Text>
-              </View>
-              <View className="px-6 pt-3">
-                <Text
-                  className="text-left text-xs font-light text-slate-500"
-                  numberOfLines={showFullDescription ? undefined : 2}
-                >
-                  {description}
-                </Text>
-                <TouchableOpacity
-                  className="mt-2 h-7 w-20 rounded-3xl bg-primary-100"
-                  onPress={toggleDescription}
-                >
-                  <Text className="items-center pt-1 text-center text-xs font-normal text-white">
-                    {showFullDescription ? 'Read Less' : 'Read More'}
-                  </Text>
-                </TouchableOpacity>
-              </View>
-              <View className="h-5 w-20 bg-white"></View>
-              <View className="h-24 w-screen bg-secondary-400">
-                <Text className="items-center py-9 pl-6 text-base font-semibold">
-                  ₱{formatNumber(product.price)}
-                </Text>
-              </View>
-              <View className="h-52 bg-white">
-                <Text className="absolute pl-6 pt-8 text-base font-medium text-black">
-                  Meetup Details
-                </Text>
-                <View className="mx-4 mt-20 w-fit self-start rounded-3xl bg-primary-400">
-                  <Text className="px-4 py-3 text-left text-xs font-normal text-white">
-                    Meetup at {location}
-                  </Text>
-                </View>
-                <View className="mx-4 mt-6 w-fit self-start rounded-3xl bg-primary-400">
-                  <Text className="px-4 py-3 text-left text-xs font-normal text-white">
-                    Preferred Time of Meetup: {formatTime(dateObject)}
-                  </Text>
-                </View>
-              </View>
-              <View className="h-12 w-20 bg-white"></View>
-              <TouchableOpacity
-                className="absolute bottom-0 left-0 right-0 h-20 items-center bg-amber-300"
-                onPress={handleBuyOrder}
-              >
-                <Text className="py-6 text-2xl font-extrabold text-white">
-                  Buy
-                </Text>
-              </TouchableOpacity>
+            <View className="relative pl-6 pt-6">
+              <Text className="max-w-[66%] text-2xl font-semibold">
+                {title}
+              </Text>
+              <Text className="absolute right-6 top-8 text-xs">
+                by {seller}
+              </Text>
             </View>
-          </ScrollView>
-        </View>
+            <View className="px-6 pt-3">
+              <Text
+                className="text-left text-xs font-light text-slate-500"
+                numberOfLines={showFullDescription ? undefined : 2}
+                onTextLayout={handleTextLayout}
+              >
+                {description}
+              </Text>
+              {renderSeeMore}
+            </View>
+            <View className="h-5 w-20 bg-white"></View>
+            <View className="h-24 w-screen bg-secondary-400">
+              <Text className="items-center py-9 pl-6 text-base font-semibold">
+                ₱{formatNumber(product.price)}
+              </Text>
+            </View>
+            <View className="h-52 bg-white">
+              <Text className="absolute pl-6 pt-8 text-base font-medium text-black">
+                Meetup Details
+              </Text>
+              <View className="mx-4 mt-20 w-fit self-start rounded-3xl bg-primary-400">
+                <Text className="px-4 py-3 text-left text-xs font-normal text-white">
+                  Meetup at {location}
+                </Text>
+              </View>
+              <View className="mx-4 mt-6 w-fit self-start rounded-3xl bg-primary-400">
+                <Text className="px-4 py-3 text-left text-xs font-normal text-white">
+                  Preferred Time of Meetup: {formatTime(dateObject)}
+                </Text>
+              </View>
+            </View>
+          </View>
+          <TouchableOpacity
+            className="mt-5 h-20 items-center bg-amber-300"
+            onPress={handleBuyOrder}
+          >
+            <Text className="py-6 text-2xl font-extrabold text-white">Buy</Text>
+          </TouchableOpacity>
+        </ScrollView>
       </ContentWrapper>
     </AuthWrapper>
   );
