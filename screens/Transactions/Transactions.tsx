@@ -116,7 +116,7 @@ export default function Transactions({ navigation }: RootNavigationProps) {
   const renderLoading = isLoading && <ActivityIndicator size="large" />;
   const renderNoOrders = !isLoading && !orders.length && (
     <Text className="mx-3 text-sm text-gray-400">
-      You do not have any orders,
+      You do not have any orders.
     </Text>
   );
   const renderNoListings = !isLoading && !listings.length && (
