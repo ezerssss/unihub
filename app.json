@@ -24,7 +24,7 @@
         "backgroundColor": "#ffffff"
       },
       "package": "com.unihubteam.unihub",
-      "versionCode": 4
+      "versionCode": 5
     },
     "web": {
       "favicon": "./assets/favicon.png"
