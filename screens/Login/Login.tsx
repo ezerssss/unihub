@@ -27,8 +27,7 @@ function Login({ navigation }: RootNavigationProps) {
   const { user } = useContext(UserContext);
 
   const [request, response, promptAsync] = Google.useIdTokenAuthRequest({
-    clientId:
-      '1008577757913-o6a7v8l3ieur5ig8qlqsbq19j1unj9e9.apps.googleusercontent.com',
+    clientId: process.env.OAUTH_CLIENT_ID,
   });
   const [isLoading, setIsLoading] = useState(false);
 
