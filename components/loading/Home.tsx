@@ -27,10 +27,10 @@ export default function HomeLoading() {
     <ContentWrapper hasHeader={true}>
       <View className="flex-1 p-2">
         <Animated.View
-          className="mx-2 my-10 rounded-2xl bg-gray-200"
-          style={{ height: 250, opacity: opacityValue }}
+          className="m-2 h-44 rounded-2xl bg-gray-200"
+          style={{ opacity: opacityValue }}
         />
-        <View className="mx-2 mb-8 flex-row items-center justify-center">
+        <View className="mx-2 mt-8 flex-row items-center justify-center">
           <Animated.View
             className="m-2 h-28 w-28 rounded-xl bg-gray-200 py-5"
             style={{ opacity: opacityValue }}

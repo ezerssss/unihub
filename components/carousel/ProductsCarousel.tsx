@@ -32,22 +32,20 @@ function ProductsCarousel(props: ProductsCarouselProps) {
 
   const renderProducts = products.map((product) => {
     return (
-      <View className="mx-3 mt-5" key={product.images[0]}>
+      <View className="mx-2 mt-5" key={product.images[0]}>
         <View className="overflow-hidden rounded-lg">
           <TouchableOpacity onPress={() => goToSpecificProduct(product)}>
             <Image
-              className="h-40 w-40"
+              className="h-32 w-32"
               resizeMode="cover"
               source={{ uri: product.images[0] }}
             />
           </TouchableOpacity>
         </View>
-        <Text className="mt-3 w-40 text-lg" numberOfLines={1}>
+        <Text className="mt-3 w-32 text-lg" numberOfLines={1}>
           {product.title}
         </Text>
-        <Text className="text-lg font-bold">
-          ₱{formatNumber(product.price)}
-        </Text>
+        <Text className="font-bold">₱{formatNumber(product.price)}</Text>
       </View>
     );
   });

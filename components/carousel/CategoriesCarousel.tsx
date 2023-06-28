@@ -22,7 +22,7 @@ function CategoriesCarousel(props: CategoriesCarouselProps) {
   }
 
   const renderCategories = categories.map((category) => (
-    <View className="mx-3 mt-5" key={category.id}>
+    <View className="mx-2 mt-5" key={category.id}>
       <View className="overflow-hidden rounded-lg">
         <TouchableOpacity
           onPress={() => {
@@ -30,13 +30,15 @@ function CategoriesCarousel(props: CategoriesCarouselProps) {
           }}
         >
           <Image
-            className="h-24 w-24"
+            className="h-20 w-20"
             resizeMode="cover"
             source={{ uri: category.image }}
           />
         </TouchableOpacity>
       </View>
-      <Text className="mt-3 text-sm">{category.name}</Text>
+      <Text className="mt-3 w-20 text-sm" numberOfLines={1}>
+        {category.name}
+      </Text>
     </View>
   ));
 
