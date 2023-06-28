@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 import auth from '../firebase/auth';
 import { Routes } from '../enums/routes';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -12,6 +12,7 @@ import db from '../firebase/db';
 import { DB } from '../enums/db';
 import UserContext from '../context/UserContext';
 import { isEmailValid } from '../helpers/auth';
+import { useFocusEffect } from '@react-navigation/native';
 
 interface PropsInterface {
   children: JSX.Element | JSX.Element[];
@@ -19,7 +20,7 @@ interface PropsInterface {
 
 export default function AuthWrapper(props: PropsInterface) {
   const { children } = props;
-  const { setUser } = useContext(UserContext);
+  const { user, setUser } = useContext(UserContext);
 
   const [isLoading, setIsLoading] = useState(true);
 
@@ -63,6 +64,14 @@ export default function AuthWrapper(props: PropsInterface) {
     handleSetUser(user);
     navigation.navigate(Routes.HOME);
   }
+
+  useFocusEffect(
+    useCallback(() => {
+      if (!user) {
+        navigation.navigate(Routes.LOGIN);
+      }
+    }, [user, navigation])
+  );
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
