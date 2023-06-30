@@ -21,7 +21,7 @@ import {
 } from 'firebase/firestore';
 import { AntDesign } from '@expo/vector-icons';
 import { formatNumber } from '../../helpers/number';
-import useGoBack from '../../hooks/useGoBack';
+import useNavigate from '../../hooks/useNavigate';
 import { ProductLoading } from '../../components/loading';
 import AuthWrapper from '../../components/AuthWrapper';
 import { Routes } from '../../enums/routes';
@@ -159,7 +159,7 @@ function SpecificProduct({ route, navigation }: ProductNavigationProps) {
     }
   }
 
-  const goBack = useGoBack();
+  const navigate = useNavigate(Routes.HOME);
 
   if (!product) {
     return <ProductLoading />;
@@ -207,7 +207,7 @@ function SpecificProduct({ route, navigation }: ProductNavigationProps) {
           <View className="flex-1 justify-start pt-10">
             <TouchableOpacity
               className="absolute left-5 top-14 z-20 rounded-full bg-primary-100 p-2"
-              onPress={goBack}
+              onPress={navigate}
             >
               <AntDesign color="white" name="left" size={30} />
             </TouchableOpacity>
