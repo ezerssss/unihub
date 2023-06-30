@@ -99,7 +99,7 @@ function Login({ navigation }: RootNavigationProps) {
               </Text>
             </View>
             <TouchableOpacity
-              className="my-28 h-12 w-64 flex-row items-center justify-center rounded-3xl border bg-primary-400 p-2"
+              className="mt-28 h-12 w-64 flex-row items-center justify-center rounded-3xl border bg-primary-400 p-2"
               disabled={!request || isLoading}
               onPress={handleLogin}
             >
