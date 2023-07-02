@@ -62,7 +62,7 @@ function Login({ navigation }: RootNavigationProps) {
   async function handleLogin() {
     try {
       setIsLoading(true);
-      await promptAsync({ useProxy: true });
+      await promptAsync();
     } catch (error) {
       console.error(error);
       alert('Something went wrong with logging in.');
