@@ -28,6 +28,8 @@ function Login({ navigation }: RootNavigationProps) {
 
   const [request, response, promptAsync] = Google.useIdTokenAuthRequest({
     clientId: process.env.OAUTH_CLIENT_ID,
+    androidClientId: process.env.ANDROID_OAUTH_ID,
+    iosClientId: process.env.IOS_OAUTH_ID,
   });
   const [isLoading, setIsLoading] = useState(false);
 
