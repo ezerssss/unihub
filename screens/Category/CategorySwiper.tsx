@@ -1,16 +1,15 @@
-import React, { useEffect, useState, useContext } from 'react';
+import React, { useEffect, useState, useContext, useCallback } from 'react';
 import { View, Text, Image, ScrollView, TouchableOpacity } from 'react-native';
 import type { Product } from '../../types/product';
 import { formatNumber } from '../../helpers/number';
 import UserContext from '../../context/UserContext';
 import { Categories } from '../../enums/categories';
-import db from '../../firebase/db';
-import { DB } from '../../enums/db';
-import { collection, getDocs } from 'firebase/firestore';
 import { useNavigation } from '@react-navigation/native';
 import { RootStackParamsList } from '../../types/navigation';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { Routes } from '../../enums/routes';
+import { generateErrorMessage } from '../../helpers/error';
+import { getProductsByCategory } from '../../services/product';
 
 interface SwiperProps {
   category: Categories;
@@ -22,9 +21,7 @@ function CategorySwiper(props: SwiperProps) {
 
   const [products, setProducts] = useState<Product[]>([]);
 
-  function filterByCategory(current: Product): boolean {
-    return current.category === category;
-  }
+  const handleGetProducts = useCallback(getProductsByCategory, [category]);
 
   useEffect(() => {
     (async () => {
@@ -33,25 +30,11 @@ function CategorySwiper(props: SwiperProps) {
           return;
         }
 
-        const productsRef = collection(db, DB.PRODUCTS);
-        const querySnapshot = await getDocs(productsRef);
-
-        if (querySnapshot.empty) {
-          return;
-        }
-
-        const fetchedProducts: Product[] = [];
-        querySnapshot.forEach((doc) => {
-          fetchedProducts.push(doc.data() as Product);
-        });
-        const filteredProducts =
-          category === Categories.ALL
-            ? fetchedProducts
-            : fetchedProducts.filter(filterByCategory);
-        setProducts(filteredProducts);
+        const fetchedProducts = await handleGetProducts(category);
+        setProducts(fetchedProducts);
       } catch (error) {
-        console.error(error);
-        alert('Something went wrong with fetching your products.');
+        const message = generateErrorMessage('', error, false);
+        alert(message);
       }
     })();
   }, []);

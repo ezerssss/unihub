@@ -1,19 +1,11 @@
 import { View, Text, ScrollView, RefreshControl } from 'react-native';
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext, useCallback } from 'react';
 import ContentWrapper from '../../components/ContentWrapper';
 import ProductsCarousel from '../../components/carousel/ProductsCarousel';
 import CategoriesCarousel from '../../components/carousel/CategoriesCarousel';
 import { HomeLoading } from '../../components/loading';
 import { categories } from '../../data/category';
-import {
-  collection,
-  doc,
-  getDocs,
-  limit,
-  onSnapshot,
-  query,
-  where,
-} from 'firebase/firestore';
+import { collection, onSnapshot } from 'firebase/firestore';
 import { DB } from '../../enums/db';
 import db from '../../firebase/db';
 
@@ -24,6 +16,8 @@ import UserContext from '../../context/UserContext';
 import { RootNavigationProps } from '../../types/navigation';
 import { Routes } from '../../enums/routes';
 import Adverts from './Adverts';
+import { getRandomProducts } from '../../services/product';
+import { generateErrorMessage } from '../../helpers/error';
 
 function Home({ navigation }: RootNavigationProps) {
   const { user } = useContext(UserContext);
@@ -42,41 +36,16 @@ function Home({ navigation }: RootNavigationProps) {
     }
   }
 
-  async function getCheckThisOut() {
+  const getCheckThisOut = useCallback(async () => {
     try {
-      const productsCollectionRef = collection(db, DB.PRODUCTS);
+      const randomProducts = await getRandomProducts(checkThisOutLimit);
 
-      const randomDocID = doc(productsCollectionRef).id;
-
-      const productsQuery = query(
-        productsCollectionRef,
-        where('__name__', '>=', randomDocID),
-        limit(checkThisOutLimit)
-      );
-
-      let querySnapshot = await getDocs(productsQuery);
-
-      if (querySnapshot.size < checkThisOutLimit) {
-        const firstThreeQuery = query(
-          productsCollectionRef,
-          limit(checkThisOutLimit)
-        );
-        querySnapshot = await getDocs(firstThreeQuery);
-      }
-
-      const products: Product[] = [];
-
-      querySnapshot.forEach((doc) => {
-        if (doc.exists()) {
-          products.push(doc.data() as Product);
-        }
-      });
-
-      setProducts(products);
+      setProducts(randomProducts);
     } catch (error) {
-      console.error('Error getting products:', error);
+      const message = generateErrorMessage('', error, false);
+      alert(message);
     }
-  }
+  }, []);
 
   useEffect(() => {
     if (!user) {

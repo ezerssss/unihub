@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -17,22 +17,22 @@ import { Message } from '../../types/messages';
 import useGoBack from '../../hooks/useGoBack';
 import { formatTime } from '../../helpers/date';
 import AuthWrapper from '../../components/AuthWrapper';
-import { getTransactionDocID, sendMessage } from '../../helpers/message';
+import { getTransactionDocID } from '../../helpers/message';
 import { ChatNavigationProps } from '../../types/navigation';
 import UserContext from '../../context/UserContext';
 import {
   Timestamp,
   Unsubscribe,
   collection,
-  doc,
   onSnapshot,
   orderBy,
   query,
-  updateDoc,
 } from 'firebase/firestore';
 import db from '../../firebase/db';
 import { DB } from '../../enums/db';
 import TransactionButton from './TransactionButton';
+import { seenMessages, sendMessage } from '../../services/chat';
+import { generateErrorMessage } from '../../helpers/error';
 
 function Chat({ route }: ChatNavigationProps) {
   const { user } = useContext(UserContext);
@@ -48,47 +48,42 @@ function Chat({ route }: ChatNavigationProps) {
   const [isSending, setIsSending] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
+  const handleGetTransactionDocID = useCallback(getTransactionDocID, [
+    user?.email,
+    transaction,
+  ]);
+
   useEffect(() => {
-    if (!user) {
-      return;
-    }
-
     (async () => {
-      if (!user.email) {
-        return;
-      }
-
-      const transactID = await getTransactionDocID(user.email, transaction);
-      setTransactionID(transactID);
-    })();
-  }, [user]);
-
-  async function handleSeenMessages(unsubscribe: Unsubscribe) {
-    try {
       if (!user?.email) {
         return;
       }
 
-      const transactionDocID = await getTransactionDocID(
+      const transactID = await handleGetTransactionDocID(
         user.email,
         transaction
       );
+      setTransactionID(transactID);
+    })();
+  }, [user]);
 
-      const transactionDocRef = doc(
-        db,
-        DB.USERS,
-        user.uid,
-        DB.TRANSACTIONS,
-        transactionDocID
-      );
+  const handleSeenMessages = useCallback(
+    async (unsubscribe: Unsubscribe) => {
+      try {
+        if (!user?.email) {
+          return;
+        }
 
-      await updateDoc(transactionDocRef, { isSeen: true });
-    } catch (error) {
-      console.error(error);
-    } finally {
-      unsubscribe();
-    }
-  }
+        await seenMessages(user.email, user.uid, transaction);
+      } catch (error) {
+        const message = generateErrorMessage('', error, false);
+        alert(message);
+      } finally {
+        unsubscribe();
+      }
+    },
+    [user?.email, user?.uid, transaction]
+  );
 
   useEffect(() => {
     if (!user || !transactionID) {
@@ -122,27 +117,28 @@ function Chat({ route }: ChatNavigationProps) {
     };
   }, [user, transactionID]);
 
-  async function handleSend() {
-    setIsSending(true);
+  const handleSend = useCallback(async () => {
     if (inputText.trim() === '' || !user?.email) {
       return;
     }
 
-    const newMessage: Message = {
-      content: inputText,
-      from: user.email,
-      date: new Date(),
-    };
-
     try {
+      setIsSending(true);
       setInputText('');
+
+      const newMessage: Message = {
+        content: inputText,
+        from: user.email,
+        date: new Date(),
+      };
       await sendMessage(transaction, newMessage, user);
     } catch (error) {
-      alert((error as Error).message);
+      const message = generateErrorMessage('', error, false);
+      alert(message);
     } finally {
       setIsSending(false);
     }
-  }
+  }, [inputText, transaction, user]);
 
   function handleRender(message: Message) {
     const { content, from, date } = message;

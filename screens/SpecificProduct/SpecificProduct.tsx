@@ -11,14 +11,7 @@ import ProductCarousel from './ProductCarousel';
 import ContentWrapper from '../../components/ContentWrapper';
 import { formatTime } from '../../helpers/date';
 import { ProductNavigationProps } from '../../types/navigation';
-import {
-  Timestamp,
-  addDoc,
-  collection,
-  getDocs,
-  query,
-  where,
-} from 'firebase/firestore';
+import { Timestamp } from 'firebase/firestore';
 import { AntDesign } from '@expo/vector-icons';
 import { formatNumber } from '../../helpers/number';
 import useGoBack from '../../hooks/useGoBack';
@@ -26,56 +19,17 @@ import { ProductLoading } from '../../components/loading';
 import AuthWrapper from '../../components/AuthWrapper';
 import { Routes } from '../../enums/routes';
 import UserContext from '../../context/UserContext';
-import db from '../../firebase/db';
-import { DB } from '../../enums/db';
-
-import { User } from 'firebase/auth';
-import { Transaction } from '../../types/transaction';
-import { Message } from '../../types/messages';
-import { StatusEnum } from '../../enums/status';
+import { generateErrorMessage } from '../../helpers/error';
+import { buy } from '../../services/transaction';
 
 function SpecificProduct({ route, navigation }: ProductNavigationProps) {
   const { product, isRedirect } = route.params;
 
   const { user } = useContext(UserContext);
 
+  const [numberOfLines, setNumberOfLines] = useState(0);
   const [showFullDescription, setShowFullDescription] = useState(false);
   const [showSeeMore, setShowSeeMore] = useState(false);
-
-  async function handleChatSetup(
-    buyerName: string,
-    buyerEmail: string,
-    buyerUid: string,
-    buyerTransactionID: string,
-    sellerUid: string,
-    sellerTransactionID: string
-  ) {
-    const firstMessage: Message = {
-      content: `${buyerName} has sent a buy request.`,
-      from: buyerEmail,
-      date: new Date(),
-    };
-
-    const buyerChatRef = collection(
-      db,
-      DB.USERS,
-      buyerUid,
-      DB.TRANSACTIONS,
-      buyerTransactionID,
-      DB.CHATS
-    );
-    const sellerChatRef = collection(
-      db,
-      DB.USERS,
-      sellerUid,
-      DB.TRANSACTIONS,
-      sellerTransactionID,
-      DB.CHATS
-    );
-
-    await addDoc(buyerChatRef, firstMessage);
-    await addDoc(sellerChatRef, firstMessage);
-  }
 
   async function handleBuyOrder() {
     try {
@@ -88,74 +42,15 @@ function SpecificProduct({ route, navigation }: ProductNavigationProps) {
         return;
       }
 
-      const userRef = collection(db, DB.USERS);
-      const sellerQuery = query(
-        userRef,
-        where('displayName', '==', product.seller)
-      );
-
-      const sellerSnapshot = await getDocs(sellerQuery);
-      if (sellerSnapshot.empty) {
-        throw new Error('Seller not found');
-      }
-
-      const seller = sellerSnapshot.docs[0].data() as User;
-      const sellerEmail = seller.email ?? '';
-      const sellerUid = sellerSnapshot.docs[0].id;
-
-      const buyer = user;
-      const buyerDisplayName = buyer.displayName ?? '';
-      const buyerEmail = buyer?.email ?? '';
-
-      const transaction: Transaction = {
-        buyer: buyerDisplayName,
-        buyerEmail: buyerEmail,
-        date: new Date(),
-        isSeen: false,
-        lastMessage: `${buyerDisplayName} has sent a buy request.`,
-        product: product,
-        sellerEmail,
-        status: StatusEnum.CONFIRM,
-      };
-
-      // upload each transaction as field reference
-      const buyerRef = collection(db, DB.USERS, buyer.uid, DB.TRANSACTIONS);
-      const sellerRef = collection(db, DB.USERS, sellerUid, DB.TRANSACTIONS);
-
-      // if there is a pending transaction, do not add
-      const pendingTransactionQuery = query(
-        sellerRef,
-        where('product.title', '==', product.title),
-        where('sellerEmail', '==', sellerEmail),
-        where('buyerEmail', '==', buyerEmail)
-      );
-
-      const pendingTransactionSnapshot = await getDocs(pendingTransactionQuery);
-
-      if (!pendingTransactionSnapshot.empty) {
-        alert('You already have a pending transaction for this product.');
-        return;
-      }
-
-      const buyerTransactionDoc = await addDoc(buyerRef, transaction);
-      const sellerTransactionDoc = await addDoc(sellerRef, transaction);
-
-      await handleChatSetup(
-        buyerDisplayName,
-        buyerEmail,
-        buyer.uid,
-        buyerTransactionDoc.id,
-        sellerUid,
-        sellerTransactionDoc.id
-      );
+      const transaction = await buy(product, user);
 
       navigation.navigate(Routes.BUY, {
         product,
         transaction,
       });
     } catch (error) {
-      console.error(error);
-      alert('Something went wrong with posting your product.');
+      const message = generateErrorMessage('', error, false);
+      alert(message);
     }
   }
 
@@ -176,6 +71,7 @@ function SpecificProduct({ route, navigation }: ProductNavigationProps) {
   }
 
   function handleTextLayout(event: NativeSyntheticEvent<TextLayoutEventData>) {
+    setNumberOfLines(2);
     const numberOfLines = event.nativeEvent.lines.length;
 
     if (numberOfLines > 2) {
@@ -225,7 +121,7 @@ function SpecificProduct({ route, navigation }: ProductNavigationProps) {
             <View className="px-6 pt-3">
               <Text
                 className="text-left text-xs font-light text-slate-500"
-                numberOfLines={showFullDescription ? undefined : 2}
+                numberOfLines={showFullDescription ? undefined : numberOfLines}
                 onTextLayout={handleTextLayout}
               >
                 {description}
