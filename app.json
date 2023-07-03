@@ -16,7 +16,8 @@
     "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.unihubteam.unihub"
+      "bundleIdentifier": "com.unihubteam.unihub",
+      "buildNumber": "3"
     },
     "android": {
       "adaptiveIcon": {
