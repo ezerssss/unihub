@@ -5,14 +5,14 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamsList } from '../types/navigation';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { LoginLoading } from './loading';
-import { UserInterface } from '../types/user';
 import { User } from 'firebase/auth';
-import { doc, getDoc, setDoc } from 'firebase/firestore';
+import { doc, getDoc } from 'firebase/firestore';
 import db from '../firebase/db';
 import { DB } from '../enums/db';
 import UserContext from '../context/UserContext';
 import { isEmailValid } from '../helpers/auth';
 import { useFocusEffect } from '@react-navigation/native';
+import { recordUserToDB } from '../services/auth';
 
 interface PropsInterface {
   children: JSX.Element | JSX.Element[];
@@ -44,7 +44,7 @@ export default function AuthWrapper(props: PropsInterface) {
     }
   }
 
-  async function handleAddUserToDB(user: User) {
+  const handleAddUserToDB = useCallback(async (user: User) => {
     const docRef = doc(db, DB.USERS, user.uid);
     const isUserRecorded = await (await getDoc(docRef)).exists();
     if (isUserRecorded) {
@@ -53,17 +53,10 @@ export default function AuthWrapper(props: PropsInterface) {
       return;
     }
 
-    const userDocument: UserInterface = {
-      displayName: user.displayName ?? '-',
-      email: user.email ?? '-',
-    };
-    await setDoc(docRef, userDocument, {
-      merge: true,
-    });
-
+    await recordUserToDB(user);
     handleSetUser(user);
     navigation.navigate(Routes.HOME);
-  }
+  }, []);
 
   useFocusEffect(
     useCallback(() => {

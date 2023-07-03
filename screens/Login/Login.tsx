@@ -20,6 +20,7 @@ import * as WebBrowser from 'expo-web-browser';
 import AuthWrapper from '../../components/AuthWrapper';
 import UserContext from '../../context/UserContext';
 import { RootNavigationProps } from '../../types/navigation';
+import { generateErrorMessage } from '../../helpers/error';
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -65,7 +66,12 @@ function Login({ navigation }: RootNavigationProps) {
       await promptAsync();
     } catch (error) {
       console.error(error);
-      alert('Something went wrong with logging in.');
+      const message = generateErrorMessage(
+        'Something went wrong with logging in.',
+        error
+      );
+
+      alert(message);
     }
   }
 

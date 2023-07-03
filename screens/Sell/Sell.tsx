@@ -5,7 +5,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import React, { useContext, useState } from 'react';
+import React, { useCallback, useContext, useState } from 'react';
 import ContentWrapper from '../../components/ContentWrapper';
 import { AntDesign } from '@expo/vector-icons';
 import AddPhoto from './AddPhoto';
@@ -17,18 +17,15 @@ import { formatTime } from '../../helpers/date';
 import useGoBack from '../../hooks/useGoBack';
 import CategoryPicker from './CategoryPicker';
 import * as ImagePicker from 'expo-image-picker';
-import uuid from 'react-native-uuid';
-import { compressImage, uploadBlob } from '../../helpers/upload';
-import { Product } from '../../types/product';
-import { addDoc, collection } from 'firebase/firestore';
-import db from '../../firebase/db';
-import { DB } from '../../enums/db';
+import { compressImage } from '../../helpers/upload';
 import { Categories } from '../../enums/categories';
 import AuthWrapper from '../../components/AuthWrapper';
 import UserContext from '../../context/UserContext';
 import { RootNavigationProps } from '../../types/navigation';
 import { Routes } from '../../enums/routes';
 import { Alert } from 'react-native';
+import { sell } from '../../services/transaction';
+import { generateErrorMessage } from '../../helpers/error';
 
 export default function Sell({ navigation }: RootNavigationProps) {
   const goBack = useGoBack();
@@ -89,20 +86,6 @@ export default function Sell({ navigation }: RootNavigationProps) {
     setImageURIs([...updatedImageURIs]);
   }
 
-  async function handleUpload(): Promise<string[]> {
-    const photoURLs: string[] = [];
-
-    for (const uri of imageURIs) {
-      const id = uuid.v4();
-      const path = `products/${id}`;
-
-      const url = await uploadBlob(uri, path);
-      photoURLs.push(url);
-    }
-
-    return photoURLs;
-  }
-
   function showErrorPopup(message: string) {
     Alert.alert('Error', message);
   }
@@ -151,45 +134,31 @@ export default function Sell({ navigation }: RootNavigationProps) {
 
   async function handleSell() {
     try {
-      if (!user) {
+      if (!user || !handleInputValidation()) {
         return;
       }
 
-      if (!handleInputValidation()) {
-        return;
-      }
-
-      setIsUploading(true);
-      const images: string[] = await handleUpload();
-
-      const product: Product = {
-        images,
+      const product = await sell(
+        imageURIs,
         title,
-        price: parseFloat(price),
+        price,
         description,
-        category: selectedCategory as Categories,
-        meetup: {
-          time,
-          location,
-        },
-        seller: user?.displayName ?? '-',
-      };
-
-      const productsRef = collection(db, DB.PRODUCTS);
-      const userRef = collection(db, DB.USERS, user.uid, DB.PRODUCTS);
-
-      await addDoc(productsRef, product);
-      await addDoc(userRef, product);
+        selectedCategory,
+        time,
+        location,
+        user
+      );
       handleStateCleanUp();
       navigation.navigate(Routes.PRODUCT, { product, isRedirect: true });
     } catch (error) {
-      console.error(error);
-      showErrorPopup('Something went wrong with posting your product.');
+      const message = generateErrorMessage('', error, false);
+      showErrorPopup(message);
     } finally {
       setIsUploading(false);
     }
   }
-  function handleStateCleanUp() {
+
+  const handleStateCleanUp = useCallback(() => {
     setImageURIs(['', '', '']);
     setTitle('');
     setPrice('');
@@ -197,7 +166,7 @@ export default function Sell({ navigation }: RootNavigationProps) {
     setSelectedCategory('');
     setShowPreferredTime(false);
     setLocation('');
-  }
+  }, []);
 
   const renderTimePicker = showTimePicker && (
     <RNDateTimePicker
@@ -222,7 +191,7 @@ export default function Sell({ navigation }: RootNavigationProps) {
 
   return (
     <AuthWrapper>
-      <ContentWrapper hasHeader={false} hasLightStatusBar={true}>
+      <ContentWrapper hasLightStatusBar hasHeader={false}>
         <ScrollView
           className="bg-secondary-400"
           contentContainerStyle={{

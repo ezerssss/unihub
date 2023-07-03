@@ -5,15 +5,13 @@ import { formatNumber } from '../../helpers/number';
 import useGoBack from '../../hooks/useGoBack';
 import ContentWrapper from '../../components/ContentWrapper';
 import AuthWrapper from '../../components/AuthWrapper';
-import { useContext, useEffect, useState } from 'react';
+import { useCallback, useContext, useEffect, useState } from 'react';
 import { ProductListingLoading } from '../../components/loading';
 import UserContext from '../../context/UserContext';
 import { Product } from '../../types/product';
-import { collection, getDocs } from 'firebase/firestore';
-import db from '../../firebase/db';
-import { DB } from '../../enums/db';
 import { RootNavigationProps } from '../../types/navigation';
 import { Routes } from '../../enums/routes';
+import { getUserListings } from '../../services/product';
 
 function ProductListing({ navigation }: RootNavigationProps) {
   const { user } = useContext(UserContext);
@@ -22,6 +20,8 @@ function ProductListing({ navigation }: RootNavigationProps) {
   const [isLoading, setIsLoading] = useState(true);
   const [products, setProducts] = useState<Product[]>([]);
 
+  const handleGetUserListings = useCallback(getUserListings, [user]);
+
   useEffect(() => {
     (async () => {
       try {
@@ -29,17 +29,7 @@ function ProductListing({ navigation }: RootNavigationProps) {
           return;
         }
 
-        const userRef = collection(db, DB.USERS, user.uid, DB.PRODUCTS);
-        const querySnapshot = await getDocs(userRef);
-
-        if (querySnapshot.empty) {
-          return;
-        }
-
-        const fetchedProducts: Product[] = [];
-        querySnapshot.forEach((doc) => {
-          fetchedProducts.push(doc.data() as Product);
-        });
+        const fetchedProducts = await handleGetUserListings(user.uid);
         setProducts(fetchedProducts);
       } catch (error) {
         console.error(error);
