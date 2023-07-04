@@ -20,11 +20,13 @@ function ProgressBar(props: PropsInterface) {
     msg = 'Order successful, enjoy!';
   } else if (status === StatusEnum.DENY) {
     msg = 'Order denied by the seller.';
+  } else if (status === StatusEnum.CANCEL) {
+    msg = 'Order cancelled by the seller.';
   }
 
   function generateStyle(bar: number): string {
     let progress = 1;
-    if (status === StatusEnum.DENY) {
+    if (status === StatusEnum.DENY || status === StatusEnum.CANCEL) {
       progress = 0;
     } else if (status === StatusEnum.MEETUP) {
       progress = 2;

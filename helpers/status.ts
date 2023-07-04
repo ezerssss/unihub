@@ -7,6 +7,7 @@ export function getStatusText(status: StatusEnum): string {
     .with(StatusEnum.CONFIRM, () => 'Waiting for confirmation.')
     .with(StatusEnum.MEETUP, () => 'Meetup in progress.')
     .with(StatusEnum.SUCCESS, () => 'Order successful.')
+    .with(StatusEnum.CANCEL, () => 'Seller canceled the order.')
     .exhaustive();
 
   return text;
@@ -18,6 +19,7 @@ export function getStatusSellerText(status: StatusEnum, seller: string) {
     .with(StatusEnum.DENY, () => `${seller} denied your order.`)
     .with(StatusEnum.MEETUP, () => `${seller} agreed to meetup.`)
     .with(StatusEnum.SUCCESS, () => `${seller} marked the order as successful.`)
+    .with(StatusEnum.CANCEL, () => `${seller} cancelled the order.`)
     .exhaustive();
 
   return text;

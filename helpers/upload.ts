@@ -33,3 +33,11 @@ export async function compressImage(uri: string): Promise<string> {
     throw new Error('Something went wrong with compressing the image.');
   }
 }
+
+export function getImageID(url: string): string {
+  const { pathname } = new URL(url);
+
+  const productSplice = pathname.split('products%2F');
+
+  return productSplice[1];
+}

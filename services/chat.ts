@@ -28,8 +28,8 @@ export async function seenMessages(
   } catch (error) {
     console.error(error);
     const message = generateErrorMessage(
-      'Something went wrong with handling the messages.',
-      error
+      error,
+      'Something went wrong with handling the messages.'
     );
     throw new Error(message);
   }
@@ -97,8 +97,8 @@ export async function sendMessage(
   } catch (error) {
     console.error(error);
     const message = generateErrorMessage(
-      'Something went wrong with sending your message.',
-      error
+      error,
+      'Something went wrong with sending your message.'
     );
 
     throw new Error(message);

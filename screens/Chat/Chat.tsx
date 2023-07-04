@@ -76,7 +76,7 @@ function Chat({ route }: ChatNavigationProps) {
 
         await seenMessages(user.email, user.uid, transaction);
       } catch (error) {
-        const message = generateErrorMessage('', error, false);
+        const message = generateErrorMessage(error);
         alert(message);
       } finally {
         unsubscribe();
@@ -133,7 +133,7 @@ function Chat({ route }: ChatNavigationProps) {
       };
       await sendMessage(transaction, newMessage, user);
     } catch (error) {
-      const message = generateErrorMessage('', error, false);
+      const message = generateErrorMessage(error);
       alert(message);
     } finally {
       setIsSending(false);

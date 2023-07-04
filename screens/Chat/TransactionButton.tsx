@@ -37,7 +37,7 @@ export default function TransactionButton(props: PropsInterface) {
         await updateTransactionStatus(user, transaction, newStatus);
         setCurrentStatus(newStatus);
       } catch (error) {
-        const message = generateErrorMessage('', error, false);
+        const message = generateErrorMessage(error);
         alert(message);
       } finally {
         setIsLoading(false);
@@ -69,9 +69,9 @@ export default function TransactionButton(props: PropsInterface) {
 
     try {
       setIsLoading(true);
-      await deleteProduct(product, user.uid);
+      await deleteProduct(product, user);
     } catch (error) {
-      const message = generateErrorMessage('', error, false);
+      const message = generateErrorMessage(error);
       alert(message);
     } finally {
       setIsLoading(false);

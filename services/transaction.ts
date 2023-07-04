@@ -69,8 +69,8 @@ export async function updateTransactionStatus(
   } catch (error) {
     console.error(error);
     const message = generateErrorMessage(
-      'Something went wrong with updating the product.',
-      error
+      error,
+      'Something went wrong with updating the product.'
     );
 
     throw new Error(message);
@@ -113,8 +113,8 @@ export async function sell(
   } catch (error) {
     console.error(error);
     const message = generateErrorMessage(
-      'Something went wrong with posting your product.',
-      error
+      error,
+      'Something went wrong with posting your product.'
     );
 
     throw new Error(message);
@@ -195,8 +195,8 @@ export async function buy(product: Product, user: User): Promise<Transaction> {
     }
 
     const message = generateErrorMessage(
-      'Something went wrong with posting your product.',
-      error
+      error,
+      'Something went wrong with posting your product.'
     );
 
     throw new Error(message);

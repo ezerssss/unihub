@@ -33,7 +33,7 @@ function CategorySwiper(props: SwiperProps) {
         const fetchedProducts = await handleGetProducts(category);
         setProducts(fetchedProducts);
       } catch (error) {
-        const message = generateErrorMessage('', error, false);
+        const message = generateErrorMessage(error);
         alert(message);
       }
     })();
