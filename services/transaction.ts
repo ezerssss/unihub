@@ -250,7 +250,7 @@ export async function buy(product: Product, user: User): Promise<Transaction> {
   }
 }
 
-export async function getAllProductTransactions(
+export async function getAllProductTransactionsDocs(
   product: Product,
   user: User
 ): Promise<QueryDocumentSnapshot<DocumentData>[]> {

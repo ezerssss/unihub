@@ -20,7 +20,7 @@ import uuid from 'react-native-uuid';
 import { getImageID, uploadBlob } from '../helpers/upload';
 import { StatusEnum } from '../enums/status';
 import {
-  getAllProductTransactions,
+  getAllProductTransactionsDocs,
   updateTransactionProduct,
   updateTransactionStatus,
 } from './transaction';
@@ -65,7 +65,7 @@ async function deleteProductPhotos(product: Product) {
 
 async function cancelAllProductTransactions(product: Product, user: User) {
   try {
-    const allProductTransactionDocs = await getAllProductTransactions(
+    const allProductTransactionDocs = await getAllProductTransactionsDocs(
       product,
       user
     );
@@ -87,7 +87,7 @@ async function cancelAllProductTransactions(product: Product, user: User) {
 
 async function updateAllProductTransactions(product: Product, user: User) {
   try {
-    const allProductTransactionDocs = await getAllProductTransactions(
+    const allProductTransactionDocs = await getAllProductTransactionsDocs(
       product,
       user
     );
