@@ -16,8 +16,7 @@ import db from '../firebase/db';
 import { generateErrorMessage } from '../helpers/error';
 import { Product } from '../types/product';
 import { Categories } from '../enums/categories';
-import uuid from 'react-native-uuid';
-import { getImageID, uploadBlob } from '../helpers/upload';
+import { getImageID } from '../helpers/upload';
 import { StatusEnum } from '../enums/status';
 import {
   getAllProductTransactionsDocs,
@@ -28,22 +27,6 @@ import { User } from 'firebase/auth';
 import { Transaction } from '../types/transaction';
 import { deleteObject, ref } from 'firebase/storage';
 import storage from '../firebase/storage';
-
-export async function uploadProductPhotos(
-  imageURIs: string[]
-): Promise<string[]> {
-  const photoURLs: string[] = [];
-
-  for (const uri of imageURIs) {
-    const id = uuid.v4();
-    const path = `products/${id}`;
-
-    const url = await uploadBlob(uri, path);
-    photoURLs.push(url);
-  }
-
-  return photoURLs;
-}
 
 async function deleteProductPhotos(product: Product) {
   try {

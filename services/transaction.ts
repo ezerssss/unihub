@@ -21,9 +21,10 @@ import { Transaction } from '../types/transaction';
 import { sendMessage } from './chat';
 import { User } from 'firebase/auth';
 import { generateErrorMessage } from '../helpers/error';
-import { uploadProductPhotos } from './product';
 import { Categories } from '../enums/categories';
 import { Product } from '../types/product';
+import { uploadBlob } from '../helpers/upload';
+import uuid from 'react-native-uuid';
 
 interface BuyerAndSellerTransactionRef {
   buyerDocRef: DocumentReference<DocumentData>;
@@ -122,6 +123,20 @@ export async function updateTransactionStatus(
 
     throw new Error(message);
   }
+}
+
+async function uploadProductPhotos(imageURIs: string[]): Promise<string[]> {
+  const photoURLs: string[] = [];
+
+  for (const uri of imageURIs) {
+    const id = uuid.v4();
+    const path = `products/${id}`;
+
+    const url = await uploadBlob(uri, path);
+    photoURLs.push(url);
+  }
+
+  return photoURLs;
 }
 
 export async function sell(
