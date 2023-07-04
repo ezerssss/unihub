@@ -187,12 +187,14 @@ export async function getUserListings(uid: string): Promise<Product[]> {
   }
 }
 
-export async function checkUserProductDuplicate(
+export async function hasProductDuplicate(
   uid: string,
   title: string
 ): Promise<boolean> {
   const userProductsRef = collection(db, DB.USERS, uid, DB.PRODUCTS);
   const qProduct = query(userProductsRef, where('title', '==', title));
   const productSnap = await getDocs(qProduct);
+  limit(1);
+
   return !productSnap.empty;
 }

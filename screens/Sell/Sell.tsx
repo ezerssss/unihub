@@ -25,7 +25,7 @@ import UserContext from '../../context/UserContext';
 import { RootNavigationProps } from '../../types/navigation';
 import { Routes } from '../../enums/routes';
 import { sell } from '../../services/transaction';
-import { checkUserProductDuplicate } from '../../services/product';
+import { hasProductDuplicate } from '../../services/product';
 import { generateErrorMessage } from '../../helpers/error';
 
 export default function Sell({ navigation }: RootNavigationProps) {
@@ -138,7 +138,7 @@ export default function Sell({ navigation }: RootNavigationProps) {
       if (!user || !handleInputValidation()) {
         return;
       }
-      if (await checkUserProductDuplicate(user.uid, title)) {
+      if (await hasProductDuplicate(user.uid, title)) {
         Alert.alert(
           'Cannot have duplicate product',
           'Please rename your product.'
