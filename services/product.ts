@@ -192,9 +192,12 @@ export async function hasProductDuplicate(
   title: string
 ): Promise<boolean> {
   const userProductsRef = collection(db, DB.USERS, uid, DB.PRODUCTS);
-  const qProduct = query(userProductsRef, where('title', '==', title));
+  const qProduct = query(
+    userProductsRef,
+    where('title', '==', title),
+    limit(1)
+  );
   const productSnap = await getDocs(qProduct);
-  limit(1);
 
   return !productSnap.empty;
 }
