@@ -19,8 +19,8 @@ export async function recordUserToDB(user: User) {
   } catch (error) {
     console.error(error);
     const message = generateErrorMessage(
-      'Something went wrong with saving your account.',
-      error
+      error,
+      'Something went wrong with saving your account.'
     );
 
     throw new Error(message);

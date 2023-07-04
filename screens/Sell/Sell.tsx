@@ -151,7 +151,7 @@ export default function Sell({ navigation }: RootNavigationProps) {
       handleStateCleanUp();
       navigation.navigate(Routes.PRODUCT, { product, isRedirect: true });
     } catch (error) {
-      const message = generateErrorMessage('', error, false);
+      const message = generateErrorMessage(error);
       showErrorPopup(message);
     } finally {
       setIsUploading(false);

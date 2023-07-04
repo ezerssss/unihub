@@ -42,7 +42,7 @@ function Home({ navigation }: RootNavigationProps) {
 
       setProducts(randomProducts);
     } catch (error) {
-      const message = generateErrorMessage('', error, false);
+      const message = generateErrorMessage(error);
       alert(message);
     }
   }, []);

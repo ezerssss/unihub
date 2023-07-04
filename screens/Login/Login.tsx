@@ -67,8 +67,8 @@ function Login({ navigation }: RootNavigationProps) {
     } catch (error) {
       console.error(error);
       const message = generateErrorMessage(
-        'Something went wrong with logging in.',
-        error
+        error,
+        'Something went wrong with logging in.'
       );
 
       alert(message);

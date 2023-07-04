@@ -16,6 +16,7 @@ export default function TransactionStatus(props: PropsInterface) {
     .with(StatusEnum.CONFIRM, () => 'text-gray-400')
     .with(StatusEnum.MEETUP, () => 'text-yellow-500')
     .with(StatusEnum.SUCCESS, () => 'text-green-600')
+    .with(StatusEnum.CANCEL, () => 'text-red-600')
     .exhaustive();
 
   return <Text className={`${textColor}`}>{getStatusText(status)}</Text>;

@@ -15,7 +15,13 @@ import { generateErrorMessage } from '../helpers/error';
 import { Product } from '../types/product';
 import { Categories } from '../enums/categories';
 import uuid from 'react-native-uuid';
-import { uploadBlob } from '../helpers/upload';
+import { getImageID, uploadBlob } from '../helpers/upload';
+import { StatusEnum } from '../enums/status';
+import { updateTransactionStatus } from './transaction';
+import { User } from 'firebase/auth';
+import { Transaction } from '../types/transaction';
+import { deleteObject, ref } from 'firebase/storage';
+import storage from '../firebase/storage';
 
 export async function uploadProductPhotos(
   imageURIs: string[]
@@ -33,12 +39,64 @@ export async function uploadProductPhotos(
   return photoURLs;
 }
 
-export async function deleteProduct(product: Product, uid: string) {
+async function deleteProductPhotos(product: Product) {
+  try {
+    const { images } = product;
+
+    for (let i = 1; i < 3; i++) {
+      const imageID = getImageID(images[i]);
+      const imageRef = ref(storage, `products/${imageID}`);
+
+      await deleteObject(imageRef);
+    }
+  } catch (error) {
+    console.error(error);
+    const message = generateErrorMessage(error);
+
+    throw new Error(message);
+  }
+}
+
+async function cancelAllProductTransactions(product: Product, user: User) {
+  try {
+    const { title, seller } = product;
+
+    const sellerTransactionsRef = collection(
+      db,
+      DB.USERS,
+      user.uid,
+      DB.TRANSACTIONS
+    );
+    const transactionQuery = query(
+      sellerTransactionsRef,
+      where('product.title', '==', title),
+      where('product.seller', '==', seller),
+      where('status', '!=', StatusEnum.SUCCESS)
+    );
+
+    const transactionsSnapshot = await getDocs(transactionQuery);
+
+    if (transactionsSnapshot.empty) {
+      return;
+    }
+
+    for (const transactionDoc of transactionsSnapshot.docs) {
+      const transaction = transactionDoc.data() as Transaction;
+      await updateTransactionStatus(user, transaction, StatusEnum.CANCEL);
+    }
+  } catch (error) {
+    console.error(error);
+    const message = generateErrorMessage(error);
+    throw new Error(message);
+  }
+}
+
+export async function deleteProduct(product: Product, user: User) {
   try {
     const { title, seller } = product;
 
     const productsRef = collection(db, DB.PRODUCTS);
-    const userProductsRef = collection(db, DB.USERS, uid, DB.PRODUCTS);
+    const userProductsRef = collection(db, DB.USERS, user.uid, DB.PRODUCTS);
     const qProductsCollection = query(
       productsRef,
       where('title', '==', title),
@@ -64,18 +122,20 @@ export async function deleteProduct(product: Product, uid: string) {
     const userProductRef = doc(
       db,
       DB.USERS,
-      uid,
+      user.uid,
       DB.PRODUCTS,
       userProductsDocId
     );
 
     await deleteDoc(productRef);
     await deleteDoc(userProductRef);
+    await cancelAllProductTransactions(product, user);
+    await deleteProductPhotos(product);
   } catch (error) {
     console.error(error);
     const message = generateErrorMessage(
-      'Something went wrong with deleting your product.',
-      error
+      error,
+      'Something went wrong with deleting your product.'
     );
 
     throw new Error(message);
@@ -113,8 +173,8 @@ export async function getRandomProducts(size: number): Promise<Product[]> {
   } catch (error) {
     console.error(error);
     const message = generateErrorMessage(
-      'Something went wrong fetching the products.',
-      error
+      error,
+      'Something went wrong fetching the products.'
     );
 
     throw new Error(message);
@@ -153,8 +213,8 @@ export async function getProductsByCategory(
     console.error(error);
 
     const message = generateErrorMessage(
-      'Something went wrong with fetching the products.',
-      error
+      error,
+      'Something went wrong with fetching the products.'
     );
 
     throw new Error(message);
@@ -179,8 +239,8 @@ export async function getUserListings(uid: string): Promise<Product[]> {
   } catch (error) {
     console.error(error);
     const message = generateErrorMessage(
-      'Something went wrong with fetching your products.',
-      error
+      error,
+      'Something went wrong with fetching your products.'
     );
 
     throw new Error(message);

@@ -69,7 +69,7 @@ function SpecificProduct({ route, navigation }: ProductNavigationProps) {
         { cancelable: false }
       );
     } catch (error) {
-      const message = generateErrorMessage('', error, false);
+      const message = generateErrorMessage(error);
       alert(message);
     }
   }
