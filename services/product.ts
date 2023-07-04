@@ -246,3 +246,18 @@ export async function getUserListings(uid: string): Promise<Product[]> {
     throw new Error(message);
   }
 }
+
+export async function hasProductDuplicate(
+  uid: string,
+  title: string
+): Promise<boolean> {
+  const userProductsRef = collection(db, DB.USERS, uid, DB.PRODUCTS);
+  const qProduct = query(
+    userProductsRef,
+    where('title', '==', title),
+    limit(1)
+  );
+  const productSnap = await getDocs(qProduct);
+
+  return !productSnap.empty;
+}

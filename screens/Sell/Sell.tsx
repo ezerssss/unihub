@@ -4,6 +4,7 @@ import {
   Text,
   TouchableOpacity,
   View,
+  Alert,
 } from 'react-native';
 import React, { useCallback, useContext, useState } from 'react';
 import ContentWrapper from '../../components/ContentWrapper';
@@ -23,8 +24,8 @@ import AuthWrapper from '../../components/AuthWrapper';
 import UserContext from '../../context/UserContext';
 import { RootNavigationProps } from '../../types/navigation';
 import { Routes } from '../../enums/routes';
-import { Alert } from 'react-native';
 import { sell } from '../../services/transaction';
+import { hasProductDuplicate } from '../../services/product';
 import { generateErrorMessage } from '../../helpers/error';
 
 export default function Sell({ navigation }: RootNavigationProps) {
@@ -137,19 +138,38 @@ export default function Sell({ navigation }: RootNavigationProps) {
       if (!user || !handleInputValidation()) {
         return;
       }
-
-      const product = await sell(
-        imageURIs,
-        title,
-        price,
-        description,
-        selectedCategory,
-        time,
-        location,
-        user
-      );
-      handleStateCleanUp();
-      navigation.navigate(Routes.PRODUCT, { product, isRedirect: true });
+      if (await hasProductDuplicate(user.uid, title)) {
+        Alert.alert(
+          'Cannot have duplicate product',
+          'Please rename your product.'
+        );
+        return;
+      }
+      Alert.alert('Confirm to Sell?', '', [
+        {
+          text: 'No',
+          onPress: () => {
+            return;
+          },
+        },
+        {
+          text: 'Yes',
+          onPress: async () => {
+            const product = await sell(
+              imageURIs,
+              title,
+              price,
+              description,
+              selectedCategory,
+              time,
+              location,
+              user
+            );
+            handleStateCleanUp();
+            navigation.navigate(Routes.PRODUCT, { product, isRedirect: true });
+          },
+        },
+      ]);
     } catch (error) {
       const message = generateErrorMessage(error);
       showErrorPopup(message);
