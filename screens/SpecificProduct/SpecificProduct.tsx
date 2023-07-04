@@ -110,6 +110,12 @@ function SpecificProduct({ route, navigation }: ProductNavigationProps) {
     </TouchableOpacity>
   );
 
+  const renderButtonText = isLoading ? (
+    <ActivityIndicator color="white" size="large" />
+  ) : (
+    <Text className="py-6 text-2xl font-extrabold text-white">Buy</Text>
+  );
+
   return (
     <AuthWrapper>
       <ContentWrapper hasHeader={false}>
@@ -175,13 +181,7 @@ function SpecificProduct({ route, navigation }: ProductNavigationProps) {
             disabled={isLoading}
             onPress={handleBuyOrder}
           >
-            {isLoading ? (
-              <ActivityIndicator color="white" size="large" />
-            ) : (
-              <Text className="py-6 text-2xl font-extrabold text-white">
-                Buy
-              </Text>
-            )}
+            {renderButtonText}
           </TouchableOpacity>
         </ScrollView>
       </ContentWrapper>
