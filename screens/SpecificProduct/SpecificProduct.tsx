@@ -5,6 +5,7 @@ import {
   TouchableOpacity,
   NativeSyntheticEvent,
   TextLayoutEventData,
+  Alert,
 } from 'react-native';
 import React, { useState, useContext } from 'react';
 import ProductCarousel from './ProductCarousel';
@@ -42,18 +43,33 @@ function SpecificProduct({ route, navigation }: ProductNavigationProps) {
         return;
       }
 
-      const transaction = await buy(product, user);
+      Alert.alert(
+        'Confirm Purchase?',
+        '',
+        [
+          {
+            text: 'No',
+            style: 'cancel',
+          },
+          {
+            text: 'Yes',
+            onPress: async () => {
+              const transaction = await buy(product, user);
 
-      navigation.navigate(Routes.BUY, {
-        product,
-        transaction,
-      });
+              navigation.navigate(Routes.BUY, {
+                product,
+                transaction,
+              });
+            },
+          },
+        ],
+        { cancelable: false }
+      );
     } catch (error) {
       const message = generateErrorMessage('', error, false);
       alert(message);
     }
   }
-
   const goBack = useGoBack();
 
   if (!product) {
