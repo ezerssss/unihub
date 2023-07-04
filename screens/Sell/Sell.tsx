@@ -25,6 +25,7 @@ import UserContext from '../../context/UserContext';
 import { RootNavigationProps } from '../../types/navigation';
 import { Routes } from '../../enums/routes';
 import { sell } from '../../services/transaction';
+import { checkUserProductDuplicate } from '../../services/product';
 import { generateErrorMessage } from '../../helpers/error';
 
 export default function Sell({ navigation }: RootNavigationProps) {
@@ -132,22 +133,28 @@ export default function Sell({ navigation }: RootNavigationProps) {
     return true;
   }
 
-  function handleSell() {
-    Alert.alert('Confirm to Sell?', '', [
-      {
-        text: 'No',
-        onPress: () => {
-          return;
+  async function handleSell() {
+    try {
+      if (!user || !handleInputValidation()) {
+        return;
+      }
+      if (await checkUserProductDuplicate(user.uid, title)) {
+        Alert.alert(
+          'Cannot have duplicate product',
+          'Please rename your product.'
+        );
+        return;
+      }
+      Alert.alert('Confirm to Sell?', '', [
+        {
+          text: 'No',
+          onPress: () => {
+            return;
+          },
         },
-      },
-      {
-        text: 'Yes',
-        onPress: async () => {
-          try {
-            if (!user || !handleInputValidation()) {
-              return;
-            }
-
+        {
+          text: 'Yes',
+          onPress: async () => {
             const product = await sell(
               imageURIs,
               title,
@@ -160,15 +167,15 @@ export default function Sell({ navigation }: RootNavigationProps) {
             );
             handleStateCleanUp();
             navigation.navigate(Routes.PRODUCT, { product, isRedirect: true });
-          } catch (error) {
-            const message = generateErrorMessage('', error, false);
-            showErrorPopup(message);
-          } finally {
-            setIsUploading(false);
-          }
+          },
         },
-      },
-    ]);
+      ]);
+    } catch (error) {
+      const message = generateErrorMessage('', error, false);
+      showErrorPopup(message);
+    } finally {
+      setIsUploading(false);
+    }
   }
 
   const handleStateCleanUp = useCallback(() => {
