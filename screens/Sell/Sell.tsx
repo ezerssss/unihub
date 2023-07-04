@@ -206,14 +206,14 @@ export default function Sell({ navigation }: RootNavigationProps) {
   const renderSellButtonText = isUploading ? (
     <ActivityIndicator color="white" size="large" />
   ) : (
-    <Text className="text-2xl font-bold text-white">Sell</Text>
+    <Text className="text-2xl font-extrabold text-white">Sell</Text>
   );
 
   return (
     <AuthWrapper>
       <ContentWrapper hasLightStatusBar hasHeader={false}>
         <ScrollView
-          className="bg-secondary-400"
+          className="bg-unihub-gray-300"
           contentContainerStyle={{
             flexGrow: 1,
             justifyContent: 'space-between',
@@ -291,14 +291,16 @@ export default function Sell({ navigation }: RootNavigationProps) {
               />
             </View>
           </View>
+        </ScrollView>
+        <View className="bottom-0 flex h-28 w-full justify-center bg-white py-7 shadow shadow-black">
           <TouchableOpacity
-            className="mt-10 items-center justify-center bg-secondary-100 py-7"
+            className="right-3 h-12 w-36 items-center justify-center self-end rounded-lg bg-secondary-100"
             disabled={isUploading}
             onPress={handleSell}
           >
             {renderSellButtonText}
           </TouchableOpacity>
-        </ScrollView>
+        </View>
       </ContentWrapper>
     </AuthWrapper>
   );
