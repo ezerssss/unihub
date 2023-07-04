@@ -5,6 +5,8 @@ import {
   TouchableOpacity,
   NativeSyntheticEvent,
   TextLayoutEventData,
+  Alert,
+  ActivityIndicator,
 } from 'react-native';
 import React, { useState, useContext } from 'react';
 import ProductCarousel from './ProductCarousel';
@@ -30,6 +32,7 @@ function SpecificProduct({ route, navigation }: ProductNavigationProps) {
   const [numberOfLines, setNumberOfLines] = useState(0);
   const [showFullDescription, setShowFullDescription] = useState(false);
   const [showSeeMore, setShowSeeMore] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   async function handleBuyOrder() {
     try {
@@ -42,12 +45,29 @@ function SpecificProduct({ route, navigation }: ProductNavigationProps) {
         return;
       }
 
-      const transaction = await buy(product, user);
-
-      navigation.navigate(Routes.BUY, {
-        product,
-        transaction,
-      });
+      Alert.alert(
+        'Confirm Purchase?',
+        '',
+        [
+          {
+            text: 'No',
+            style: 'cancel',
+          },
+          {
+            text: 'Yes',
+            onPress: async () => {
+              setIsLoading(true);
+              const transaction = await buy(product, user);
+              setIsLoading(false);
+              navigation.navigate(Routes.BUY, {
+                product,
+                transaction,
+              });
+            },
+          },
+        ],
+        { cancelable: false }
+      );
     } catch (error) {
       const message = generateErrorMessage('', error, false);
       alert(message);
@@ -152,9 +172,16 @@ function SpecificProduct({ route, navigation }: ProductNavigationProps) {
           </View>
           <TouchableOpacity
             className="mt-5 h-20 items-center bg-amber-300"
+            disabled={isLoading}
             onPress={handleBuyOrder}
           >
-            <Text className="py-6 text-2xl font-extrabold text-white">Buy</Text>
+            {isLoading ? (
+              <ActivityIndicator color="white" size="large" />
+            ) : (
+              <Text className="py-6 text-2xl font-extrabold text-white">
+                Buy
+              </Text>
+            )}
           </TouchableOpacity>
         </ScrollView>
       </ContentWrapper>
