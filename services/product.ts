@@ -8,36 +8,25 @@ import {
   limit,
   DocumentData,
   QuerySnapshot,
+  DocumentReference,
+  updateDoc,
 } from 'firebase/firestore';
 import { DB } from '../enums/db';
 import db from '../firebase/db';
 import { generateErrorMessage } from '../helpers/error';
 import { Product } from '../types/product';
 import { Categories } from '../enums/categories';
-import uuid from 'react-native-uuid';
-import { getImageID, uploadBlob } from '../helpers/upload';
+import { getImageID } from '../helpers/upload';
 import { StatusEnum } from '../enums/status';
-import { updateTransactionStatus } from './transaction';
+import {
+  getAllProductTransactionsDocs,
+  updateTransactionProduct,
+  updateTransactionStatus,
+} from './transaction';
 import { User } from 'firebase/auth';
 import { Transaction } from '../types/transaction';
 import { deleteObject, ref } from 'firebase/storage';
 import storage from '../firebase/storage';
-
-export async function uploadProductPhotos(
-  imageURIs: string[]
-): Promise<string[]> {
-  const photoURLs: string[] = [];
-
-  for (const uri of imageURIs) {
-    const id = uuid.v4();
-    const path = `products/${id}`;
-
-    const url = await uploadBlob(uri, path);
-    photoURLs.push(url);
-  }
-
-  return photoURLs;
-}
 
 async function deleteProductPhotos(product: Product) {
   try {
@@ -59,28 +48,16 @@ async function deleteProductPhotos(product: Product) {
 
 async function cancelAllProductTransactions(product: Product, user: User) {
   try {
-    const { title, seller } = product;
-
-    const sellerTransactionsRef = collection(
-      db,
-      DB.USERS,
-      user.uid,
-      DB.TRANSACTIONS
-    );
-    const transactionQuery = query(
-      sellerTransactionsRef,
-      where('product.title', '==', title),
-      where('product.seller', '==', seller),
-      where('status', '!=', StatusEnum.SUCCESS)
+    const allProductTransactionDocs = await getAllProductTransactionsDocs(
+      product,
+      user
     );
 
-    const transactionsSnapshot = await getDocs(transactionQuery);
-
-    if (transactionsSnapshot.empty) {
+    if (allProductTransactionDocs.length < 1) {
       return;
     }
 
-    for (const transactionDoc of transactionsSnapshot.docs) {
+    for (const transactionDoc of allProductTransactionDocs) {
       const transaction = transactionDoc.data() as Transaction;
       await updateTransactionStatus(user, transaction, StatusEnum.CANCEL);
     }
@@ -91,40 +68,82 @@ async function cancelAllProductTransactions(product: Product, user: User) {
   }
 }
 
-export async function deleteProduct(product: Product, user: User) {
+async function updateAllProductTransactions(product: Product, user: User) {
   try {
-    const { title, seller } = product;
-
-    const productsRef = collection(db, DB.PRODUCTS);
-    const userProductsRef = collection(db, DB.USERS, user.uid, DB.PRODUCTS);
-    const qProductsCollection = query(
-      productsRef,
-      where('title', '==', title),
-      where('seller', '==', seller)
-    );
-    const qUsersCollection = query(
-      userProductsRef,
-      where('title', '==', title),
-      where('seller', '==', seller)
+    const allProductTransactionDocs = await getAllProductTransactionsDocs(
+      product,
+      user
     );
 
-    const productsSnapshot = await getDocs(qProductsCollection);
-    const userSnapshot = await getDocs(qUsersCollection);
-
-    if (productsSnapshot.empty || userSnapshot.empty) {
+    if (allProductTransactionDocs.length < 1) {
       return;
     }
 
-    const productsDocID = productsSnapshot.docs[0].id;
-    const productRef = doc(db, DB.PRODUCTS, productsDocID);
+    for (const transactionDoc of allProductTransactionDocs) {
+      const transaction = transactionDoc.data() as Transaction;
+      await updateTransactionProduct(user, transaction, product);
+    }
+  } catch (error) {
+    console.error(error);
+    const message = generateErrorMessage(error);
+    throw new Error(message);
+  }
+}
 
-    const userProductsDocId = userSnapshot.docs[0].id;
-    const userProductRef = doc(
-      db,
-      DB.USERS,
-      user.uid,
-      DB.PRODUCTS,
-      userProductsDocId
+interface ProductAndUserProductRefs {
+  productRef: DocumentReference<DocumentData>;
+  userProductRef: DocumentReference<DocumentData>;
+}
+
+async function getProductAndUserProductRefs(
+  product: Product,
+  user: User
+): Promise<ProductAndUserProductRefs> {
+  const { title, seller } = product;
+
+  const productsRef = collection(db, DB.PRODUCTS);
+  const userProductsRef = collection(db, DB.USERS, user.uid, DB.PRODUCTS);
+  const qProductsCollection = query(
+    productsRef,
+    where('title', '==', title),
+    where('seller', '==', seller)
+  );
+  const qUsersCollection = query(
+    userProductsRef,
+    where('title', '==', title),
+    where('seller', '==', seller)
+  );
+
+  const productsSnapshot = await getDocs(qProductsCollection);
+  const userSnapshot = await getDocs(qUsersCollection);
+
+  if (productsSnapshot.empty || userSnapshot.empty) {
+    throw new Error('Product not found!');
+  }
+
+  const productsDocID = productsSnapshot.docs[0].id;
+  const productRef = doc(db, DB.PRODUCTS, productsDocID);
+
+  const userProductsDocId = userSnapshot.docs[0].id;
+  const userProductRef = doc(
+    db,
+    DB.USERS,
+    user.uid,
+    DB.PRODUCTS,
+    userProductsDocId
+  );
+
+  return {
+    productRef,
+    userProductRef,
+  };
+}
+
+export async function deleteProduct(product: Product, user: User) {
+  try {
+    const { productRef, userProductRef } = await getProductAndUserProductRefs(
+      product,
+      user
     );
 
     await deleteDoc(productRef);
@@ -136,6 +155,27 @@ export async function deleteProduct(product: Product, user: User) {
     const message = generateErrorMessage(
       error,
       'Something went wrong with deleting your product.'
+    );
+
+    throw new Error(message);
+  }
+}
+
+export async function updateProduct(product: Product, user: User) {
+  try {
+    const { productRef, userProductRef } = await getProductAndUserProductRefs(
+      product,
+      user
+    );
+
+    await updateDoc(productRef, { ...product });
+    await updateDoc(userProductRef, { ...product });
+    await updateAllProductTransactions(product, user);
+  } catch (error) {
+    console.error(error);
+    const message = generateErrorMessage(
+      error,
+      'Something went wrong with updating your product.'
     );
 
     throw new Error(message);

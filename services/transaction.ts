@@ -1,4 +1,7 @@
 import {
+  DocumentData,
+  DocumentReference,
+  QueryDocumentSnapshot,
   addDoc,
   collection,
   doc,
@@ -18,9 +21,77 @@ import { Transaction } from '../types/transaction';
 import { sendMessage } from './chat';
 import { User } from 'firebase/auth';
 import { generateErrorMessage } from '../helpers/error';
-import { uploadProductPhotos } from './product';
 import { Categories } from '../enums/categories';
 import { Product } from '../types/product';
+import { uploadBlob } from '../helpers/upload';
+import uuid from 'react-native-uuid';
+
+interface BuyerAndSellerTransactionRef {
+  buyerDocRef: DocumentReference<DocumentData>;
+  sellerDocRef: DocumentReference<DocumentData>;
+}
+
+export async function getBuyerAndSellerTransactionRef(
+  user: User,
+  transaction: Transaction
+): Promise<BuyerAndSellerTransactionRef> {
+  const { buyerEmail, sellerEmail } = transaction;
+
+  const sellerTransactionDocID = await getTransactionDocID(
+    sellerEmail,
+    transaction
+  );
+  const buyerTransactionDocID = await getTransactionDocID(
+    buyerEmail,
+    transaction
+  );
+
+  const sellerDocRef = doc(
+    db,
+    DB.USERS,
+    user.uid,
+    DB.TRANSACTIONS,
+    sellerTransactionDocID
+  );
+
+  const buyerUid = await getUserDocID(buyerEmail);
+  const buyerDocRef = doc(
+    db,
+    DB.USERS,
+    buyerUid,
+    DB.TRANSACTIONS,
+    buyerTransactionDocID
+  );
+
+  return {
+    buyerDocRef,
+    sellerDocRef,
+  };
+}
+
+export async function updateTransactionProduct(
+  user: User,
+  transaction: Transaction,
+  product: Product
+) {
+  try {
+    const { buyerDocRef, sellerDocRef } = await getBuyerAndSellerTransactionRef(
+      user,
+      transaction
+    );
+
+    await updateDoc(buyerDocRef, { product });
+    await updateDoc(sellerDocRef, { product });
+  } catch (error) {
+    console.error(error);
+    const message = generateErrorMessage(
+      error,
+      'Something went wrong with updating the product.'
+    );
+
+    throw new Error(message);
+  }
+}
 
 export async function updateTransactionStatus(
   user: User,
@@ -28,32 +99,9 @@ export async function updateTransactionStatus(
   newStatus: StatusEnum
 ) {
   try {
-    const { buyerEmail, sellerEmail } = transaction;
-
-    const sellerTransactionDocID = await getTransactionDocID(
-      sellerEmail,
+    const { sellerDocRef, buyerDocRef } = await getBuyerAndSellerTransactionRef(
+      user,
       transaction
-    );
-    const buyerTransactionDocID = await getTransactionDocID(
-      buyerEmail,
-      transaction
-    );
-
-    const sellerDocRef = doc(
-      db,
-      DB.USERS,
-      user.uid,
-      DB.TRANSACTIONS,
-      sellerTransactionDocID
-    );
-
-    const buyerUid = await getUserDocID(buyerEmail);
-    const buyerDocRef = doc(
-      db,
-      DB.USERS,
-      buyerUid,
-      DB.TRANSACTIONS,
-      buyerTransactionDocID
     );
 
     await updateDoc(sellerDocRef, { status: newStatus });
@@ -70,11 +118,25 @@ export async function updateTransactionStatus(
     console.error(error);
     const message = generateErrorMessage(
       error,
-      'Something went wrong with updating the product.'
+      'Something went wrong with updating the status of the product.'
     );
 
     throw new Error(message);
   }
+}
+
+async function uploadProductPhotos(imageURIs: string[]): Promise<string[]> {
+  const photoURLs: string[] = [];
+
+  for (const uri of imageURIs) {
+    const id = uuid.v4();
+    const path = `products/${id}`;
+
+    const url = await uploadBlob(uri, path);
+    photoURLs.push(url);
+  }
+
+  return photoURLs;
 }
 
 export async function sell(
@@ -201,4 +263,28 @@ export async function buy(product: Product, user: User): Promise<Transaction> {
 
     throw new Error(message);
   }
+}
+
+export async function getAllProductTransactionsDocs(
+  product: Product,
+  user: User
+): Promise<QueryDocumentSnapshot<DocumentData>[]> {
+  const { title, seller } = product;
+
+  const sellerTransactionsRef = collection(
+    db,
+    DB.USERS,
+    user.uid,
+    DB.TRANSACTIONS
+  );
+  const transactionQuery = query(
+    sellerTransactionsRef,
+    where('product.title', '==', title),
+    where('product.seller', '==', seller),
+    where('status', '!=', StatusEnum.SUCCESS)
+  );
+
+  const transactionsSnapshot = await getDocs(transactionQuery);
+
+  return transactionsSnapshot.docs;
 }
