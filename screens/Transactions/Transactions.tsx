@@ -52,7 +52,7 @@ export default function Transactions({ navigation }: RootNavigationProps) {
   const [isLoading, setIsLoading] = useState(true);
   const [orders, setOrders] = useState<Transaction[]>([]);
   const [listings, setListings] = useState<Transaction[]>([]);
-  const [activeStatus, setActiveStatus] = useState<StatusEnum | null | ''>(
+  const [activeStatus, setActiveStatus] = useState<StatusEnum>(
     StatusEnum.CONFIRM
   );
 
