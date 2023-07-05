@@ -24,6 +24,7 @@ module.exports = {
         'unihub-gray': {
           100: '#BFBFBF',
           200: '#808080',
+          300: '#ECECEC',
         },
         'light-yellow': '#FFFEDF',
         'pale-yellow': '#FDFDBA',
