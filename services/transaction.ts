@@ -267,7 +267,8 @@ export async function buy(product: Product, user: User): Promise<Transaction> {
 
 export async function getAllProductTransactionsDocs(
   product: Product,
-  user: User
+  user: User,
+  excludeMeetupTransactions?: boolean
 ): Promise<QueryDocumentSnapshot<DocumentData>[]> {
   const { title, seller } = product;
 
@@ -277,12 +278,20 @@ export async function getAllProductTransactionsDocs(
     user.uid,
     DB.TRANSACTIONS
   );
-  const transactionQuery = query(
+
+  let transactionQuery = query(
     sellerTransactionsRef,
     where('product.title', '==', title),
     where('product.seller', '==', seller),
     where('status', '!=', StatusEnum.SUCCESS)
   );
+
+  if (excludeMeetupTransactions) {
+    transactionQuery = query(
+      transactionQuery,
+      where('status', '!=', StatusEnum.MEETUP)
+    );
+  }
 
   const transactionsSnapshot = await getDocs(transactionQuery);
 
