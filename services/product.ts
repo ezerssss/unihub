@@ -10,6 +10,7 @@ import {
   QuerySnapshot,
   DocumentReference,
   updateDoc,
+  getDoc,
 } from 'firebase/firestore';
 import { DB } from '../enums/db';
 import db from '../firebase/db';
@@ -27,6 +28,7 @@ import { User } from 'firebase/auth';
 import { Transaction } from '../types/transaction';
 import { deleteObject, ref } from 'firebase/storage';
 import storage from '../firebase/storage';
+import { deleteSearchableItem } from './search';
 
 async function deleteProductPhotos(product: Product) {
   try {
@@ -150,6 +152,9 @@ export async function deleteProduct(product: Product, user: User) {
     await deleteDoc(userProductRef);
     await cancelAllProductTransactions(product, user);
     await deleteProductPhotos(product);
+
+    const productDocID = (await getDoc(productRef)).id;
+    await deleteSearchableItem(productDocID);
   } catch (error) {
     console.error(error);
     const message = generateErrorMessage(
@@ -300,4 +305,12 @@ export async function hasProductDuplicate(
   const productSnap = await getDocs(qProduct);
 
   return !productSnap.empty;
+}
+
+export async function getProductByDocID(id: string): Promise<Product> {
+  const docRef = doc(db, DB.PRODUCTS, id);
+
+  const product = (await getDoc(docRef)).data() as Product;
+
+  return product;
 }

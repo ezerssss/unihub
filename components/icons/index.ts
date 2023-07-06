@@ -5,3 +5,5 @@ export { default as ProductIcon } from './ProductIcon';
 export { default as ShopIcon } from './ShopIcon';
 export { default as SettingsIcon } from './SettingsIcon';
 export { default as UniHubLoginIcon } from './UniHubLogin';
+export { default as BigSearchIcon } from './BigSearchIcon';
+export { default as LeftArrowIcon } from './LeftArrow';

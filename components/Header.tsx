@@ -35,11 +35,6 @@ function Header() {
     setMenuOpen(false);
   }
 
-  function onSearch(query: string) {
-    // eslint-disable-next-line no-console
-    console.log(query);
-  }
-
   function handleToTransactions() {
     navigation.navigate(Routes.TRANSACTIONS);
   }
@@ -76,15 +71,19 @@ function Header() {
     <View className="absolute right-0 top-0 rounded-full bg-red-500 p-1" />
   );
 
+  function handleSearchFocus() {
+    navigation.navigate(Routes.SEARCH);
+  }
+
   return (
-    <View className="bg-primary-400 pb-3 pt-10">
+    <View className="bg-primary-400 pb-5 pt-16">
       <View className="flex-row items-center justify-between px-4">
         <View className="w-1/6">
           <TouchableOpacity onPress={openMenu}>
             <MaterialIcons color="white" name="menu" size={30} />
           </TouchableOpacity>
         </View>
-        <Search onSearch={onSearch} />
+        <Search onFocus={handleSearchFocus} />
         <View className="w-1/6 flex-row justify-end">
           <TouchableOpacity className="relative" onPress={handleToTransactions}>
             <BagIcon />
