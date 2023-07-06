@@ -100,6 +100,12 @@ function SpecificProduct({ route, navigation }: ProductNavigationProps) {
     }
   }
 
+  const renderEditButton = user?.displayName === product.seller && (
+    <TouchableOpacity className="absolute right-7 top-14 z-20 h-12 w-12 items-center justify-center rounded-full bg-secondary-100">
+      <PencilIcon />
+    </TouchableOpacity>
+  );
+
   const renderSeeMore = showSeeMore && (
     <TouchableOpacity
       className="mt-2 h-7 w-20 rounded-3xl bg-secondary-100"
@@ -134,9 +140,7 @@ function SpecificProduct({ route, navigation }: ProductNavigationProps) {
             >
               <AntDesign color="white" name="left" size={30} />
             </TouchableOpacity>
-            <TouchableOpacity className="absolute right-7 top-14 z-20 h-12 w-12 items-center justify-center rounded-full bg-secondary-100">
-              <PencilIcon />
-            </TouchableOpacity>
+            {renderEditButton}
             <View className="px-2">
               <ProductCarousel images={images} />
             </View>
