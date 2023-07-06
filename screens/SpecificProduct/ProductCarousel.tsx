@@ -47,6 +47,9 @@ function ProductCarousel(props: CarouselProps) {
         activeDot={<View className="mx-2 h-2 w-2 rounded-full bg-black" />}
         dot={<View className="mx-2 h-2 w-2 rounded-full bg-gray-400" />}
         style={{ height: 250 }}
+        onIndexChanged={(index) => {
+          setImageIndex(index);
+        }}
       >
         {renderProducts}
       </Swiper>
