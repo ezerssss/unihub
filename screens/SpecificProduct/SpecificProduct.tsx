@@ -176,25 +176,25 @@ function SpecificProduct({ route, navigation }: ProductNavigationProps) {
             </View>
           </View>
         </ScrollView>
-        <View
-          className="bottom-0 flex h-28 w-full bg-transparent shadow shadow-black"
-          style={{
-            elevation: 1,
-          }}
-        >
-          <Text className="text-s left-8 top-4 text-unihub-gray-400">
-            Price:
-          </Text>
-          <Text className="absolute left-8 top-10 items-center text-lg font-bold text-primary-300">
-            ₱{formatNumber(product.price)}
-          </Text>
-          <TouchableOpacity
-            className="absolute right-3 top-4 h-12 w-36 items-center justify-center rounded-lg bg-secondary-100"
-            disabled={isLoading}
-            onPress={handleBuyOrder}
+        <View className="h-28 bg-white shadow shadow-black">
+          <View
+            className="h-full w-full flex-row items-center justify-between border-t border-transparent px-5"
+            style={{ elevation: 2 }}
           >
-            {renderButtonText}
-          </TouchableOpacity>
+            <View>
+              <Text className="text-sm text-unihub-gray-400">Price:</Text>
+              <Text className="items-center text-lg font-bold text-primary-300">
+                ₱{formatNumber(product.price)}
+              </Text>
+            </View>
+            <TouchableOpacity
+              className="h-12 w-36 items-center justify-center rounded-lg bg-secondary-100"
+              disabled={isLoading}
+              onPress={handleBuyOrder}
+            >
+              {renderButtonText}
+            </TouchableOpacity>
+          </View>
         </View>
       </ContentWrapper>
     </AuthWrapper>
