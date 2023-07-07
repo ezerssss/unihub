@@ -144,7 +144,7 @@ function SpecificProduct({ route, navigation }: ProductNavigationProps) {
             <ProductCarousel images={images} />
             <View className="mx-8 mt-2 flex">
               <TouchableOpacity className="mb-2 flex">
-                <Text className="text-primary-500">by {seller}</Text>
+                <Text className="text-primary-300">by {seller}</Text>
               </TouchableOpacity>
               <Text className="text-2xl font-semibold">{title}</Text>
             </View>
