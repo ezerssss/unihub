@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, TextInput } from 'react-native';
-import { SearchIcon } from './icons';
+import { AlgoliaSearchIcon, SearchIcon } from './icons';
 
 interface PropsInterface {
   autoFocus?: boolean;
@@ -14,17 +14,16 @@ function Search(props: PropsInterface) {
 
   return (
     <View className="flex-1 flex-row items-center justify-center rounded-xl bg-white px-3 py-1">
-      <View className="ml-5">
-        <SearchIcon />
-      </View>
+      <SearchIcon />
       <TextInput
         autoFocus={autoFocus}
-        className="w-full py-2 pl-3 text-black"
+        className="w-full flex-1 py-2 pl-3 text-black"
         placeholder="Search for products"
         value={value}
         onChangeText={onChange}
         onFocus={onFocus}
       />
+      <AlgoliaSearchIcon />
     </View>
   );
 }

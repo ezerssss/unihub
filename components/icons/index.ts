@@ -7,3 +7,4 @@ export { default as SettingsIcon } from './SettingsIcon';
 export { default as UniHubLoginIcon } from './UniHubLogin';
 export { default as BigSearchIcon } from './BigSearchIcon';
 export { default as LeftArrowIcon } from './LeftArrow';
+export { default as AlgoliaSearchIcon } from './AlgoliaSearchIcon';
