@@ -23,6 +23,7 @@ import { Routes } from '../../enums/routes';
 import UserContext from '../../context/UserContext';
 import { generateErrorMessage } from '../../helpers/error';
 import { buy } from '../../services/transaction';
+import PencilIcon from '../../components/icons/PencilIcon';
 
 function SpecificProduct({ route, navigation }: ProductNavigationProps) {
   const { product, isRedirect } = route.params;
@@ -99,13 +100,19 @@ function SpecificProduct({ route, navigation }: ProductNavigationProps) {
     }
   }
 
+  const renderEditButton = user?.displayName === product.seller && (
+    <TouchableOpacity className="absolute right-7 top-14 z-20 h-12 w-12 items-center justify-center rounded-full bg-secondary-100">
+      <PencilIcon />
+    </TouchableOpacity>
+  );
+
   const renderSeeMore = showSeeMore && (
     <TouchableOpacity
-      className="mt-2 h-7 w-20 rounded-3xl bg-primary-100"
+      className="mt-2 h-7 w-20 rounded-3xl bg-secondary-100"
       onPress={toggleDescription}
     >
-      <Text className="items-center pt-1 text-center text-xs font-normal text-white">
-        {showFullDescription ? 'Read Less' : 'Read More'}
+      <Text className="items-center pt-1 text-center text-xs font-normal text-primary-400">
+        {showFullDescription ? 'See Less' : 'See More'}
       </Text>
     </TouchableOpacity>
   );
@@ -113,7 +120,7 @@ function SpecificProduct({ route, navigation }: ProductNavigationProps) {
   const renderButtonText = isLoading ? (
     <ActivityIndicator color="white" size="large" />
   ) : (
-    <Text className="py-6 text-2xl font-extrabold text-white">Buy</Text>
+    <Text className="text-2xl font-extrabold text-white">Buy</Text>
   );
 
   return (
@@ -133,17 +140,17 @@ function SpecificProduct({ route, navigation }: ProductNavigationProps) {
             >
               <AntDesign color="white" name="left" size={30} />
             </TouchableOpacity>
+            {renderEditButton}
             <View className="px-2">
               <ProductCarousel images={images} />
             </View>
-            <View className="relative pl-6 pt-6">
-              <Text className="max-w-[66%] text-2xl font-semibold">
-                {title}
-              </Text>
-              <Text className="absolute right-6 top-8 text-xs">
-                by {seller}
-              </Text>
+            <View className="mx-8 mt-2 flex">
+              <TouchableOpacity className="mb-2 flex">
+                <Text className="text-primary-500">by {seller}</Text>
+              </TouchableOpacity>
+              <Text className="text-2xl font-semibold">{title}</Text>
             </View>
+
             <View className="px-6 pt-3">
               <Text
                 className="text-left text-xs font-light text-slate-500"
@@ -154,36 +161,38 @@ function SpecificProduct({ route, navigation }: ProductNavigationProps) {
               </Text>
               {renderSeeMore}
             </View>
-            <View className="h-5 w-20 bg-white"></View>
-            <View className="h-24 w-screen bg-secondary-400">
-              <Text className="items-center py-9 pl-6 text-base font-semibold">
-                ₱{formatNumber(product.price)}
-              </Text>
-            </View>
             <View className="h-52 bg-white">
               <Text className="absolute pl-6 pt-8 text-base font-medium text-black">
                 Meetup Details
               </Text>
-              <View className="mx-4 mt-20 w-fit self-start rounded-3xl bg-primary-400">
+              <View className="mx-4 mt-20 w-fit self-start rounded-3xl bg-primary-200">
                 <Text className="px-4 py-3 text-left text-xs font-normal text-white">
                   Meetup at {location}
                 </Text>
               </View>
-              <View className="mx-4 mt-6 w-fit self-start rounded-3xl bg-primary-400">
+              <View className="mx-4 mt-6 w-fit self-start rounded-3xl bg-primary-200">
                 <Text className="px-4 py-3 text-left text-xs font-normal text-white">
                   Preferred Time of Meetup: {formatTime(dateObject)}
                 </Text>
               </View>
             </View>
           </View>
+        </ScrollView>
+        <View className="bottom-0 flex h-28 w-full bg-white shadow shadow-black ">
+          <Text className="text-s left-8 top-4 text-unihub-gray-400">
+            Price:
+          </Text>
+          <Text className="absolute left-8 top-10 items-center text-lg font-bold text-primary-300">
+            ₱{formatNumber(product.price)}
+          </Text>
           <TouchableOpacity
-            className="mt-5 h-20 items-center bg-amber-300"
+            className="absolute right-3 top-4 h-12 w-36 items-center justify-center rounded-lg bg-secondary-100"
             disabled={isLoading}
             onPress={handleBuyOrder}
           >
             {renderButtonText}
           </TouchableOpacity>
-        </ScrollView>
+        </View>
       </ContentWrapper>
     </AuthWrapper>
   );
