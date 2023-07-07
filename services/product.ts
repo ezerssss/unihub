@@ -48,11 +48,16 @@ async function deleteProductPhotos(product: Product) {
   }
 }
 
-async function cancelAllProductTransactions(product: Product, user: User) {
+export async function cancelAllProductTransactions(
+  product: Product,
+  user: User,
+  excludeMeetupTransactions?: boolean
+) {
   try {
     const allProductTransactionDocs = await getAllProductTransactionsDocs(
       product,
-      user
+      user,
+      excludeMeetupTransactions
     );
 
     if (allProductTransactionDocs.length < 1) {

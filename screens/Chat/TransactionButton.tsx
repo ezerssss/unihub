@@ -9,7 +9,10 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { Routes } from '../../enums/routes';
 import { generateErrorMessage } from '../../helpers/error';
 import { updateTransactionStatus } from '../../services/transaction';
-import { deleteProduct } from '../../services/product';
+import {
+  cancelAllProductTransactions,
+  deleteProduct,
+} from '../../services/product';
 
 interface PropsInterface {
   transaction: Transaction;
@@ -79,8 +82,13 @@ export default function TransactionButton(props: PropsInterface) {
   }, [product, user]);
 
   async function handlePress() {
+    if (!user) {
+      return;
+    }
+
     if (currentStatus === StatusEnum.CONFIRM) {
       await handleUpdateStatus(StatusEnum.MEETUP);
+      await cancelAllProductTransactions(product, user, true);
     } else if (currentStatus === StatusEnum.MEETUP) {
       await handleUpdateStatus(StatusEnum.SUCCESS);
       await handleDeleteProduct();
