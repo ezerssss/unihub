@@ -13,6 +13,7 @@ export interface Product {
   };
   isFeatured?: boolean;
   seller: string;
+  sellerExpoPushToken?: string;
 }
 
 export interface ProductListings extends Pick<Product, 'title' | 'price'> {

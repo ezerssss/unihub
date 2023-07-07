@@ -10,4 +10,5 @@ export interface Transaction {
   buyerEmail: string;
   isSeen: boolean;
   lastMessage: string;
+  buyerExpoPushToken?: string;
 }

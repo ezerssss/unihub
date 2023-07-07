@@ -25,13 +25,19 @@ import UserContext from '../../context/UserContext';
 import { RootNavigationProps } from '../../types/navigation';
 import { Routes } from '../../enums/routes';
 import { sell } from '../../services/transaction';
-import { hasProductDuplicate } from '../../services/product';
+import {
+  hasProductDuplicate,
+  uploadProductPhotos,
+} from '../../services/product';
 import { generateErrorMessage } from '../../helpers/error';
+import { Product } from '../../types/product';
+import NotificationContext from '../../context/NotificationContext';
 
 export default function Sell({ navigation }: RootNavigationProps) {
   const goBack = useGoBack();
 
   const { user } = useContext(UserContext);
+  const { expoPushToken } = useContext(NotificationContext);
 
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
@@ -134,10 +140,37 @@ export default function Sell({ navigation }: RootNavigationProps) {
   }
 
   async function handleSell() {
+    if (!user) {
+      return;
+    }
+
+    const images = await uploadProductPhotos(imageURIs);
+
+    const product: Product = {
+      images,
+      title,
+      price: parseFloat(price),
+      description,
+      category: selectedCategory as Categories,
+      meetup: {
+        time,
+        location,
+      },
+      seller: user?.displayName ?? '-',
+      sellerExpoPushToken: expoPushToken,
+    };
+
+    await sell(product, user);
+    handleStateCleanUp();
+    navigation.navigate(Routes.PRODUCT, { product, isRedirect: true });
+  }
+
+  async function handleSellButtonPress() {
     try {
       if (!user || !handleInputValidation()) {
         return;
       }
+
       if (await hasProductDuplicate(user.uid, title)) {
         Alert.alert(
           'Cannot have duplicate product',
@@ -154,20 +187,7 @@ export default function Sell({ navigation }: RootNavigationProps) {
         },
         {
           text: 'Yes',
-          onPress: async () => {
-            const product = await sell(
-              imageURIs,
-              title,
-              price,
-              description,
-              selectedCategory,
-              time,
-              location,
-              user
-            );
-            handleStateCleanUp();
-            navigation.navigate(Routes.PRODUCT, { product, isRedirect: true });
-          },
+          onPress: handleSell,
         },
       ]);
     } catch (error) {
@@ -296,7 +316,7 @@ export default function Sell({ navigation }: RootNavigationProps) {
           <TouchableOpacity
             className="right-3 h-12 w-36 items-center justify-center self-end rounded-lg bg-secondary-100"
             disabled={isUploading}
-            onPress={handleSell}
+            onPress={handleSellButtonPress}
           >
             {renderSellButtonText}
           </TouchableOpacity>

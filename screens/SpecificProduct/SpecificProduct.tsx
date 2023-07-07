@@ -24,11 +24,13 @@ import UserContext from '../../context/UserContext';
 import { generateErrorMessage } from '../../helpers/error';
 import { buy } from '../../services/transaction';
 import PencilIcon from '../../components/icons/PencilIcon';
+import NotificationContext from '../../context/NotificationContext';
 
 function SpecificProduct({ route, navigation }: ProductNavigationProps) {
   const { product, isRedirect } = route.params;
 
   const { user } = useContext(UserContext);
+  const { expoPushToken } = useContext(NotificationContext);
 
   const [numberOfLines, setNumberOfLines] = useState(0);
   const [showFullDescription, setShowFullDescription] = useState(false);
@@ -58,12 +60,12 @@ function SpecificProduct({ route, navigation }: ProductNavigationProps) {
             text: 'Yes',
             onPress: async () => {
               setIsLoading(true);
-              const transaction = await buy(product, user);
-              setIsLoading(false);
+              const transaction = await buy(product, user, expoPushToken);
               navigation.navigate(Routes.BUY, {
                 product,
                 transaction,
               });
+              setIsLoading(false);
             },
           },
         ],
