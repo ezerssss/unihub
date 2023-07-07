@@ -59,7 +59,7 @@ export async function sendProductPushNotification(
       data: { ...transaction },
     };
 
-    await axios.post('http://192.168.0.108:3000/api', { ...message });
+    await axios.post('https://unihub-web.vercel.app/api', { ...message });
   } catch (error) {
     console.error(error);
     const message = generateErrorMessage(
