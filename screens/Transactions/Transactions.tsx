@@ -5,6 +5,7 @@ import {
   View,
   FlatList,
   Image,
+  ScrollView,
 } from 'react-native';
 import React, { useContext, useEffect, useState } from 'react';
 import AuthWrapper from '../../components/AuthWrapper';
@@ -20,7 +21,10 @@ import { Product } from '../../types/product';
 import { RootNavigationProps } from '../../types/navigation';
 import { Routes } from '../../enums/routes';
 import { formatNumber } from '../../helpers/number';
-import TransactionStatus from './TransactionStatus';
+import EditIcon from '../../components/icons/EditIcon';
+import ChatIcon from '../../components/icons/ChatIcon';
+import RoundedButton from './RoundedButton';
+import { StatusEnum } from '../../enums/status';
 
 export default function Transactions({ navigation }: RootNavigationProps) {
   const { user } = useContext(UserContext);
@@ -28,6 +32,9 @@ export default function Transactions({ navigation }: RootNavigationProps) {
   const [isLoading, setIsLoading] = useState(true);
   const [orders, setOrders] = useState<Transaction[]>([]);
   const [listings, setListings] = useState<Transaction[]>([]);
+  const [activeStatus, setActiveStatus] = useState<StatusEnum>(
+    StatusEnum.CONFIRM
+  );
 
   const goBack = useGoBack();
 
@@ -77,39 +84,41 @@ export default function Transactions({ navigation }: RootNavigationProps) {
   }
 
   function handleRender(transaction: Transaction) {
-    const { product, status, isSeen, lastMessage } = transaction;
+    const { product, isSeen } = transaction;
     const { title, images, price } = product;
 
-    const messagesStyle = !isSeen && 'font-bold';
-    const borderStyle = !isSeen && 'border-primary-100';
     const titleStyle = !isSeen && 'text-primary-100';
 
+    const renderChat = activeStatus !== StatusEnum.CANCEL &&
+      activeStatus !== StatusEnum.DENY && (
+        <TouchableOpacity
+          className="absolute right-6 top-5 rounded-full"
+          onPress={() => handleClick(product, transaction)}
+        >
+          <ChatIcon />
+        </TouchableOpacity>
+      );
+
     return (
-      <TouchableOpacity
-        className="relative h-36 w-full flex-row border-b border-gray-300 p-2"
+      <View
+        className="relative mx-4 h-40 flex-row rounded-2xl bg-white p-2 px-4 py-5 shadow-lg"
         key={title}
-        onPress={() => handleClick(product, transaction)}
       >
-        <View className={`aspect-square border ${borderStyle}`}>
+        <View className="aspect-square">
           <Image className="h-full w-full" source={{ uri: images[0] }} />
         </View>
         <View className="flex-1 justify-center p-4">
-          <Text className={`mb-2 text-xl font-semibold ${titleStyle}`}>
+          <Text className={`mb-1 text-xl font-normal ${titleStyle}`}>
             {product.title}
           </Text>
+          <Text className="mb-5 text-[#3838FC]">by YOU</Text>
           <Text className="text-gray-500">₱{formatNumber(price)}</Text>
-          <View className="mt-3 flex-row flex-wrap">
-            <Text className="font-bold">Status: </Text>
-            <TransactionStatus status={status} />
-          </View>
-          <View className="flex-row">
-            <Text className="font-bold">Messages: </Text>
-            <Text className={`flex-1 ${messagesStyle}`} numberOfLines={1}>
-              {lastMessage}
-            </Text>
-          </View>
         </View>
-      </TouchableOpacity>
+        {renderChat}
+        <TouchableOpacity className="absolute bottom-5 right-5 rounded-full bg-[#FFD700] p-[10px]">
+          <EditIcon />
+        </TouchableOpacity>
+      </View>
     );
   }
 
@@ -120,7 +129,7 @@ export default function Transactions({ navigation }: RootNavigationProps) {
     </Text>
   );
   const renderNoListings = !isLoading && !listings.length && (
-    <Text className="mx-3 text-sm text-gray-400">
+    <Text className="mx-3 h-14 text-sm text-gray-400">
       Your products have no orders.
     </Text>
   );
@@ -134,9 +143,10 @@ export default function Transactions({ navigation }: RootNavigationProps) {
           </TouchableOpacity>
           <Text className="text-2xl font-bold text-white">Transactions</Text>
         </View>
-        <Text className="mx-3 mt-5 text-center text-lg font-bold">
-          MY ORDERS
+        <Text className="mx-3 mt-5 text-xl font-extrabold text-[#2A2ABD]">
+          Your Orders
         </Text>
+        <View className="mx-3 border-b border-primary-500" />
         <>{renderLoading}</>
         <>{renderNoOrders}</>
         <FlatList
@@ -144,14 +154,38 @@ export default function Transactions({ navigation }: RootNavigationProps) {
           data={orders}
           renderItem={({ item }) => handleRender(item)}
         />
-        <Text className="mx-3 border-t pt-2 text-center text-lg font-bold">
-          MY LISTINGS
+        <Text className="mx-3 mt-5 text-xl font-extrabold text-[#2A2ABD]">
+          Your Listings
         </Text>
+        <View className="mx-3 border-b border-primary-500" />
+        <ScrollView
+          horizontal
+          className="mt-3 h-0"
+          showsHorizontalScrollIndicator={false}
+        >
+          <View className="mx-3 mb-5 mt-3 flex h-14 flex-row justify-between">
+            <RoundedButton
+              isActive={activeStatus === StatusEnum.CONFIRM}
+              title="Pending"
+              onPress={() => setActiveStatus(StatusEnum.CONFIRM)}
+            />
+            <RoundedButton
+              isActive={activeStatus === StatusEnum.MEETUP}
+              title="Meetup in Progress"
+              onPress={() => setActiveStatus(StatusEnum.MEETUP)}
+            />
+            <RoundedButton
+              isActive={activeStatus === StatusEnum.SUCCESS}
+              title="Completed"
+              onPress={() => setActiveStatus(StatusEnum.SUCCESS)}
+            />
+          </View>
+        </ScrollView>
         <>{renderLoading}</>
         <>{renderNoListings}</>
         <FlatList
           className="py-5"
-          data={listings}
+          data={listings.filter((listing) => listing.status === activeStatus)}
           renderItem={({ item }) => handleRender(item)}
         />
       </ContentWrapper>
