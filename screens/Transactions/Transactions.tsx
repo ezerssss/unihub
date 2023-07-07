@@ -14,7 +14,7 @@ import useGoBack from '../../hooks/useGoBack';
 import { AntDesign } from '@expo/vector-icons';
 import UserContext from '../../context/UserContext';
 import { Transaction } from '../../types/transaction';
-import { collection, onSnapshot, query, where } from 'firebase/firestore';
+import { collection, onSnapshot } from 'firebase/firestore';
 import db from '../../firebase/db';
 import { DB } from '../../enums/db';
 import { Product } from '../../types/product';
@@ -23,28 +23,8 @@ import { Routes } from '../../enums/routes';
 import { formatNumber } from '../../helpers/number';
 import EditIcon from '../../components/icons/EditIcon';
 import ChatIcon from '../../components/icons/ChatIcon';
+import RoundedButton from './RoundedButton';
 import { StatusEnum } from '../../enums/status';
-
-type RoundedButtonProps = {
-  title: string;
-  isActive: boolean;
-  onPress: () => void;
-};
-
-function RoundedButton({ title, isActive, onPress }: RoundedButtonProps) {
-  const textClasses = `text-white ${isActive ? '' : 'text-[#B3B3B5]'}`;
-
-  return (
-    <TouchableOpacity
-      className={`mx-1 flex min-w-[130px] flex-row justify-center rounded-full border border-[#3838FC] px-5 py-5 align-middle ${
-        isActive ? 'bg-[#3838FC]' : 'border-[#B3B3B5]'
-      }`}
-      onPress={onPress}
-    >
-      <Text className={textClasses}>{title}</Text>
-    </TouchableOpacity>
-  );
-}
 
 export default function Transactions({ navigation }: RootNavigationProps) {
   const { user } = useContext(UserContext);
@@ -70,32 +50,30 @@ export default function Transactions({ navigation }: RootNavigationProps) {
       DB.TRANSACTIONS
     );
 
-    const queryRef = query(
+    const unsubscribe = onSnapshot(
       transactionsCollectionRef,
-      where('status', '==', activeStatus)
+      (querySnapshot) => {
+        const ordersArray: Transaction[] = [];
+        const listingsArray: Transaction[] = [];
+
+        querySnapshot.forEach((doc) => {
+          const transaction: Transaction = doc.data() as Transaction;
+
+          if (transaction.buyerEmail === user.email) {
+            ordersArray.push(transaction);
+          } else {
+            listingsArray.push(transaction);
+          }
+        });
+
+        setOrders(ordersArray);
+        setListings(listingsArray);
+        setIsLoading(false);
+      }
     );
 
-    const unsubscribe = onSnapshot(queryRef, (querySnapshot) => {
-      const ordersArray: Transaction[] = [];
-      const listingsArray: Transaction[] = [];
-
-      querySnapshot.forEach((doc) => {
-        const transaction: Transaction = doc.data() as Transaction;
-
-        if (transaction.buyerEmail === user.email) {
-          ordersArray.push(transaction);
-        } else {
-          listingsArray.push(transaction);
-        }
-      });
-
-      setOrders(ordersArray);
-      setListings(listingsArray);
-      setIsLoading(false);
-    });
-
     return () => unsubscribe();
-  }, [user, activeStatus]);
+  }, [user]);
 
   function handleClick(product: Product, transaction: Transaction) {
     if (transaction.buyerEmail === user?.email) {
@@ -111,14 +89,15 @@ export default function Transactions({ navigation }: RootNavigationProps) {
 
     const titleStyle = !isSeen && 'text-primary-100';
 
-    const renderChat = activeStatus === StatusEnum.CONFIRM && (
-      <TouchableOpacity
-        className="absolute right-6 top-5 rounded-full"
-        onPress={() => handleClick(product, transaction)}
-      >
-        <ChatIcon />
-      </TouchableOpacity>
-    );
+    const renderChat = activeStatus !== StatusEnum.CANCEL &&
+      activeStatus !== StatusEnum.DENY && (
+        <TouchableOpacity
+          className="absolute right-6 top-5 rounded-full"
+          onPress={() => handleClick(product, transaction)}
+        >
+          <ChatIcon />
+        </TouchableOpacity>
+      );
 
     return (
       <View
@@ -167,7 +146,7 @@ export default function Transactions({ navigation }: RootNavigationProps) {
         <Text className="mx-3 mt-5 text-xl font-extrabold text-[#2A2ABD]">
           Your Orders
         </Text>
-        <View className="mx-3 border-b border-[#B3B3B5]" />
+        <View className="mx-3 border-b border-primary-500" />
         <>{renderLoading}</>
         <>{renderNoOrders}</>
         <FlatList
@@ -178,7 +157,7 @@ export default function Transactions({ navigation }: RootNavigationProps) {
         <Text className="mx-3 mt-5 text-xl font-extrabold text-[#2A2ABD]">
           Your Listings
         </Text>
-        <View className="mx-3 border-b border-[#B3B3B5]" />
+        <View className="mx-3 border-b border-primary-500" />
         <ScrollView
           horizontal
           className="mt-3 h-0"
@@ -206,7 +185,7 @@ export default function Transactions({ navigation }: RootNavigationProps) {
         <>{renderNoListings}</>
         <FlatList
           className="py-5"
-          data={listings}
+          data={listings.filter((listing) => listing.status === activeStatus)}
           renderItem={({ item }) => handleRender(item)}
         />
       </ContentWrapper>
