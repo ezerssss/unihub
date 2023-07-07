@@ -1,36 +1,29 @@
-import React, { useState } from 'react';
-import {
-  View,
-  TextInput,
-  TouchableOpacity,
-  NativeSyntheticEvent,
-  TextInputKeyPressEventData,
-} from 'react-native';
-import { SearchIcon } from './icons';
+import React from 'react';
+import { View, TextInput } from 'react-native';
+import { AlgoliaSearchIcon, SearchIcon } from './icons';
 
-interface SearchProps {
-  onSearch: (query: string) => void;
+interface PropsInterface {
+  autoFocus?: boolean;
+  value?: string;
+  onChange?: (query: string) => void;
+  onFocus?: () => void;
 }
 
-function Search(props: SearchProps) {
-  const { onSearch } = props;
-  const [searchQuery, setSearchQuery] = useState<string>('');
-
-  function handleSearch() {
-    onSearch(searchQuery);
-  }
+function Search(props: PropsInterface) {
+  const { autoFocus, value, onChange, onFocus } = props;
 
   return (
-    <View className="mb-6 mt-8 flex-1 flex-row items-center justify-center rounded-full bg-white px-3 py-1">
-      <View className="ml-5">
-        <SearchIcon />
-      </View>
+    <View className="flex-1 flex-row items-center justify-center rounded-xl bg-white px-3 py-1">
+      <SearchIcon />
       <TextInput
-        className="w-full py-2 pl-3 text-black"
+        autoFocus={autoFocus}
+        className="w-full flex-1 py-2 pl-3 text-black"
         placeholder="Search for products"
-        value={searchQuery}
-        onChangeText={setSearchQuery}
+        value={value}
+        onChangeText={onChange}
+        onFocus={onFocus}
       />
+      <AlgoliaSearchIcon />
     </View>
   );
 }

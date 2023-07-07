@@ -25,6 +25,7 @@ import { Categories } from '../enums/categories';
 import { Product } from '../types/product';
 import { uploadBlob } from '../helpers/upload';
 import uuid from 'react-native-uuid';
+import { saveAsSearchableItem } from './search';
 
 interface BuyerAndSellerTransactionRef {
   buyerDocRef: DocumentReference<DocumentData>;
@@ -168,8 +169,9 @@ export async function sell(
     const productsRef = collection(db, DB.PRODUCTS);
     const userRef = collection(db, DB.USERS, user.uid, DB.PRODUCTS);
 
-    await addDoc(productsRef, product);
+    const { id } = await addDoc(productsRef, product);
     await addDoc(userRef, product);
+    await saveAsSearchableItem(product, id);
 
     return product;
   } catch (error) {
