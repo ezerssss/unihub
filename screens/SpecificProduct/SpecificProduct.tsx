@@ -141,9 +141,7 @@ function SpecificProduct({ route, navigation }: ProductNavigationProps) {
               <AntDesign color="white" name="left" size={30} />
             </TouchableOpacity>
             {renderEditButton}
-            <View className="px-2">
-              <ProductCarousel images={images} />
-            </View>
+            <ProductCarousel images={images} />
             <View className="mx-8 mt-2 flex">
               <TouchableOpacity className="mb-2 flex">
                 <Text className="text-primary-500">by {seller}</Text>
@@ -178,7 +176,12 @@ function SpecificProduct({ route, navigation }: ProductNavigationProps) {
             </View>
           </View>
         </ScrollView>
-        <View className="bottom-0 flex h-28 w-full bg-white shadow shadow-black ">
+        <View
+          className="bottom-0 flex h-28 w-full bg-transparent shadow shadow-black"
+          style={{
+            elevation: 1,
+          }}
+        >
           <Text className="text-s left-8 top-4 text-unihub-gray-400">
             Price:
           </Text>

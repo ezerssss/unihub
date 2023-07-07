@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Image, TouchableOpacity } from 'react-native';
+import { View, Image, TouchableWithoutFeedback } from 'react-native';
 import Swiper from 'react-native-swiper';
 import ImageView from 'react-native-image-viewing';
 
@@ -17,27 +17,22 @@ function ProductCarousel(props: CarouselProps) {
   }
 
   const renderProducts = images.map((image) => (
-    <View className="overflow-hidden rounded-2xl" key={image}>
-      <ImageView
-        imageIndex={imageIndex}
-        images={images.map(setIntoImageSource)}
-        visible={isFullImage}
-        onRequestClose={() => setIsFullImage(false)}
-      />
-      <TouchableOpacity
+    <View
+      className="mx-2 overflow-hidden rounded-2xl border border-gray-200"
+      key={image}
+    >
+      <TouchableWithoutFeedback
         onPress={() => {
           setIsFullImage(true);
         }}
       >
-        <View className="relative">
-          <Image
-            className="h-full w-full rounded-lg"
-            source={{
-              uri: image,
-            }}
-          />
-        </View>
-      </TouchableOpacity>
+        <Image
+          className="h-full w-full rounded-lg"
+          source={{
+            uri: image,
+          }}
+        />
+      </TouchableWithoutFeedback>
     </View>
   ));
 
@@ -46,13 +41,18 @@ function ProductCarousel(props: CarouselProps) {
       <Swiper
         activeDot={<View className="mx-2 h-2 w-2 rounded-full bg-black" />}
         dot={<View className="mx-2 h-2 w-2 rounded-full bg-gray-400" />}
-        style={{ height: 288 }}
-        onIndexChanged={(index) => {
-          setImageIndex(index);
-        }}
+        height={288}
+        loop={false}
+        onIndexChanged={(index) => setImageIndex(index)}
       >
         {renderProducts}
       </Swiper>
+      <ImageView
+        imageIndex={imageIndex}
+        images={images.map(setIntoImageSource)}
+        visible={isFullImage}
+        onRequestClose={() => setIsFullImage(false)}
+      />
     </View>
   );
 }
