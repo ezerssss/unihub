@@ -49,6 +49,7 @@ export async function registerForPushNotifications(): Promise<string> {
 export async function sendProductPushNotification(
   expoPushToken: string,
   body: string,
+  title: string,
   transaction: Transaction
 ) {
   try {
@@ -56,6 +57,7 @@ export async function sendProductPushNotification(
       to: expoPushToken,
       sound: 'default',
       body,
+      title,
       data: { ...transaction },
     };
 

@@ -121,6 +121,7 @@ export async function updateTransactionStatus(
       await sendProductPushNotification(
         buyerExpoPushToken,
         getStatusSellerText(newStatus, user.displayName ?? '-'),
+        'Your order status has been updated.',
         transaction
       );
     }
@@ -226,6 +227,7 @@ export async function buy(
       await sendProductPushNotification(
         sellerExpoPushToken,
         `${buyerDisplayName} has sent a buy request for the ${product.title}`,
+        'You got an order.',
         transaction
       );
     }
