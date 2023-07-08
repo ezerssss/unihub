@@ -18,39 +18,55 @@ import ProductSold from './screens/SpecificProduct/ProductSold';
 import Transactions from './screens/Transactions/Transactions';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import SearchScreen from './screens/Search/Search';
+import NotificationContext from './context/NotificationContext';
 
 const Stack = createNativeStackNavigator<RootStackParamsList>();
 
 export default function App() {
   const [user, setUser] = useState<User | null>(null);
+  const [expoPushToken, setExpoPushToken] = useState<string | undefined>(
+    undefined
+  );
   const userContextValue = useMemo(() => ({ user, setUser }), [user, setUser]);
+  const notificationContextValue = useMemo(
+    () => ({ expoPushToken, setExpoPushToken }),
+    [expoPushToken, setExpoPushToken]
+  );
 
   return (
     <UserContext.Provider value={userContextValue}>
-      <SafeAreaProvider className="flex-1">
-        <StatusBar style="auto" />
-        <NavigationContainer>
-          <Stack.Navigator
-            initialRouteName={Routes.HOME}
-            screenOptions={{ animation: 'none' }}
-          >
-            <Stack.Screen component={Home} name={Routes.HOME} />
-            <Stack.Screen component={Login} name={Routes.LOGIN} />
-            <Stack.Screen component={Sell} name={Routes.SELL} />
-            <Stack.Screen component={Chat} name={Routes.CHAT} />
-            <Stack.Screen component={SpecificProduct} name={Routes.PRODUCT} />
-            <Stack.Screen component={Buy} name={Routes.BUY} />
-            <Stack.Screen component={Category} name={Routes.CATEGORY} />
-            <Stack.Screen component={ProductSold} name={Routes.PRODUCT_SOLD} />
-            <Stack.Screen
-              component={ProductListing}
-              name={Routes.PRODUCT_LISTINGS}
-            />
-            <Stack.Screen component={Transactions} name={Routes.TRANSACTIONS} />
-            <Stack.Screen component={SearchScreen} name={Routes.SEARCH} />
-          </Stack.Navigator>
-        </NavigationContainer>
-      </SafeAreaProvider>
+      <NotificationContext.Provider value={notificationContextValue}>
+        <SafeAreaProvider className="flex-1">
+          <StatusBar style="auto" />
+          <NavigationContainer>
+            <Stack.Navigator
+              initialRouteName={Routes.HOME}
+              screenOptions={{ animation: 'none' }}
+            >
+              <Stack.Screen component={Home} name={Routes.HOME} />
+              <Stack.Screen component={Login} name={Routes.LOGIN} />
+              <Stack.Screen component={Sell} name={Routes.SELL} />
+              <Stack.Screen component={Chat} name={Routes.CHAT} />
+              <Stack.Screen component={SpecificProduct} name={Routes.PRODUCT} />
+              <Stack.Screen component={Buy} name={Routes.BUY} />
+              <Stack.Screen component={Category} name={Routes.CATEGORY} />
+              <Stack.Screen
+                component={ProductSold}
+                name={Routes.PRODUCT_SOLD}
+              />
+              <Stack.Screen
+                component={ProductListing}
+                name={Routes.PRODUCT_LISTINGS}
+              />
+              <Stack.Screen
+                component={Transactions}
+                name={Routes.TRANSACTIONS}
+              />
+              <Stack.Screen component={SearchScreen} name={Routes.SEARCH} />
+            </Stack.Navigator>
+          </NavigationContainer>
+        </SafeAreaProvider>
+      </NotificationContext.Provider>
     </UserContext.Provider>
   );
 }

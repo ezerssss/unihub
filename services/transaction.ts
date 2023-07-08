@@ -21,11 +21,10 @@ import { Transaction } from '../types/transaction';
 import { sendMessage } from './chat';
 import { User } from 'firebase/auth';
 import { generateErrorMessage } from '../helpers/error';
-import { Categories } from '../enums/categories';
 import { Product } from '../types/product';
-import { uploadBlob } from '../helpers/upload';
-import uuid from 'react-native-uuid';
+
 import { saveAsSearchableItem } from './search';
+import { sendProductPushNotification } from './notification';
 
 interface BuyerAndSellerTransactionRef {
   buyerDocRef: DocumentReference<DocumentData>;
@@ -105,6 +104,8 @@ export async function updateTransactionStatus(
       transaction
     );
 
+    const { buyerExpoPushToken } = transaction;
+
     await updateDoc(sellerDocRef, { status: newStatus });
     await updateDoc(buyerDocRef, { status: newStatus, isSeen: false });
 
@@ -115,6 +116,14 @@ export async function updateTransactionStatus(
     };
 
     await sendMessage(transaction, message, user);
+
+    if (buyerExpoPushToken) {
+      await sendProductPushNotification(
+        buyerExpoPushToken,
+        getStatusSellerText(newStatus, user.displayName ?? '-'),
+        transaction
+      );
+    }
   } catch (error) {
     console.error(error);
     const message = generateErrorMessage(
@@ -126,54 +135,14 @@ export async function updateTransactionStatus(
   }
 }
 
-async function uploadProductPhotos(imageURIs: string[]): Promise<string[]> {
-  const photoURLs: string[] = [];
-
-  for (const uri of imageURIs) {
-    const id = uuid.v4();
-    const path = `products/${id}`;
-
-    const url = await uploadBlob(uri, path);
-    photoURLs.push(url);
-  }
-
-  return photoURLs;
-}
-
-export async function sell(
-  imageURIs: string[],
-  title: string,
-  price: string,
-  description: string,
-  selectedCategory: string,
-  time: Date,
-  location: string,
-  user: User
-): Promise<Product> {
+export async function sell(product: Product, user: User) {
   try {
-    const images = await uploadProductPhotos(imageURIs);
-
-    const product: Product = {
-      images,
-      title,
-      price: parseFloat(price),
-      description,
-      category: selectedCategory as Categories,
-      meetup: {
-        time,
-        location,
-      },
-      seller: user?.displayName ?? '-',
-    };
-
     const productsRef = collection(db, DB.PRODUCTS);
     const userRef = collection(db, DB.USERS, user.uid, DB.PRODUCTS);
 
     const { id } = await addDoc(productsRef, product);
     await addDoc(userRef, product);
     await saveAsSearchableItem(product, id);
-
-    return product;
   } catch (error) {
     console.error(error);
     const message = generateErrorMessage(
@@ -185,7 +154,11 @@ export async function sell(
   }
 }
 
-export async function buy(product: Product, user: User): Promise<Transaction> {
+export async function buy(
+  product: Product,
+  user: User,
+  expoPushToken?: string
+): Promise<Transaction> {
   try {
     const userRef = collection(db, DB.USERS);
     const sellerQuery = query(
@@ -215,6 +188,7 @@ export async function buy(product: Product, user: User): Promise<Transaction> {
       product: product,
       sellerEmail,
       status: StatusEnum.CONFIRM,
+      buyerExpoPushToken: expoPushToken,
     };
 
     const buyerRef = collection(db, DB.USERS, buyer.uid, DB.TRANSACTIONS);
@@ -245,6 +219,16 @@ export async function buy(product: Product, user: User): Promise<Transaction> {
     };
 
     await sendMessage(transaction, firstMessage, user);
+
+    const { sellerExpoPushToken } = product;
+
+    if (sellerExpoPushToken) {
+      await sendProductPushNotification(
+        sellerExpoPushToken,
+        `${buyerDisplayName} has sent a buy request for the ${product.title}`,
+        transaction
+      );
+    }
 
     return transaction;
   } catch (error) {
@@ -284,14 +268,18 @@ export async function getAllProductTransactionsDocs(
   let transactionQuery = query(
     sellerTransactionsRef,
     where('product.title', '==', title),
-    where('product.seller', '==', seller),
-    where('status', '!=', StatusEnum.SUCCESS)
+    where('product.seller', '==', seller)
   );
 
   if (excludeMeetupTransactions) {
     transactionQuery = query(
       transactionQuery,
       where('status', '!=', StatusEnum.MEETUP)
+    );
+  } else {
+    transactionQuery = query(
+      transactionQuery,
+      where('status', '!=', StatusEnum.SUCCESS)
     );
   }
 
