@@ -17,10 +17,11 @@ import {
 } from 'firebase/auth';
 import auth from '../../firebase/auth';
 import * as WebBrowser from 'expo-web-browser';
-import AuthWrapper from '../../components/AuthWrapper';
 import UserContext from '../../context/UserContext';
 import { RootNavigationProps } from '../../types/navigation';
 import { generateErrorMessage } from '../../helpers/error';
+import useAuthHandler from '../../hooks/useAuthHandler';
+import { LoginLoading } from '../../components/loading';
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -32,16 +33,20 @@ function Login({ navigation }: RootNavigationProps) {
     androidClientId: process.env.ANDROID_OAUTH_ID,
     iosClientId: process.env.IOS_OAUTH_ID,
   });
+
+  const isAuthLoading = useAuthHandler();
   const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    setIsLoading(isAuthLoading);
+  }, [isAuthLoading]);
 
   async function openTermsOfService() {
     await Linking.openURL('http://google.com/search?q=terms+of+service');
   }
 
   useEffect(() => {
-    if (!user) {
-      setIsLoading(false);
-    } else if (user && navigation.getState().index > 0) {
+    if (user && navigation.getState().index > 0) {
       navigation.popToTop();
     }
   }, [user]);
@@ -86,37 +91,39 @@ function Login({ navigation }: RootNavigationProps) {
     </>
   );
 
+  if (isAuthLoading) {
+    return <LoginLoading />;
+  }
+
   return (
-    <AuthWrapper>
-      <ContentWrapper hasHeader={false} hasLightStatusBar={true}>
-        <View className="flex-1 items-center justify-center bg-primary-400">
-          <View className="h-5/6 w-11/12 flex-none items-center justify-center rounded-3xl bg-white">
-            <UniHubIcon />
-            <Text className="t mt-7 text-xl font-bold text-primary-400">
-              Welcome
-            </Text>
-            <View className="flex h-14 w-64">
-              <Text className="text-center">
-                By signing in you are agreeing to our{'\n'}
-                <Text
-                  className="color-primary-400 text-center"
-                  onPress={openTermsOfService}
-                >
-                  terms and privacy policies
-                </Text>
+    <ContentWrapper hasHeader={false} hasLightStatusBar={true}>
+      <View className="flex-1 items-center justify-center bg-primary-400">
+        <View className="h-5/6 w-11/12 flex-none items-center justify-center rounded-3xl bg-white">
+          <UniHubIcon />
+          <Text className="t mt-7 text-xl font-bold text-primary-400">
+            Welcome
+          </Text>
+          <View className="flex h-14 w-64">
+            <Text className="text-center">
+              By signing in you are agreeing to our{'\n'}
+              <Text
+                className="color-primary-400 text-center"
+                onPress={openTermsOfService}
+              >
+                terms and privacy policies
               </Text>
-            </View>
-            <TouchableOpacity
-              className="mt-28 h-12 w-64 flex-row items-center justify-center rounded-3xl border bg-primary-400 p-2"
-              disabled={!request || isLoading}
-              onPress={handleLogin}
-            >
-              {renderButtonText}
-            </TouchableOpacity>
+            </Text>
           </View>
+          <TouchableOpacity
+            className="mt-28 h-12 w-64 flex-row items-center justify-center rounded-3xl border bg-primary-400 p-2"
+            disabled={!request || isLoading}
+            onPress={handleLogin}
+          >
+            {renderButtonText}
+          </TouchableOpacity>
         </View>
-      </ContentWrapper>
-    </AuthWrapper>
+      </View>
+    </ContentWrapper>
   );
 }
 
