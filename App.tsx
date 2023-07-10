@@ -18,6 +18,7 @@ import ProductSold from './screens/SpecificProduct/ProductSold';
 import Transactions from './screens/Transactions/Transactions';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import SearchScreen from './screens/Search/Search';
+import EditSell from './screens/Sell/EditSell';
 import NotificationContext from './context/NotificationContext';
 
 const Stack = createNativeStackNavigator<RootStackParamsList>();
@@ -46,6 +47,7 @@ export default function App() {
               <Stack.Screen component={Home} name={Routes.HOME} />
               <Stack.Screen component={Login} name={Routes.LOGIN} />
               <Stack.Screen component={Sell} name={Routes.SELL} />
+              <Stack.Screen component={EditSell} name={Routes.EDIT_SELL} />
               <Stack.Screen component={Chat} name={Routes.CHAT} />
               <Stack.Screen component={SpecificProduct} name={Routes.PRODUCT} />
               <Stack.Screen component={Buy} name={Routes.BUY} />

@@ -47,15 +47,17 @@ export async function uploadProductPhotos(
   return photoURLs;
 }
 
-async function deleteProductPhotos(product: Product) {
+export async function deleteProductPhotos(product: Product) {
   try {
     const { images } = product;
 
     for (let i = 1; i < 3; i++) {
       const imageID = getImageID(images[i]);
-      const imageRef = ref(storage, `products/${imageID}`);
+      const imagePath = `products/${imageID}`;
 
-      await deleteObject(imageRef);
+      const storageRef = ref(storage, imagePath);
+
+      await deleteObject(storageRef);
     }
   } catch (error) {
     console.error(error);
@@ -64,7 +66,6 @@ async function deleteProductPhotos(product: Product) {
     throw new Error(message);
   }
 }
-
 export async function cancelAllProductTransactions(
   product: Product,
   user: User,
