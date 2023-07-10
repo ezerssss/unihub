@@ -5,31 +5,31 @@ export const categories: Category[] = [
   {
     id: '1',
     image:
-      'https://ph-test-11.slatic.net/p/5c3121dd522ddbd86338323f6691002d.jpg',
+      'https://i.imgur.com/w2n45Ty.png',
     name: Categories.BOOKS,
   },
   {
     id: '2',
     image:
-      'https://blog.japanwondertravel.com/wp-content/uploads/2021/10/Japanese-clothing-store.jpg',
+      'https://i.imgur.com/GY3hZt2.png',
     name: Categories.CLOTHING,
   },
   {
     id: '3',
     image:
-      'https://ibvi.org/wp-content/uploads/2019/12/IBVI_Blog_MustHaveBackToSchoolSupplies_1920x820.jpg',
+      'https://i.imgur.com/k7nA74l.png',
     name: Categories.SCHOOL_SUPPLIES,
   },
   {
     id: '4',
     image:
-      'https://identity.missouri.edu/wp-content/uploads/2020/11/StudentOrg-Apparel-4.png',
+      'https://i.imgur.com/3EN63t8.png',
     name: Categories.ORG_MERCH,
   },
   {
-    id: '6',
+    id: '5',
     image:
-      'https://images.unsplash.com/photo-1555664424-778a1e5e1b48?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1740&q=80',
+      'https://i.imgur.com/IawpIP1.png',
     name: Categories.ELECTRONICS,
   },
 ];

@@ -30,13 +30,13 @@ function CategoriesCarousel(props: CategoriesCarouselProps) {
           }}
         >
           <Image
-            className="h-20 w-20"
+            className="h-16 w-16"
             resizeMode="cover"
             source={{ uri: category.image }}
           />
         </TouchableOpacity>
       </View>
-      <Text className="mt-3 w-20 text-sm" numberOfLines={1}>
+      <Text className="mt-3 w-16 text-xs font-medium text-center">
         {category.name}
       </Text>
     </View>
