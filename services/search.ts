@@ -29,8 +29,20 @@ export async function deleteSearchableItem(productDocID: string) {
   await searchIndex.deleteObject(productDocID);
 }
 
-interface HitInterface extends CleanedSearchableProduct {
-  objectID: string;
+export async function updateSearchableItem(
+  product: Product,
+  productDocID: string
+) {
+  const { title, description, seller } = product;
+
+  const object: CleanedSearchableProduct = {
+    title,
+    description,
+    seller,
+    objectID: productDocID,
+  };
+
+  await searchIndex.partialUpdateObject(object);
 }
 
 export async function search(query: string): Promise<SearchResult[]> {
@@ -39,7 +51,7 @@ export async function search(query: string): Promise<SearchResult[]> {
 
   const { hits } = response;
   for (const item of hits) {
-    const { objectID, title } = item as HitInterface;
+    const { objectID, title } = item as CleanedSearchableProduct;
 
     const result: SearchResult = {
       docID: objectID,

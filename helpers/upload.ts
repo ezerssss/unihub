@@ -1,7 +1,10 @@
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 import storage from '../firebase/storage';
 import * as ImageManipulator from 'expo-image-manipulator';
-import { imageCompressionLevel } from '../constants/image';
+import {
+  firebaseStorageSubstringURI,
+  imageCompressionLevel,
+} from '../constants/image';
 
 export async function uploadBlob(uri: string, path: string): Promise<string> {
   try {
@@ -32,4 +35,8 @@ export async function compressImage(uri: string): Promise<string> {
     console.error(error);
     throw new Error('Something went wrong with compressing the image.');
   }
+}
+
+export function isFirebaseImage(uri: string) {
+  return uri.includes(firebaseStorageSubstringURI);
 }

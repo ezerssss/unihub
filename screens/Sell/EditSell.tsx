@@ -25,21 +25,26 @@ import { Timestamp } from 'firebase/firestore';
 import UserContext from '../../context/UserContext';
 import { EditSellNavigationProps } from '../../types/navigation';
 import { Routes } from '../../enums/routes';
-import { updateProduct, deleteProduct } from '../../services/product';
 import {
+  updateProduct,
+  deleteProduct,
   uploadProductPhotos,
   deleteProductPhotos,
+  hasProductDuplicate,
 } from '../../services/product';
 import { generateErrorMessage } from '../../helpers/error';
 import { Product } from '../../types/product';
 import NotificationContext from '../../context/NotificationContext';
-import { User } from 'firebase/auth';
 
-export default function Sell({ navigation, route }: EditSellNavigationProps) {
+export default function EditSell({
+  navigation,
+  route,
+}: EditSellNavigationProps) {
   const { product } = route.params;
+
   const timestamp = product.meetup.time;
   const dateObject =
-    timestamp instanceof Timestamp ? timestamp.toDate() : new Date();
+    timestamp instanceof Timestamp ? timestamp.toDate() : timestamp;
 
   const goBack = useGoBack();
 
@@ -51,7 +56,7 @@ export default function Sell({ navigation, route }: EditSellNavigationProps) {
   const [price, setPrice] = useState(product.price.toString());
   const [location, setLocation] = useState(product.meetup.location);
   const [imageURIs, setImageURIs] = useState<string[]>(product.images);
-  const [showPreferredTime, setShowPreferredTime] = useState<boolean>(false);
+  const [showPreferredTime, setShowPreferredTime] = useState<boolean>(true);
   const [showTimePicker, setShowTimePicker] = useState<boolean>(false);
   const [time, setTime] = useState<Date>(dateObject);
   const [selectedCategory, setSelectedCategory] = useState<string>(
@@ -94,11 +99,17 @@ export default function Sell({ navigation, route }: EditSellNavigationProps) {
       return;
     }
 
-    const uri = await compressImage(image.assets[0].uri);
-    const updatedImageURIs = imageURIs;
-    updatedImageURIs[index] = uri;
+    const newURI = await compressImage(image.assets[0].uri);
 
-    setImageURIs([...updatedImageURIs]);
+    setImageURIs(
+      imageURIs.map((uri, i) => {
+        if (i === index) {
+          return newURI;
+        }
+
+        return uri;
+      })
+    );
   }
 
   function showErrorPopup(message: string) {
@@ -147,7 +158,7 @@ export default function Sell({ navigation, route }: EditSellNavigationProps) {
     return true;
   }
 
-  async function handleDelete(product: Product, user: User) {
+  async function handleDelete() {
     if (!user) {
       return;
     }
@@ -155,19 +166,37 @@ export default function Sell({ navigation, route }: EditSellNavigationProps) {
     setIsDeleting(true);
 
     await deleteProduct(product, user);
+    handleStateCleanUp();
     navigation.navigate(Routes.HOME);
   }
 
-  async function handleEdit(originalProduct: Product) {
+  async function handleEdit() {
     if (!user) {
       return;
     }
+
     setIsEditing(true);
 
-    await deleteProductPhotos(originalProduct);
+    const hasTitleChanged = product.title !== title;
+
+    if (hasTitleChanged && (await hasProductDuplicate(user.uid, title))) {
+      Alert.alert(
+        'Cannot have duplicate product',
+        'Please rename your product.'
+      );
+      setIsEditing(false);
+
+      return;
+    }
+
+    const outdatedImages = product.images.filter(
+      (uri, index) => uri !== imageURIs[index]
+    );
+
+    await deleteProductPhotos(outdatedImages);
     const images = await uploadProductPhotos(imageURIs);
 
-    const product: Product = {
+    const newProduct: Product = {
       images,
       title,
       price: parseFloat(price),
@@ -181,9 +210,12 @@ export default function Sell({ navigation, route }: EditSellNavigationProps) {
       sellerExpoPushToken: expoPushToken,
     };
 
-    await updateProduct(product, user);
+    await updateProduct(product, newProduct, user);
     handleStateCleanUp();
-    navigation.navigate(Routes.PRODUCT, { product, isRedirect: true });
+    navigation.navigate(Routes.PRODUCT, {
+      product: newProduct,
+      isRedirect: true,
+    });
   }
 
   async function handleDeleteButtonPress() {
@@ -201,7 +233,7 @@ export default function Sell({ navigation, route }: EditSellNavigationProps) {
         },
         {
           text: 'Yes',
-          onPress: () => handleDelete(product, user),
+          onPress: handleDelete,
         },
       ]);
     } catch (error) {
@@ -217,7 +249,6 @@ export default function Sell({ navigation, route }: EditSellNavigationProps) {
       if (!user || !handleInputValidation()) {
         return;
       }
-      setIsEditing(true);
 
       Alert.alert('Confirm to Edit?', '', [
         {
@@ -228,7 +259,7 @@ export default function Sell({ navigation, route }: EditSellNavigationProps) {
         },
         {
           text: 'Yes',
-          onPress: () => handleEdit(product),
+          onPress: handleEdit,
         },
       ]);
     } catch (error) {
@@ -247,6 +278,8 @@ export default function Sell({ navigation, route }: EditSellNavigationProps) {
     setSelectedCategory('');
     setShowPreferredTime(false);
     setLocation('');
+    setIsDeleting(false);
+    setIsEditing(false);
   }, []);
 
   const renderTimePicker = showTimePicker && (
@@ -360,18 +393,21 @@ export default function Sell({ navigation, route }: EditSellNavigationProps) {
           </View>
         </ScrollView>
 
-        <View className="bottom-0 flex h-28 w-full content-end justify-center bg-white py-4 shadow shadow-black">
-          <View className="ml-auto flex flex-row">
+        <View className="h-28 bg-white shadow shadow-black">
+          <View
+            className="h-full flex-row items-center justify-end border-t border-transparent py-4"
+            style={{ elevation: 2 }}
+          >
             <TouchableOpacity
-              className="mr-5 h-10 w-28 items-center justify-center self-end rounded-lg bg-tertiary-100"
-              disabled={isDeleting}
+              className="mr-5 h-10 w-28 items-center justify-center rounded-lg bg-tertiary-100"
+              disabled={isDeleting || isEditing}
               onPress={handleDeleteButtonPress}
             >
               {renderDeleteButtonText}
             </TouchableOpacity>
             <TouchableOpacity
-              className="mr-5 h-12 w-36 items-center justify-center self-end rounded-lg bg-secondary-100"
-              disabled={isEditing}
+              className="mr-5 h-12 w-36 items-center justify-center rounded-lg bg-secondary-100"
+              disabled={isEditing || isDeleting}
               onPress={handleEditButtonPress}
             >
               {renderEditButtonText}

@@ -86,11 +86,17 @@ export default function Sell({ navigation }: RootNavigationProps) {
       return;
     }
 
-    const uri = await compressImage(image.assets[0].uri);
-    const updatedImageURIs = imageURIs;
-    updatedImageURIs[index] = uri;
+    const newURI = await compressImage(image.assets[0].uri);
 
-    setImageURIs([...updatedImageURIs]);
+    setImageURIs(
+      imageURIs.map((uri, i) => {
+        if (i === index) {
+          return newURI;
+        }
+
+        return uri;
+      })
+    );
   }
 
   function showErrorPopup(message: string) {
@@ -208,6 +214,7 @@ export default function Sell({ navigation }: RootNavigationProps) {
     setSelectedCategory('');
     setShowPreferredTime(false);
     setLocation('');
+    setIsUploading(false);
   }, []);
 
   const renderTimePicker = showTimePicker && (
