@@ -37,7 +37,9 @@ import { User } from 'firebase/auth';
 
 export default function Sell({ navigation, route }: EditSellNavigationProps) {
   const { product } = route.params;
-  const dateObject = (product.meetup.time as unknown as Timestamp).toDate();
+  const timestamp = product.meetup.time;
+  const dateObject =
+    timestamp instanceof Timestamp ? timestamp.toDate() : new Date();
 
   const goBack = useGoBack();
 
@@ -152,11 +154,8 @@ export default function Sell({ navigation, route }: EditSellNavigationProps) {
 
     setIsDeleting(true);
 
-    try {
-      await deleteProduct(product, user);
-    } catch {
-      navigation.navigate(Routes.HOME);
-    }
+    await deleteProduct(product, user);
+    navigation.navigate(Routes.HOME);
   }
 
   async function handleEdit(originalProduct: Product) {
@@ -165,6 +164,7 @@ export default function Sell({ navigation, route }: EditSellNavigationProps) {
     }
     setIsEditing(true);
 
+    await deleteProductPhotos(originalProduct);
     const images = await uploadProductPhotos(imageURIs);
 
     const product: Product = {
@@ -181,13 +181,9 @@ export default function Sell({ navigation, route }: EditSellNavigationProps) {
       sellerExpoPushToken: expoPushToken,
     };
 
-    try {
-      await deleteProductPhotos(originalProduct);
-      await updateProduct(product, user);
-    } catch {
-      handleStateCleanUp();
-      navigation.navigate(Routes.PRODUCT, { product, isRedirect: true });
-    }
+    await updateProduct(product, user);
+    handleStateCleanUp();
+    navigation.navigate(Routes.PRODUCT, { product, isRedirect: true });
   }
 
   async function handleDeleteButtonPress() {

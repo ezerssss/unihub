@@ -162,12 +162,9 @@ export default function Sell({ navigation }: RootNavigationProps) {
       sellerExpoPushToken: expoPushToken,
     };
 
-    try {
-      await sell(product, user);
-    } catch {
-      handleStateCleanUp();
-      navigation.navigate(Routes.PRODUCT, { product, isRedirect: true });
-    }
+    await sell(product, user);
+    handleStateCleanUp();
+    navigation.navigate(Routes.PRODUCT, { product, isRedirect: true });
   }
 
   async function handleSellButtonPress() {

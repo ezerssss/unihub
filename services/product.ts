@@ -17,7 +17,7 @@ import db from '../firebase/db';
 import { generateErrorMessage } from '../helpers/error';
 import { Product } from '../types/product';
 import { Categories } from '../enums/categories';
-import { getImageID, uploadBlob } from '../helpers/upload';
+import { uploadBlob } from '../helpers/upload';
 import { StatusEnum } from '../enums/status';
 import {
   getAllProductTransactionsDocs,
@@ -48,22 +48,16 @@ export async function uploadProductPhotos(
 }
 
 export async function deleteProductPhotos(product: Product) {
-  try {
-    const { images } = product;
+  const { images } = product;
 
-    for (let i = 1; i < 3; i++) {
-      const imageID = getImageID(images[i]);
-      const imagePath = `products/${imageID}`;
+  for (let i = 1; i < 3; i++) {
+    const storageRef = ref(storage, images[i]);
 
-      const storageRef = ref(storage, imagePath);
-
+    try {
       await deleteObject(storageRef);
+    } catch (error) {
+      console.error(error);
     }
-  } catch (error) {
-    console.error(error);
-    const message = generateErrorMessage(error);
-
-    throw new Error(message);
   }
 }
 export async function cancelAllProductTransactions(
