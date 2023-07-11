@@ -144,6 +144,8 @@ export default function Sell({ navigation }: RootNavigationProps) {
       return;
     }
 
+    setIsUploading(true);
+
     const images = await uploadProductPhotos(imageURIs);
 
     const product: Product = {
@@ -160,9 +162,12 @@ export default function Sell({ navigation }: RootNavigationProps) {
       sellerExpoPushToken: expoPushToken,
     };
 
-    await sell(product, user);
-    handleStateCleanUp();
-    navigation.navigate(Routes.PRODUCT, { product, isRedirect: true });
+    try {
+      await sell(product, user);
+    } catch {
+      handleStateCleanUp();
+      navigation.navigate(Routes.PRODUCT, { product, isRedirect: true });
+    }
   }
 
   async function handleSellButtonPress() {

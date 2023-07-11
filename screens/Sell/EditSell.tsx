@@ -55,7 +55,8 @@ export default function Sell({ navigation, route }: EditSellNavigationProps) {
   const [selectedCategory, setSelectedCategory] = useState<string>(
     product.category
   );
-  const [isUploading, setIsUploading] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
 
   function handleCategoryChange(category: string) {
     setSelectedCategory(category);
@@ -149,17 +150,21 @@ export default function Sell({ navigation, route }: EditSellNavigationProps) {
       return;
     }
 
-    await deleteProduct(product, user);
-    handleStateCleanUp();
-    navigation.navigate(Routes.HOME);
+    setIsDeleting(true);
+
+    try {
+      await deleteProduct(product, user);
+    } catch {
+      navigation.navigate(Routes.HOME);
+    }
   }
 
   async function handleEdit(originalProduct: Product) {
     if (!user) {
       return;
     }
+    setIsEditing(true);
 
-    await deleteProductPhotos(originalProduct);
     const images = await uploadProductPhotos(imageURIs);
 
     const product: Product = {
@@ -176,9 +181,13 @@ export default function Sell({ navigation, route }: EditSellNavigationProps) {
       sellerExpoPushToken: expoPushToken,
     };
 
-    await updateProduct(product, user);
-    handleStateCleanUp();
-    navigation.navigate(Routes.PRODUCT, { product, isRedirect: true });
+    try {
+      await deleteProductPhotos(originalProduct);
+      await updateProduct(product, user);
+    } catch {
+      handleStateCleanUp();
+      navigation.navigate(Routes.PRODUCT, { product, isRedirect: true });
+    }
   }
 
   async function handleDeleteButtonPress() {
@@ -203,7 +212,7 @@ export default function Sell({ navigation, route }: EditSellNavigationProps) {
       const message = generateErrorMessage(error);
       showErrorPopup(message);
     } finally {
-      setIsUploading(false);
+      setIsDeleting(false);
     }
   }
 
@@ -212,6 +221,7 @@ export default function Sell({ navigation, route }: EditSellNavigationProps) {
       if (!user || !handleInputValidation()) {
         return;
       }
+      setIsEditing(true);
 
       Alert.alert('Confirm to Edit?', '', [
         {
@@ -229,7 +239,7 @@ export default function Sell({ navigation, route }: EditSellNavigationProps) {
       const message = generateErrorMessage(error);
       showErrorPopup(message);
     } finally {
-      setIsUploading(false);
+      setIsEditing(false);
     }
   }
 
@@ -258,13 +268,13 @@ export default function Sell({ navigation, route }: EditSellNavigationProps) {
     <AntDesign color="black" name="right" size={22} />
   );
 
-  const renderDeleteButtonText = isUploading ? (
+  const renderDeleteButtonText = isDeleting ? (
     <ActivityIndicator color="white" size="large" />
   ) : (
     <Text className="text-md font-extrabold text-white">Delete Listing</Text>
   );
 
-  const renderEditButtonText = isUploading ? (
+  const renderEditButtonText = isEditing ? (
     <ActivityIndicator color="white" size="large" />
   ) : (
     <Text className="text-2xl font-extrabold text-white">Update</Text>
@@ -358,14 +368,14 @@ export default function Sell({ navigation, route }: EditSellNavigationProps) {
           <View className="ml-auto flex flex-row">
             <TouchableOpacity
               className="mr-5 h-10 w-28 items-center justify-center self-end rounded-lg bg-tertiary-100"
-              disabled={isUploading}
+              disabled={isDeleting}
               onPress={handleDeleteButtonPress}
             >
               {renderDeleteButtonText}
             </TouchableOpacity>
             <TouchableOpacity
               className="mr-5 h-12 w-36 items-center justify-center self-end rounded-lg bg-secondary-100"
-              disabled={isUploading}
+              disabled={isEditing}
               onPress={handleEditButtonPress}
             >
               {renderEditButtonText}
