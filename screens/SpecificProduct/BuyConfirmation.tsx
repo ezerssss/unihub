@@ -102,32 +102,38 @@ function Buy({ route, navigation }: BuyNavigationProps) {
           <TouchableOpacity className="absolute left-0" onPress={handleBack}>
             <ReturnIcon />
           </TouchableOpacity>
-          <Text className="text-xl font-semibold">Order Update</Text>
+          <Text className="text-lg font-bold">Order Update</Text>
         </View>
-        <View className="h-28 w-28 items-center justify-center self-center rounded-full bg-white shadow shadow-primary-300">
+        <View className="h-28 w-28 items-center justify-center self-center rounded-full bg-white shadow shadow-primary-400">
           <UniHubIcon />
         </View>
         <ProgressBar transaction={transactionState} />
         <View className="h-24 w-full flex-row items-center justify-between bg-secondary-400 px-8">
-          <Text className="font-medium">Chat your seller</Text>
+          <Text className="text-base font-semibold text-primary-400">
+            Chat your seller
+          </Text>
           <TouchableOpacity className="relative" onPress={goToChat}>
             {renderNotificationBubble}
             <ChatIcon />
           </TouchableOpacity>
         </View>
         <View className="p-8">
-          <Text className="text-s font-medium text-primary-300">
+          <Text className="text-xs font-medium text-primary-400">
             Meetup Details
           </Text>
           <View className="flex-row">
-            <Text className="pt-2 text-xs">Meetup Location:</Text>
-            <Text className="absolute right-8 text-xs">
+            <Text className="pt-2 text-[10px] text-unihub-gray-200">
+              Meetup Location:
+            </Text>
+            <Text className="absolute right-8 text-[10px] text-primary-300">
               {product.meetup.location}
             </Text>
           </View>
           <View className="flex-row">
-            <Text className="pt-2 text-xs">Preferred Meetup Times</Text>
-            <Text className="absolute right-8 text-xs">
+            <Text className="pt-2 text-[10px] text-unihub-gray-200">
+              Preferred Meetup Times
+            </Text>
+            <Text className="absolute right-8 text-[10px] text-primary-300">
               {formatTime(dateObject)}
             </Text>
           </View>

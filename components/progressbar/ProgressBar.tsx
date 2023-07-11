@@ -43,7 +43,7 @@ function ProgressBar(props: PropsInterface) {
 
   return (
     <View className="my-8">
-      <Text className="me text-m self-center font-medium">{msg}</Text>
+      <Text className="me self-center text-sm font-medium">{msg}</Text>
       <View className="flex-row items-center justify-center pt-4">
         <View className={generateStyle(1)} />
         <View className={generateStyle(2)} />

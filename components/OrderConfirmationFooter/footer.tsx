@@ -5,7 +5,7 @@ import UniHubIconSmall from '../icons/UniHubIconSmall';
 function Footer() {
   return (
     <View className="absolute bottom-0 flex h-44 w-full rounded-3xl bg-white shadow shadow-black">
-      <Text className="text-s pl-8 pt-8 font-medium">Did you know?</Text>
+      <Text className="text-s pb-2 pl-8 pt-8 font-medium">Did you know?</Text>
       <View className="flex-row">
         <Text className="w-5/6 pl-16 text-center text-xs">
           UniHub started as a school project. The project drew inspiration from
