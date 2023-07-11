@@ -39,10 +39,9 @@ export default function Transactions({ navigation }: RootNavigationProps) {
   const goBack = useGoBack();
 
   function goToEditSell(product: Product) {
-    return () =>
-      navigation.navigate(Routes.EDIT_SELL, {
-        product,
-      });
+    return navigation.navigate(Routes.EDIT_SELL, {
+      product,
+    });
   }
 
   useEffect(() => {
@@ -124,7 +123,7 @@ export default function Transactions({ navigation }: RootNavigationProps) {
         {renderChat}
         <TouchableOpacity
           className="absolute bottom-5 right-5 rounded-full bg-[#FFD700] p-[10px]"
-          onPress={goToEditSell(product)}
+          onPress={() => goToEditSell(product)}
         >
           <EditIcon />
         </TouchableOpacity>

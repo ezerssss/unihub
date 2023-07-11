@@ -81,10 +81,9 @@ function SpecificProduct({ route, navigation }: ProductNavigationProps) {
   const goBack = useGoBack();
 
   function goToEditSell(product: Product) {
-    return () =>
-      navigation.navigate(Routes.EDIT_SELL, {
-        product,
-      });
+    return navigation.navigate(Routes.EDIT_SELL, {
+      product,
+    });
   }
 
   if (!product) {
@@ -113,7 +112,7 @@ function SpecificProduct({ route, navigation }: ProductNavigationProps) {
   const renderEditButton = user?.displayName === product.seller && (
     <TouchableOpacity
       className="absolute right-7 top-14 z-20 h-12 w-12 items-center justify-center rounded-full bg-secondary-100"
-      onPress={goToEditSell(product)}
+      onPress={() => goToEditSell(product)}
     >
       <PencilIcon />
     </TouchableOpacity>
