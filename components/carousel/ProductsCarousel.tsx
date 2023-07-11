@@ -6,7 +6,6 @@ import { RootStackParamsList } from '../../types/navigation';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { Routes } from '../../enums/routes';
 
-
 import type { Product } from '../../types/product';
 
 interface ProductsCarouselProps {
@@ -27,9 +26,12 @@ function ProductsCarousel(props: ProductsCarouselProps) {
 
   const renderProducts = products.map((product) => {
     return (
-      <View className="mt-4 mb-8 mx-2" key={product.images[0]} >
-        <View className="w-32 overflow-hidden rounded-lg" style={{ elevation: 2 }}>
-          <TouchableOpacity className='bg-white' onPress={() => goToSpecificProduct(product)}>
+      <View className="mx-2 mb-8 mt-4" key={product.images[0]}>
+        <View className="w-32 overflow-hidden rounded-lg shadow shadow-black">
+          <TouchableOpacity
+            className="bg-white"
+            onPress={() => goToSpecificProduct(product)}
+          >
             <Image
               className="h-24 rounded-b-lg"
               resizeMode="cover"

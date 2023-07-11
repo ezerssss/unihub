@@ -2,22 +2,21 @@ import React from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import UniHubIcon from '../../components/icons/UniHubIcon';
+import { gradientColors } from '../../constants/color';
 
 function GetFeatured() {
   return (
-    <View className="mx-7 mb-7 ml-8 h-40 w-80">
+    <View className="mx-7 mb-7 ml-8 h-40 w-80 ">
       <LinearGradient
-        className="rounded-lg"
-        colors={['#C3C3E4', '#2626E2']}
+        className="flex-1 items-center justify-center rounded-lg shadow shadow-black"
+        colors={gradientColors}
         end={[0.9, 0]}
         start={[0, 0]}
-        style={{ alignItems: 'center', flex: 1, justifyContent: 'center' }}
       >
-        <View>
-          <Text className="bottom-9 pr-4 text-base font-medium">
-            Want to get your product featured?
-          </Text>
-        </View>
+        <Text className="bottom-9 pr-4 text-base font-medium">
+          Want to get your product featured?
+        </Text>
+
         <View className="absolute right-0 pt-3">
           <UniHubIcon />
         </View>

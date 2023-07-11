@@ -16,7 +16,7 @@ import UserContext from '../../context/UserContext';
 import { RootNavigationProps } from '../../types/navigation';
 import { Routes } from '../../enums/routes';
 import Adverts from './Adverts';
-import TrustedSellers from './TrustedSellers'
+import TrustedSellers from './TrustedSellers';
 import GetFeatured from './GetFeatured';
 import CollegeSelector from './CollegeSelector';
 import { getRandomProducts } from '../../services/product';
@@ -90,31 +90,29 @@ function Home({ navigation }: RootNavigationProps) {
             <Adverts />
           </View>
           <View className="max-h-max bg-white">
-            <View className="flex-1">
-              <View className="my-4 h-12 w-48 items-center rounded-r-lg bg-primary-200" style={{ elevation: 4 }}>
-                <Text className="py-3 text-base font-extrabold text-secondary-100">
-                  Check these out!
-                </Text>
-              </View>
-              <ProductsCarousel products={products} />
-              <View className="h-5" />
-              <View className="h-auto bg-gray-100">
-                <Text className="font-extrabold text-base text-primary-200 mt-3 mx-3">
-                  From the most trusted sellers
-                </Text>
-              <TrustedSellers products={products} />
-              <View className="h-5" />
-              </View>
-              <View className="h-12 w-48 items-center rounded-r-lg bg-secondary-100" style={{ elevation: 4 }}>
-                <Text className="py-3 text-base font-extrabold text-primary-200">
-                  Filter by college
-                </Text>
-              </View>
-              <CollegeSelector/>
-              <GetFeatured/>
-              <Text className="text-base font-extrabold mx-3 text-primary-200">Product Categories</Text>
-              <CategoriesCarousel categories={categories} />
+            <View className="my-4 h-12 w-48 items-center rounded-r-lg bg-primary-200 shadow shadow-black">
+              <Text className="py-3 text-base font-extrabold text-secondary-100">
+                Check these out!
+              </Text>
             </View>
+            <ProductsCarousel products={products} />
+            <View className="h-auto bg-gray-100 pb-5">
+              <Text className="mx-3 mt-3 text-base font-extrabold text-primary-200">
+                From the most trusted sellers
+              </Text>
+              <TrustedSellers products={products} />
+            </View>
+            <View className="h-12 w-48 items-center rounded-r-lg bg-secondary-100 shadow shadow-black">
+              <Text className="py-3 text-base font-extrabold text-primary-200">
+                Filter by college
+              </Text>
+            </View>
+            <CollegeSelector />
+            <GetFeatured />
+            <Text className="mx-3 text-base font-extrabold text-primary-200">
+              Product Categories
+            </Text>
+            <CategoriesCarousel categories={categories} />
           </View>
         </ScrollView>
       </ContentWrapper>
