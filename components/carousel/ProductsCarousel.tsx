@@ -27,7 +27,10 @@ function ProductsCarousel(props: ProductsCarouselProps) {
   const renderProducts = products.map((product) => {
     return (
       <View className="mx-2 mb-8 mt-4" key={product.images[0]}>
-        <View className="w-32 overflow-hidden rounded-lg shadow shadow-black">
+        <View
+          className="w-32 overflow-hidden rounded-lg shadow shadow-black"
+          style={{ elevation: 2 }}
+        >
           <TouchableOpacity
             className="bg-white"
             onPress={() => goToSpecificProduct(product)}

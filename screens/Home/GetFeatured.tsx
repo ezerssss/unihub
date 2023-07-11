@@ -12,6 +12,7 @@ function GetFeatured() {
         colors={gradientColors}
         end={[0.9, 0]}
         start={[0, 0]}
+        style={{ elevation: 4 }}
       >
         <Text className="bottom-9 pr-4 text-base font-medium">
           Want to get your product featured?

@@ -90,7 +90,10 @@ function Home({ navigation }: RootNavigationProps) {
             <Adverts />
           </View>
           <View className="max-h-max bg-white">
-            <View className="my-4 h-12 w-48 items-center rounded-r-lg bg-primary-200 shadow shadow-black">
+            <View
+              className="my-4 h-12 w-48 items-center rounded-r-lg bg-primary-200 shadow shadow-black"
+              style={{ elevation: 4 }}
+            >
               <Text className="py-3 text-base font-extrabold text-secondary-100">
                 Check these out!
               </Text>
@@ -102,7 +105,10 @@ function Home({ navigation }: RootNavigationProps) {
               </Text>
               <TrustedSellers products={products} />
             </View>
-            <View className="h-12 w-48 items-center rounded-r-lg bg-secondary-100 shadow shadow-black">
+            <View
+              className="h-12 w-48 items-center rounded-r-lg bg-secondary-100 shadow shadow-black"
+              style={{ elevation: 4 }}
+            >
               <Text className="py-3 text-base font-extrabold text-primary-200">
                 Filter by college
               </Text>
