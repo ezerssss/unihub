@@ -16,6 +16,9 @@ import UserContext from '../../context/UserContext';
 import { RootNavigationProps } from '../../types/navigation';
 import { Routes } from '../../enums/routes';
 import Adverts from './Adverts';
+import TrustedSellers from './TrustedSellers';
+import GetFeatured from './GetFeatured';
+import CollegeSelector from './CollegeSelector';
 import { getRandomProducts } from '../../services/product';
 import { generateErrorMessage } from '../../helpers/error';
 
@@ -81,18 +84,41 @@ function Home({ navigation }: RootNavigationProps) {
           refreshControl={
             <RefreshControl refreshing={isLoading} onRefresh={handleGetData} />
           }
+          showsVerticalScrollIndicator={false}
         >
-          <View className="bg-secondary-400 p-4">
+          <View className="bg-white px-3 pt-4">
             <Adverts />
           </View>
           <View className="max-h-max bg-white">
-            <View className="mx-3 my-5 flex-1">
-              <Text className="text-lg font-semibold">Also check this out</Text>
-              <ProductsCarousel products={products} />
-              <View className="h-5" />
-              <Text className="text-xl font-semibold">Categories</Text>
-              <CategoriesCarousel categories={categories} />
+            <View
+              className="my-4 h-12 w-48 items-center rounded-r-lg bg-primary-200 shadow shadow-black"
+              style={{ elevation: 4 }}
+            >
+              <Text className="py-3 text-base font-extrabold text-secondary-100">
+                Check these out!
+              </Text>
             </View>
+            <ProductsCarousel products={products} />
+            <View className="h-auto bg-gray-100 pb-5">
+              <Text className="mx-3 mt-3 text-base font-extrabold text-primary-200">
+                From the most trusted sellers
+              </Text>
+              <TrustedSellers products={products} />
+            </View>
+            <View
+              className="h-12 w-48 items-center rounded-r-lg bg-secondary-100 shadow shadow-black"
+              style={{ elevation: 4 }}
+            >
+              <Text className="py-3 text-base font-extrabold text-primary-200">
+                Filter by college
+              </Text>
+            </View>
+            <CollegeSelector />
+            <GetFeatured />
+            <Text className="mx-3 text-base font-extrabold text-primary-200">
+              Product Categories
+            </Text>
+            <CategoriesCarousel categories={categories} />
           </View>
         </ScrollView>
       </ContentWrapper>

@@ -8,11 +8,11 @@ import { Routes } from '../../enums/routes';
 
 import type { Product } from '../../types/product';
 
-interface ProductsCarouselProps {
+interface SellerScrollProps {
   products: Product[];
 }
 
-function ProductsCarousel(props: ProductsCarouselProps) {
+function SellerScroll(props: SellerScrollProps) {
   const { products } = props;
 
   const navigation =
@@ -26,42 +26,40 @@ function ProductsCarousel(props: ProductsCarouselProps) {
 
   const renderProducts = products.map((product) => {
     return (
-      <View className="mx-2 mb-8 mt-4" key={product.images[0]}>
-        <View
-          className="w-32 overflow-hidden rounded-lg shadow shadow-black"
+      <View className="mx-3 my-2" key={product.images[0]}>
+        <TouchableOpacity
+          className="h-32 w-full overflow-hidden rounded-lg bg-white py-4 pl-5 shadow shadow-black"
           style={{ elevation: 2 }}
+          onPress={() => goToSpecificProduct(product)}
         >
-          <TouchableOpacity
-            className="bg-white"
-            onPress={() => goToSpecificProduct(product)}
-          >
+          <View className="flex-row items-center">
             <Image
-              className="h-24 rounded-b-lg"
+              className="h-24 w-24 rounded-lg"
               resizeMode="cover"
               source={{ uri: product.images[0] }}
             />
-            <View className="h-16">
-              <Text className="mt-1 px-2 text-xs font-medium" numberOfLines={2}>
+            <View className="pl-2">
+              <Text className="w-52 text-base font-medium" numberOfLines={1}>
                 {product.title}
               </Text>
-              <Text
-                className="absolute bottom-0 right-0 px-2 py-2 text-sm font-semibold text-primary-300"
-                numberOfLines={1}
-              >
-                PHP {formatNumber(product.price)}
+              <Text className="text-xs text-primary-300">
+                by {product.seller}
+              </Text>
+              <Text className="pt-4 text-xs text-gray-400">
+                ₱ {formatNumber(product.price)}
               </Text>
             </View>
-          </TouchableOpacity>
-        </View>
+          </View>
+        </TouchableOpacity>
       </View>
     );
   });
 
   return (
-    <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+    <ScrollView showsVerticalScrollIndicator={false}>
       {renderProducts}
     </ScrollView>
   );
 }
 
-export default ProductsCarousel;
+export default SellerScroll;
