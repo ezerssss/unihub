@@ -50,7 +50,7 @@ export async function uploadProductPhotos(
 export async function deleteProductPhotos(product: Product) {
   const { images } = product;
 
-  for (let i = 1; i < 3; i++) {
+  for (let i = 0; i < 3; i++) {
     const storageRef = ref(storage, images[i]);
 
     try {

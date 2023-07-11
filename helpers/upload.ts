@@ -33,12 +33,3 @@ export async function compressImage(uri: string): Promise<string> {
     throw new Error('Something went wrong with compressing the image.');
   }
 }
-
-export function getImageID(url: string): string {
-  const startIdx = url.lastIndexOf('%2F') + 3;
-  const endIdx = url.indexOf('?');
-
-  const specificPart = url.substring(startIdx, endIdx);
-
-  return `${specificPart}.jpg`;
-}
