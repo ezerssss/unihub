@@ -40,5 +40,5 @@ export function getImageID(url: string): string {
 
   const specificPart = url.substring(startIdx, endIdx);
 
-  return specificPart;
+  return `${specificPart}.jpg`;
 }
