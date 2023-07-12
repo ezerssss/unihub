@@ -43,7 +43,8 @@
     "react-native-svg": "13.4.0",
     "react-native-swiper": "^1.6.0",
     "react-native-uuid": "^2.0.1",
-    "ts-pattern": "^4.3.0"
+    "ts-pattern": "^4.3.0",
+    "expo-linear-gradient": "~12.1.2"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",

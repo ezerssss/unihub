@@ -21,6 +21,9 @@ module.exports = {
           300: '#403600',
           400: '#FFFADA',
         },
+        tertiary: {
+          100: '#FF240D'
+        },
         dark: '#01010E',
         'unihub-gray': {
           100: '#BFBFBF',

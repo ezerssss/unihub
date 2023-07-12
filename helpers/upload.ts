@@ -1,8 +1,10 @@
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 import storage from '../firebase/storage';
 import * as ImageManipulator from 'expo-image-manipulator';
-import { imageCompressionLevel } from '../constants/image';
-import { productURLSplicer } from '../constants/products';
+import {
+  firebaseStorageSubstringURI,
+  imageCompressionLevel,
+} from '../constants/image';
 
 export async function uploadBlob(uri: string, path: string): Promise<string> {
   try {
@@ -35,10 +37,6 @@ export async function compressImage(uri: string): Promise<string> {
   }
 }
 
-export function getImageID(url: string): string {
-  const { pathname } = new URL(url);
-
-  const productSplice = pathname.split(productURLSplicer);
-
-  return productSplice[1];
+export function isFirebaseImage(uri: string) {
+  return uri.includes(firebaseStorageSubstringURI);
 }

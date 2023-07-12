@@ -41,6 +41,12 @@ export default function Transactions({ navigation }: RootNavigationProps) {
 
   const goBack = useGoBack();
 
+  function goToEditSell(product: Product) {
+    return navigation.navigate(Routes.EDIT_SELL, {
+      product,
+    });
+  }
+
   useEffect(() => {
     if (!user) {
       return;
@@ -102,12 +108,6 @@ export default function Transactions({ navigation }: RootNavigationProps) {
         </TouchableOpacity>
       );
 
-    const renderEditButton = seller === user?.displayName && (
-      <TouchableOpacity className="absolute bottom-5 right-5 rounded-full bg-secondary-100 p-[10px]">
-        <EditIcon />
-      </TouchableOpacity>
-    );
-
     return (
       <View
         className="relative mx-4 h-40 flex-row rounded-2xl bg-white p-2 px-4 py-5 shadow-lg"
@@ -127,14 +127,14 @@ export default function Transactions({ navigation }: RootNavigationProps) {
         </View>
         {renderChat}
         {renderEditButton}
+        <TouchableOpacity
+          className="absolute bottom-5 right-5 rounded-full bg-[#FFD700] p-[10px]"
+          onPress={() => goToEditSell(product)}
+        >
+          <EditIcon />
+        </TouchableOpacity>
       </View>
     );
-  }
-
-  function getListingData() {
-    if (activeListingStatus === StatusEnum.PENDING) {
-      return;
-    }
   }
 
   const renderLoading = isLoading && <ActivityIndicator size="large" />;
