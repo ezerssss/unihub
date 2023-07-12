@@ -4,7 +4,7 @@ import Colleges from '../../data/colleges';
 
 function CollegeSelector() {
   return (
-    <View className="mx-8 mb-8 mt-4 grid grid-cols-3 gap-4">
+    <View className="mb-10 mt-5 flex-row flex-wrap items-center justify-center">
       {Colleges.map((college, index) => (
         <TouchableOpacity
           className="mx-2 my-2 h-32 w-24"
