@@ -6,7 +6,7 @@ import { gradientColors } from '../../constants/color';
 
 function GetFeatured() {
   return (
-    <View className="mx-7 mb-7 ml-8 h-40 w-80 ">
+    <View className="mx-7 mb-7 ml-8 h-40 w-10/12">
       <LinearGradient
         className="flex-1 items-center justify-center rounded-lg shadow shadow-black"
         colors={gradientColors}

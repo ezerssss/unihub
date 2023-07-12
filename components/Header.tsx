@@ -2,7 +2,6 @@ import React, { useContext, useEffect, useState } from 'react';
 import { Text, View, TouchableOpacity } from 'react-native';
 import Search from './Search';
 import { BellIcon, MenuIcon } from './icons';
-import { MenuModal } from './modals';
 import { useNavigation } from '@react-navigation/native';
 import { RootStackParamsList } from '../types/navigation';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -19,20 +18,11 @@ import db from '../firebase/db';
 import { DB } from '../enums/db';
 
 function Header() {
-  const [isMenuOpen, setMenuOpen] = useState<boolean>(false);
   const [hasNotification, setHasNotification] = useState(false);
   const { user } = useContext(UserContext);
 
   const navigation =
     useNavigation<NativeStackNavigationProp<RootStackParamsList>>();
-
-  function openMenu() {
-    setMenuOpen(true);
-  }
-
-  function closeMenu() {
-    setMenuOpen(false);
-  }
 
   function handleToTransactions() {
     navigation.navigate(Routes.TRANSACTIONS);
@@ -67,7 +57,7 @@ function Header() {
   }, [user]);
 
   const renderNotificationBubble = hasNotification && (
-    <View className="absolute right-0 top-0 rounded-full bg-red-500 p-1" />
+    <View className="absolute -right-1 -top-1 rounded-full bg-red-500 p-1" />
   );
 
   function handleSearchFocus() {
@@ -93,20 +83,18 @@ function Header() {
           HELLO, {getFirstName(user?.displayName)}
         </Text>
         <View className="flex flex-row gap-5">
-          <TouchableOpacity className="relative" onPress={handleToTransactions}>
+          <TouchableOpacity className="relative">
             <BellIcon />
-            {renderNotificationBubble}
           </TouchableOpacity>
-          <TouchableOpacity onPress={openMenu}>
+          <TouchableOpacity onPress={handleToTransactions}>
             <MenuIcon />
+            {renderNotificationBubble}
           </TouchableOpacity>
         </View>
       </View>
       <View className="flex-row items-center justify-between px-4">
         <Search onFocus={handleSearchFocus} />
       </View>
-
-      <MenuModal isOpen={isMenuOpen} onClose={closeMenu} />
     </View>
   );
 }
