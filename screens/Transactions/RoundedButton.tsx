@@ -11,11 +11,13 @@ export default function RoundedButton({
   isActive,
   onPress,
 }: RoundedButtonProps) {
-  const textClasses = `text-white ${isActive ? '' : 'text-primary-500'}`;
+  const textClasses = `text-white text-[8px] ${
+    isActive ? '' : 'text-primary-500'
+  }`;
 
   return (
     <TouchableOpacity
-      className={`mx-1 flex min-w-[130px] flex-row justify-center rounded-full border border-primary-300 px-5 py-5 align-middle ${
+      className={`max- mx-1 flex min-w-[85px] flex-row items-center justify-center rounded-full border border-primary-300 align-middle ${
         isActive ? 'bg-primary-300' : 'border-primary-500'
       }`}
       onPress={onPress}
