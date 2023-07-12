@@ -1,8 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { View, TouchableOpacity } from 'react-native';
+import { Text, View, TouchableOpacity } from 'react-native';
 import Search from './Search';
-import { MaterialIcons } from '@expo/vector-icons';
-import { BagIcon } from './icons';
+import { BellIcon, MenuIcon } from './icons';
 import { MenuModal } from './modals';
 import { useNavigation } from '@react-navigation/native';
 import { RootStackParamsList } from '../types/navigation';
@@ -75,21 +74,29 @@ function Header() {
     navigation.navigate(Routes.SEARCH);
   }
 
+  function getFirstName(fullName: string) {
+    const [firstName] = fullName.split(' ');
+    return firstName;
+  }
+
   return (
     <View className="bg-primary-400 pb-5 pt-16">
-      <View className="flex-row items-center justify-between px-4">
-        <View className="w-1/6">
-          <TouchableOpacity onPress={openMenu}>
-            <MaterialIcons color="white" name="menu" size={30} />
-          </TouchableOpacity>
-        </View>
-        <Search onFocus={handleSearchFocus} />
-        <View className="w-1/6 flex-row justify-end">
+      <View className="mx-5 flex flex-row justify-between">
+        <Text className="mb-5 text-2xl font-bold uppercase text-secondary-100">
+          HELLO, {getFirstName(user?.displayName || '')}
+        </Text>
+        <View className="flex flex-row gap-5">
           <TouchableOpacity className="relative" onPress={handleToTransactions}>
-            <BagIcon />
+            <BellIcon />
             {renderNotificationBubble}
           </TouchableOpacity>
+          <TouchableOpacity onPress={openMenu}>
+            <MenuIcon />
+          </TouchableOpacity>
         </View>
+      </View>
+      <View className="flex-row items-center justify-between px-4">
+        <Search onFocus={handleSearchFocus} />
       </View>
 
       <MenuModal isOpen={isMenuOpen} onClose={closeMenu} />

@@ -13,7 +13,7 @@ function Search(props: PropsInterface) {
   const { autoFocus, value, onChange, onFocus } = props;
 
   return (
-    <View className="flex-1 flex-row items-center justify-center rounded-xl bg-white px-3 py-1">
+    <View className="flex-1 flex-row items-center justify-center rounded-lg bg-white px-3 py-1">
       <SearchIcon />
       <TextInput
         autoFocus={autoFocus}
