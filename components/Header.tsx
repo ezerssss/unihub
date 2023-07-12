@@ -74,7 +74,14 @@ function Header() {
     navigation.navigate(Routes.SEARCH);
   }
 
-  function getFirstName(fullName: string) {
+  function getFirstName(
+    fullName: string | null | undefined,
+    defaultName = 'User'
+  ) {
+    if (!fullName) {
+      return defaultName;
+    }
+
     const [firstName] = fullName.split(' ');
     return firstName;
   }
@@ -83,7 +90,7 @@ function Header() {
     <View className="bg-primary-400 pb-5 pt-16">
       <View className="mx-5 flex flex-row justify-between">
         <Text className="mb-5 text-2xl font-bold uppercase text-secondary-100">
-          HELLO, {getFirstName(user?.displayName || '')}
+          HELLO, {getFirstName(user?.displayName)}
         </Text>
         <View className="flex flex-row gap-5">
           <TouchableOpacity className="relative" onPress={handleToTransactions}>
