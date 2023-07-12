@@ -38,6 +38,12 @@ export default function Transactions({ navigation }: RootNavigationProps) {
 
   const goBack = useGoBack();
 
+  function goToEditSell(product: Product) {
+    return navigation.navigate(Routes.EDIT_SELL, {
+      product,
+    });
+  }
+
   useEffect(() => {
     if (!user) {
       return;
@@ -115,7 +121,10 @@ export default function Transactions({ navigation }: RootNavigationProps) {
           <Text className="text-gray-500">₱{formatNumber(price)}</Text>
         </View>
         {renderChat}
-        <TouchableOpacity className="absolute bottom-5 right-5 rounded-full bg-[#FFD700] p-[10px]">
+        <TouchableOpacity
+          className="absolute bottom-5 right-5 rounded-full bg-[#FFD700] p-[10px]"
+          onPress={() => goToEditSell(product)}
+        >
           <EditIcon />
         </TouchableOpacity>
       </View>
@@ -160,10 +169,10 @@ export default function Transactions({ navigation }: RootNavigationProps) {
         <View className="mx-3 border-b border-primary-500" />
         <ScrollView
           horizontal
-          className="mt-3 h-0"
+          className="mt-3"
           showsHorizontalScrollIndicator={false}
         >
-          <View className="mx-3 mb-5 mt-3 flex h-14 flex-row justify-between">
+          <View className="mx-3 mt-3 flex h-14 flex-row justify-between">
             <RoundedButton
               isActive={activeStatus === StatusEnum.CONFIRM}
               title="Pending"
@@ -184,7 +193,7 @@ export default function Transactions({ navigation }: RootNavigationProps) {
         <>{renderLoading}</>
         <>{renderNoListings}</>
         <FlatList
-          className="py-5"
+          className="pb-5"
           data={listings.filter((listing) => listing.status === activeStatus)}
           renderItem={({ item }) => handleRender(item)}
         />

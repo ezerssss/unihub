@@ -10,4 +10,5 @@ export enum Routes {
   PRODUCT_SOLD = 'ProductSold',
   TRANSACTIONS = 'Transactions',
   SEARCH = 'Search',
+  EDIT_SELL = 'EditSell',
 }

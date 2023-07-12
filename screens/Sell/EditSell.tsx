@@ -21,36 +21,49 @@ import * as ImagePicker from 'expo-image-picker';
 import { compressImage } from '../../helpers/upload';
 import { Categories } from '../../enums/categories';
 import AuthWrapper from '../../components/AuthWrapper';
+import { Timestamp } from 'firebase/firestore';
 import UserContext from '../../context/UserContext';
-import { RootNavigationProps } from '../../types/navigation';
+import { EditSellNavigationProps } from '../../types/navigation';
 import { Routes } from '../../enums/routes';
-import { sell } from '../../services/transaction';
 import {
-  hasProductDuplicate,
+  updateProduct,
+  deleteProduct,
   uploadProductPhotos,
+  deleteProductPhotos,
+  hasProductDuplicate,
 } from '../../services/product';
 import { generateErrorMessage } from '../../helpers/error';
 import { Product } from '../../types/product';
 import NotificationContext from '../../context/NotificationContext';
 
-export default function Sell({ navigation }: RootNavigationProps) {
+export default function EditSell({
+  navigation,
+  route,
+}: EditSellNavigationProps) {
+  const { product } = route.params;
+
+  const timestamp = product.meetup.time;
+  const dateObject =
+    timestamp instanceof Timestamp ? timestamp.toDate() : timestamp;
+
   const goBack = useGoBack();
 
   const { user } = useContext(UserContext);
   const { expoPushToken } = useContext(NotificationContext);
 
-  const [title, setTitle] = useState('');
-  const [description, setDescription] = useState('');
-  const [price, setPrice] = useState('');
-  const [location, setLocation] = useState('');
-  const [imageURIs, setImageURIs] = useState<string[]>(['', '', '']);
-  const [showPreferredTime, setShowPreferredTime] = useState<boolean>(false);
+  const [title, setTitle] = useState(product.title);
+  const [description, setDescription] = useState(product.description);
+  const [price, setPrice] = useState(product.price.toString());
+  const [location, setLocation] = useState(product.meetup.location);
+  const [imageURIs, setImageURIs] = useState<string[]>(product.images);
+  const [showPreferredTime, setShowPreferredTime] = useState<boolean>(true);
   const [showTimePicker, setShowTimePicker] = useState<boolean>(false);
-  const [time, setTime] = useState<Date>(new Date());
+  const [time, setTime] = useState<Date>(dateObject);
   const [selectedCategory, setSelectedCategory] = useState<string>(
-    Categories.BOOKS
+    product.category
   );
-  const [isUploading, setIsUploading] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
 
   function handleCategoryChange(category: string) {
     setSelectedCategory(category);
@@ -145,16 +158,45 @@ export default function Sell({ navigation }: RootNavigationProps) {
     return true;
   }
 
-  async function handleSell() {
+  async function handleDelete() {
     if (!user) {
       return;
     }
 
-    setIsUploading(true);
+    setIsDeleting(true);
 
+    await deleteProduct(product, user);
+    handleStateCleanUp();
+    navigation.navigate(Routes.HOME);
+  }
+
+  async function handleEdit() {
+    if (!user) {
+      return;
+    }
+
+    setIsEditing(true);
+
+    const hasTitleChanged = product.title !== title;
+
+    if (hasTitleChanged && (await hasProductDuplicate(user.uid, title))) {
+      Alert.alert(
+        'Cannot have duplicate product',
+        'Please rename your product.'
+      );
+      setIsEditing(false);
+
+      return;
+    }
+
+    const outdatedImages = product.images.filter(
+      (uri, index) => uri !== imageURIs[index]
+    );
+
+    await deleteProductPhotos(outdatedImages);
     const images = await uploadProductPhotos(imageURIs);
 
-    const product: Product = {
+    const newProduct: Product = {
       images,
       title,
       price: parseFloat(price),
@@ -168,25 +210,21 @@ export default function Sell({ navigation }: RootNavigationProps) {
       sellerExpoPushToken: expoPushToken,
     };
 
-    await sell(product, user);
+    await updateProduct(product, newProduct, user);
     handleStateCleanUp();
-    navigation.navigate(Routes.PRODUCT, { product, isRedirect: true });
+    navigation.navigate(Routes.PRODUCT, {
+      product: newProduct,
+      isRedirect: true,
+    });
   }
 
-  async function handleSellButtonPress() {
+  async function handleDeleteButtonPress() {
     try {
-      if (!user || !handleInputValidation()) {
+      if (!user) {
         return;
       }
 
-      if (await hasProductDuplicate(user.uid, title)) {
-        Alert.alert(
-          'Cannot have duplicate product',
-          'Please rename your product.'
-        );
-        return;
-      }
-      Alert.alert('Confirm to Sell?', '', [
+      Alert.alert('Confirm to Delete?', '', [
         {
           text: 'No',
           onPress: () => {
@@ -195,14 +233,40 @@ export default function Sell({ navigation }: RootNavigationProps) {
         },
         {
           text: 'Yes',
-          onPress: handleSell,
+          onPress: handleDelete,
         },
       ]);
     } catch (error) {
       const message = generateErrorMessage(error);
       showErrorPopup(message);
     } finally {
-      setIsUploading(false);
+      setIsDeleting(false);
+    }
+  }
+
+  async function handleEditButtonPress() {
+    try {
+      if (!user || !handleInputValidation()) {
+        return;
+      }
+
+      Alert.alert('Confirm to Edit?', '', [
+        {
+          text: 'No',
+          onPress: () => {
+            return;
+          },
+        },
+        {
+          text: 'Yes',
+          onPress: handleEdit,
+        },
+      ]);
+    } catch (error) {
+      const message = generateErrorMessage(error);
+      showErrorPopup(message);
+    } finally {
+      setIsEditing(false);
     }
   }
 
@@ -214,7 +278,8 @@ export default function Sell({ navigation }: RootNavigationProps) {
     setSelectedCategory('');
     setShowPreferredTime(false);
     setLocation('');
-    setIsUploading(false);
+    setIsDeleting(false);
+    setIsEditing(false);
   }, []);
 
   const renderTimePicker = showTimePicker && (
@@ -232,10 +297,16 @@ export default function Sell({ navigation }: RootNavigationProps) {
     <AntDesign color="black" name="right" size={22} />
   );
 
-  const renderSellButtonText = isUploading ? (
+  const renderDeleteButtonText = isDeleting ? (
     <ActivityIndicator color="white" size="large" />
   ) : (
-    <Text className="text-2xl font-extrabold text-white">Sell</Text>
+    <Text className="text-md font-extrabold text-white">Delete Listing</Text>
+  );
+
+  const renderEditButtonText = isEditing ? (
+    <ActivityIndicator color="white" size="large" />
+  ) : (
+    <Text className="text-2xl font-extrabold text-white">Update</Text>
   );
 
   return (
@@ -321,14 +392,27 @@ export default function Sell({ navigation }: RootNavigationProps) {
             </View>
           </View>
         </ScrollView>
-        <View className="bottom-0 flex h-28 w-full justify-center bg-white py-4 shadow shadow-black">
-          <TouchableOpacity
-            className="right-3 h-12 w-36 items-center justify-center self-end rounded-lg bg-secondary-100"
-            disabled={isUploading}
-            onPress={handleSellButtonPress}
+
+        <View className="h-28 bg-white shadow shadow-black">
+          <View
+            className="h-full flex-row items-center justify-end border-t border-transparent py-4"
+            style={{ elevation: 2 }}
           >
-            {renderSellButtonText}
-          </TouchableOpacity>
+            <TouchableOpacity
+              className="mr-5 h-10 w-28 items-center justify-center rounded-lg bg-tertiary-100"
+              disabled={isDeleting || isEditing}
+              onPress={handleDeleteButtonPress}
+            >
+              {renderDeleteButtonText}
+            </TouchableOpacity>
+            <TouchableOpacity
+              className="mr-5 h-12 w-36 items-center justify-center rounded-lg bg-secondary-100"
+              disabled={isEditing || isDeleting}
+              onPress={handleEditButtonPress}
+            >
+              {renderEditButtonText}
+            </TouchableOpacity>
+          </View>
         </View>
       </ContentWrapper>
     </AuthWrapper>
