@@ -32,7 +32,10 @@ export default function Transactions({ navigation }: RootNavigationProps) {
   const [isLoading, setIsLoading] = useState(true);
   const [orders, setOrders] = useState<Transaction[]>([]);
   const [listings, setListings] = useState<Transaction[]>([]);
-  const [activeStatus, setActiveStatus] = useState<StatusEnum>(
+  const [activeOrderStatus, setActiveOrderStatus] = useState<StatusEnum>(
+    StatusEnum.CONFIRM
+  );
+  const [activeListingStatus, setActiveListingStatus] = useState<StatusEnum>(
     StatusEnum.CONFIRM
   );
 
@@ -85,12 +88,12 @@ export default function Transactions({ navigation }: RootNavigationProps) {
 
   function handleRender(transaction: Transaction) {
     const { product, isSeen } = transaction;
-    const { title, images, price } = product;
+    const { title, images, price, seller } = product;
 
     const titleStyle = !isSeen && 'text-primary-100';
 
-    const renderChat = activeStatus !== StatusEnum.CANCEL &&
-      activeStatus !== StatusEnum.DENY && (
+    const renderChat = activeListingStatus !== StatusEnum.CANCEL &&
+      activeListingStatus !== StatusEnum.DENY && (
         <TouchableOpacity
           className="absolute right-6 top-5 rounded-full"
           onPress={() => handleClick(product, transaction)}
@@ -98,6 +101,12 @@ export default function Transactions({ navigation }: RootNavigationProps) {
           <ChatIcon />
         </TouchableOpacity>
       );
+
+    const renderEditButton = seller === user?.displayName && (
+      <TouchableOpacity className="absolute bottom-5 right-5 rounded-full bg-[#FFD700] p-[10px]">
+        <EditIcon />
+      </TouchableOpacity>
+    );
 
     return (
       <View
@@ -111,13 +120,13 @@ export default function Transactions({ navigation }: RootNavigationProps) {
           <Text className={`mb-1 text-xl font-normal ${titleStyle}`}>
             {product.title}
           </Text>
-          <Text className="mb-5 text-[#3838FC]">by YOU</Text>
+          <Text className="mb-5 text-[#3838FC]">
+            by {seller !== user?.displayName ? seller : 'YOU'}
+          </Text>
           <Text className="text-gray-500">₱{formatNumber(price)}</Text>
         </View>
         {renderChat}
-        <TouchableOpacity className="absolute bottom-5 right-5 rounded-full bg-[#FFD700] p-[10px]">
-          <EditIcon />
-        </TouchableOpacity>
+        {renderEditButton}
       </View>
     );
   }
@@ -146,38 +155,62 @@ export default function Transactions({ navigation }: RootNavigationProps) {
         <Text className="mx-3 mt-5 text-xl font-extrabold text-[#2A2ABD]">
           Your Orders
         </Text>
+        <ScrollView
+          horizontal
+          className="mt-3"
+          showsHorizontalScrollIndicator={false}
+        >
+          <View className="mx-3 mb-5 mt-3 flex h-14 flex-row justify-between">
+            <RoundedButton
+              isActive={activeOrderStatus === StatusEnum.CONFIRM}
+              title="Pending"
+              onPress={() => setActiveOrderStatus(StatusEnum.CONFIRM)}
+            />
+            <RoundedButton
+              isActive={activeOrderStatus === StatusEnum.MEETUP}
+              title="Meetup in Progress"
+              onPress={() => setActiveOrderStatus(StatusEnum.MEETUP)}
+            />
+            <RoundedButton
+              isActive={activeOrderStatus === StatusEnum.SUCCESS}
+              title="Completed"
+              onPress={() => setActiveOrderStatus(StatusEnum.SUCCESS)}
+            />
+          </View>
+        </ScrollView>
         <View className="mx-3 border-b border-primary-500" />
         <>{renderLoading}</>
         <>{renderNoOrders}</>
         <FlatList
           className="mb-5"
-          data={orders}
+          data={orders.filter((orders) => orders.status === activeOrderStatus)}
           renderItem={({ item }) => handleRender(item)}
         />
         <Text className="mx-3 mt-5 text-xl font-extrabold text-[#2A2ABD]">
           Your Listings
         </Text>
+
         <View className="mx-3 border-b border-primary-500" />
         <ScrollView
           horizontal
-          className="mt-3 h-0"
+          className="mt-3"
           showsHorizontalScrollIndicator={false}
         >
           <View className="mx-3 mb-5 mt-3 flex h-14 flex-row justify-between">
             <RoundedButton
-              isActive={activeStatus === StatusEnum.CONFIRM}
+              isActive={activeListingStatus === StatusEnum.CONFIRM}
               title="Pending"
-              onPress={() => setActiveStatus(StatusEnum.CONFIRM)}
+              onPress={() => setActiveListingStatus(StatusEnum.CONFIRM)}
             />
             <RoundedButton
-              isActive={activeStatus === StatusEnum.MEETUP}
+              isActive={activeListingStatus === StatusEnum.MEETUP}
               title="Meetup in Progress"
-              onPress={() => setActiveStatus(StatusEnum.MEETUP)}
+              onPress={() => setActiveListingStatus(StatusEnum.MEETUP)}
             />
             <RoundedButton
-              isActive={activeStatus === StatusEnum.SUCCESS}
+              isActive={activeListingStatus === StatusEnum.SUCCESS}
               title="Completed"
-              onPress={() => setActiveStatus(StatusEnum.SUCCESS)}
+              onPress={() => setActiveListingStatus(StatusEnum.SUCCESS)}
             />
           </View>
         </ScrollView>
@@ -185,7 +218,9 @@ export default function Transactions({ navigation }: RootNavigationProps) {
         <>{renderNoListings}</>
         <FlatList
           className="py-5"
-          data={listings.filter((listing) => listing.status === activeStatus)}
+          data={listings.filter(
+            (listing) => listing.status === activeListingStatus
+          )}
           renderItem={({ item }) => handleRender(item)}
         />
       </ContentWrapper>
