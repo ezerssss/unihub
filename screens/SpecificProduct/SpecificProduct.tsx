@@ -187,7 +187,7 @@ function SpecificProduct({ route, navigation }: ProductNavigationProps) {
         </ScrollView>
         <View className="h-28 bg-white shadow shadow-black">
           <View
-            className="h-full w-full flex-row items-center justify-between border-t border-transparent px-5"
+            className="h-full w-full flex-row items-center justify-between border-t-0 border-transparent px-5"
             style={{ elevation: 2 }}
           >
             <View>

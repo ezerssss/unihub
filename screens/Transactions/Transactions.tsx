@@ -158,23 +158,25 @@ export default function Transactions({ navigation }: RootNavigationProps) {
     );
 
     return (
-      <View
-        className="relative mx-4 h-40 flex-row rounded-2xl bg-white p-2 px-4 py-5 shadow-lg"
-        key={title}
-      >
-        <View className="aspect-square">
-          <Image className="h-full w-full" source={{ uri: images[0] }} />
+      <View className="shadow-lg" key={title}>
+        <View
+          className="relative mx-4 mb-2 h-40 flex-row rounded-2xl border-0 border-transparent bg-white p-2 px-4 py-5"
+          style={{ elevation: 4 }}
+        >
+          <View className="aspect-square">
+            <Image className="h-full w-full" source={{ uri: images[0] }} />
+          </View>
+          <View className="flex-1 justify-center p-4">
+            <Text className="mb-1 text-xl font-normal">{title}</Text>
+            <Text className="mb-5 text-primary-300">
+              by {seller !== user?.displayName ? seller : 'YOU'}
+            </Text>
+            <Text className="text-gray-500">₱{formatNumber(price)}</Text>
+          </View>
+          {renderChatOrder}
+          {renderChatListing}
+          {renderEditButton}
         </View>
-        <View className="flex-1 justify-center p-4">
-          <Text className="mb-1 text-xl font-normal">{title}</Text>
-          <Text className="mb-5 text-primary-300">
-            by {seller !== user?.displayName ? seller : 'YOU'}
-          </Text>
-          <Text className="text-gray-500">₱{formatNumber(price)}</Text>
-        </View>
-        {renderChatOrder}
-        {renderChatListing}
-        {renderEditButton}
       </View>
     );
   }

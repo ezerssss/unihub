@@ -321,14 +321,19 @@ export default function Sell({ navigation }: RootNavigationProps) {
             </View>
           </View>
         </ScrollView>
-        <View className="bottom-0 flex h-28 w-full justify-center bg-white py-4 shadow shadow-black">
-          <TouchableOpacity
-            className="right-3 h-12 w-36 items-center justify-center self-end rounded-lg bg-secondary-100"
-            disabled={isUploading}
-            onPress={handleSellButtonPress}
+        <View className="bottom-0 bg-white shadow shadow-black">
+          <View
+            className="flex h-28 w-full justify-center border-t-0 border-transparent py-4"
+            style={{ elevation: 1 }}
           >
-            {renderSellButtonText}
-          </TouchableOpacity>
+            <TouchableOpacity
+              className="right-3 h-12 w-36 items-center justify-center self-end rounded-lg bg-secondary-100"
+              disabled={isUploading}
+              onPress={handleSellButtonPress}
+            >
+              {renderSellButtonText}
+            </TouchableOpacity>
+          </View>
         </View>
       </ContentWrapper>
     </AuthWrapper>
