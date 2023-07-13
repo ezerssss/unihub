@@ -32,12 +32,12 @@ export default function Transactions({ navigation }: RootNavigationProps) {
   const [isLoading, setIsLoading] = useState(true);
   const [orders, setOrders] = useState<Transaction[]>([]);
   const [listings, setListings] = useState<Transaction[]>([]);
-  const [products, setProducts] = useState<Product[]>([]);
+  const [products, setProducts] = useState<Transaction[]>([]);
   const [activeOrderStatus, setActiveOrderStatus] = useState<StatusEnum>(
     StatusEnum.CONFIRM
   );
   const [activeListingStatus, setActiveListingStatus] = useState<StatusEnum>(
-    StatusEnum.CONFIRM
+    StatusEnum.PENDING
   );
 
   const goBack = useGoBack();
@@ -66,15 +66,40 @@ export default function Transactions({ navigation }: RootNavigationProps) {
       DB.TRANSACTIONS
     );
 
+    class TempTransaction implements Transaction {
+      product: Product;
+      status: StatusEnum;
+      date: Date;
+      sellerEmail: string;
+      buyer: string;
+      buyerEmail: string;
+      isSeen: boolean;
+      lastMessage: string;
+      buyerExpoPushToken: string | undefined;
+
+      public constructor(product: Product) {
+        this.product = product;
+        this.status = StatusEnum.PENDING;
+        this.date = new Date();
+        this.sellerEmail = '';
+        this.buyer = '';
+        this.buyerEmail = '';
+        this.isSeen = false;
+        this.lastMessage = '';
+        this.buyerExpoPushToken = undefined;
+      }
+    }
+
     const unsubscribeProducts = onSnapshot(
       productsCollectionRef,
       (querySnapshot) => {
-        const productsArray: Product[] = [];
+        const productsArray: Transaction[] = [];
 
         querySnapshot.forEach((doc) => {
           const product: Product = doc.data() as Product;
+          const tempTransaction = new TempTransaction(product);
 
-          productsArray.push(product);
+          productsArray.push(tempTransaction);
         });
 
         setProducts(productsArray);
@@ -122,7 +147,8 @@ export default function Transactions({ navigation }: RootNavigationProps) {
 
     const titleStyle = !isSeen && 'text-primary-100';
 
-    const renderChat = activeListingStatus !== StatusEnum.PENDING &&
+    const renderChatListing = activeListingStatus !== StatusEnum.PENDING &&
+      user?.displayName === seller &&
       activeListingStatus !== StatusEnum.DENY && (
         <TouchableOpacity
           className="absolute right-6 top-5 rounded-full"
@@ -131,9 +157,18 @@ export default function Transactions({ navigation }: RootNavigationProps) {
           <ChatIcon />
         </TouchableOpacity>
       );
-    const renderEditButton = user?.displayName !== product.seller && (
+    const renderChatOrder = user?.displayName !== seller &&
+      activeListingStatus !== StatusEnum.DENY && (
+        <TouchableOpacity
+          className="absolute right-6 top-5 rounded-full"
+          onPress={() => handleClick(product, transaction)}
+        >
+          <ChatIcon />
+        </TouchableOpacity>
+      );
+    const renderEditButton = user?.displayName === product.seller && (
       <TouchableOpacity
-        className="absolute bottom-5 right-5 rounded-full bg-[#FFD700] p-[10px]"
+        className="absolute bottom-5 right-5 rounded-full bg-secondary-100 p-[10px]"
         onPress={() => goToEditSell(product)}
       >
         <EditIcon />
@@ -157,27 +192,11 @@ export default function Transactions({ navigation }: RootNavigationProps) {
           </Text>
           <Text className="text-gray-500">₱{formatNumber(price)}</Text>
         </View>
-        {renderChat}
+        {renderChatOrder}
+        {renderChatListing}
         {renderEditButton}
       </View>
     );
-  }
-
-  function getListingData() {
-    const pendingProducts: Product[] = [];
-    listings.forEach((listing) => {
-      products.forEach((product) => {
-        if (product === listing.product) {
-          pendingProducts.push(product);
-        }
-      });
-    });
-
-    if (activeListingStatus === StatusEnum.PENDING) {
-      return pendingProducts;
-    } else {
-      return listings;
-    }
   }
 
   const renderLoading = isLoading && <ActivityIndicator size="large" />;
@@ -207,7 +226,11 @@ export default function Transactions({ navigation }: RootNavigationProps) {
           Your Orders
         </Text>
         <View className="mx-3 border-b border-primary-500" />
-        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+        <ScrollView
+          horizontal
+          className="pb-3"
+          showsHorizontalScrollIndicator={false}
+        >
           <View className="mx-[9px] mb-5 mt-3 flex h-8 flex-row justify-between">
             <RoundedButton
               isActive={activeOrderStatus === StatusEnum.CONFIRM}
@@ -242,7 +265,11 @@ export default function Transactions({ navigation }: RootNavigationProps) {
           Your Listings
         </Text>
         <View className="mx-3 border-b border-primary-500" />
-        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+        <ScrollView
+          horizontal
+          className="pb-3"
+          showsHorizontalScrollIndicator={false}
+        >
           <View className="mx-3 mb-5 mt-3 flex h-8 flex-row justify-between">
             <RoundedButton
               isActive={activeListingStatus === StatusEnum.PENDING}
@@ -274,9 +301,17 @@ export default function Transactions({ navigation }: RootNavigationProps) {
         <>{renderLoading}</>
         <FlatList
           className="py-5"
-          data={listings.filter(
-            (listing) => listing.status === activeListingStatus
-          )}
+          data={
+            activeListingStatus !== StatusEnum.PENDING
+              ? listings.filter(
+                  (listing) => listing.status === activeListingStatus
+                )
+              : products.filter((product) => {
+                  return !listings.some((listing) => {
+                    return listing.product.title === product.product.title;
+                  });
+                })
+          }
           ListEmptyComponent={renderNoListings}
           renderItem={({ item }) => handleRender(item)}
         />
