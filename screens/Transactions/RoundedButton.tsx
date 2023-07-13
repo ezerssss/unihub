@@ -11,16 +11,15 @@ export default function RoundedButton({
   isActive,
   onPress,
 }: RoundedButtonProps) {
-  const textClasses = `text-white ${isActive ? '' : 'text-primary-500'}`;
+  const textStyle = `text-white text-xs ${isActive ? '' : 'text-primary-500'}`;
+  const backgroundStyle = isActive ? 'bg-primary-300' : 'border-primary-500';
 
   return (
     <TouchableOpacity
-      className={`mx-1 flex min-w-[130px] flex-row justify-center rounded-full border border-primary-300 px-5 py-5 align-middle ${
-        isActive ? 'bg-primary-300' : 'border-primary-500'
-      }`}
+      className={`mx-1 h-8 min-w-[85px] items-center justify-center rounded-xl border border-primary-300 px-2 ${backgroundStyle}`}
       onPress={onPress}
     >
-      <Text className={textClasses}>{title}</Text>
+      <Text className={textStyle}>{title}</Text>
     </TouchableOpacity>
   );
 }
