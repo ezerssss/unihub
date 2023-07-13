@@ -225,7 +225,6 @@ export default function Transactions({ navigation }: RootNavigationProps) {
             Your Transactions
           </Text>
         </View>
-<<<<<<< HEAD
         <View className="mb-5 flex-1">
           <Text className="mx-3 mt-4 text-lg font-extrabold text-primary-200">
             Your Orders
@@ -261,101 +260,6 @@ export default function Transactions({ navigation }: RootNavigationProps) {
           <>{renderLoading}</>
           <>{renderListingFlatList}</>
         </View>
-=======
-        <Text className="mx-3 mt-4 text-lg font-extrabold text-primary-200">
-          Your Orders
-        </Text>
-        <View className="mx-3 border-b border-primary-500" />
-        <ScrollView
-          horizontal
-          className="pb-3"
-          showsHorizontalScrollIndicator={false}
-        >
-          <View className="mx-[9px] mb-5 mt-3 flex h-8 flex-row justify-between">
-            <RoundedButton
-              isActive={activeOrderStatus === StatusEnum.CONFIRM}
-              title="Order Requests"
-              onPress={() => setActiveOrderStatus(StatusEnum.CONFIRM)}
-            />
-            <RoundedButton
-              isActive={activeOrderStatus === StatusEnum.MEETUP}
-              title="Meetup in Progress"
-              onPress={() => setActiveOrderStatus(StatusEnum.MEETUP)}
-            />
-            <RoundedButton
-              isActive={activeOrderStatus === StatusEnum.SUCCESS}
-              title="Completed"
-              onPress={() => setActiveOrderStatus(StatusEnum.SUCCESS)}
-            />
-            <RoundedButton
-              isActive={activeOrderStatus === StatusEnum.CANCEL}
-              title="Canceled"
-              onPress={() => setActiveOrderStatus(StatusEnum.CANCEL)}
-            />
-          </View>
-        </ScrollView>
-        <>{renderLoading}</>
-        <FlatList
-          className="mb-5 min-h-[128px]"
-          data={orders.filter((orders) => orders.status === activeOrderStatus)}
-          ListEmptyComponent={renderNoOrders}
-          renderItem={({ item }) => handleRender(item)}
-        />
-        <Text className="mx-3 text-lg font-extrabold text-primary-200">
-          Your Listings
-        </Text>
-        <View className="mx-3 border-b border-primary-500" />
-        <ScrollView
-          horizontal
-          className="pb-3"
-          showsHorizontalScrollIndicator={false}
-        >
-          <View className="mx-3 mb-5 mt-3 flex h-8 flex-row justify-between">
-            <RoundedButton
-              isActive={activeListingStatus === StatusEnum.PENDING}
-              title="Pending"
-              onPress={() => setActiveListingStatus(StatusEnum.PENDING)}
-            />
-            <RoundedButton
-              isActive={activeListingStatus === StatusEnum.CONFIRM}
-              title="Order Requests"
-              onPress={() => setActiveListingStatus(StatusEnum.CONFIRM)}
-            />
-            <RoundedButton
-              isActive={activeListingStatus === StatusEnum.MEETUP}
-              title="Meetup in Progress"
-              onPress={() => setActiveListingStatus(StatusEnum.MEETUP)}
-            />
-            <RoundedButton
-              isActive={activeListingStatus === StatusEnum.SUCCESS}
-              title="Completed"
-              onPress={() => setActiveListingStatus(StatusEnum.SUCCESS)}
-            />
-            <RoundedButton
-              isActive={activeListingStatus === StatusEnum.CANCEL}
-              title="Canceled"
-              onPress={() => setActiveListingStatus(StatusEnum.CANCEL)}
-            />
-          </View>
-        </ScrollView>
-        <>{renderLoading}</>
-        <FlatList
-          className="min-h-[128px] py-5"
-          data={
-            activeListingStatus !== StatusEnum.PENDING
-              ? listings.filter(
-                  (listing) => listing.status === activeListingStatus
-                )
-              : products.filter((product) => {
-                  return !listings.some((listing) => {
-                    return listing.product.title === product.product.title;
-                  });
-                })
-          }
-          ListEmptyComponent={renderNoListings}
-          renderItem={({ item }) => handleRender(item)}
-        />
->>>>>>> 1d1368699aab5a82734f077ad1d736445545d5a8
       </ContentWrapper>
     </AuthWrapper>
   );
