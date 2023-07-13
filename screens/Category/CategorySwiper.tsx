@@ -71,14 +71,14 @@ function CategorySwiper(props: SwiperProps) {
             <View className="absolute -top-3 h-3 w-3 bg-white"></View>
             <View className="absolute -top-3 right-0 h-3 w-3 bg-white"></View>
             <Text className="my-3 text-lg text-black">{product.title}</Text>
-            <View className="my-1 flex flex-row items-start">
+            <View className="my-1 flex flex-row items-center">
               <LocationIcon />
-              <Text className="ml-2 text-unihub-gray-200">
+              <Text className="ml-2 text-unihub-gray-200" numberOfLines={1}>
                 {product.meetup.location}
               </Text>
             </View>
             <View className="my-1 flex flex-row justify-between">
-              <View className="flex flex-row items-start">
+              <View className="flex flex-row items-center">
                 <ClockIcon />
                 <Text className="ml-1 text-unihub-gray-200">
                   {formattedtime}

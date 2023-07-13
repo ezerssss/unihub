@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text } from 'react-native';
 import CategorySwiper from './CategorySwiper';
 import { CategoryNavigationProps } from '../../types/navigation';
@@ -9,10 +9,15 @@ import SecondarySearch from '../Search/SecondarySearch';
 function Category({ route }: CategoryNavigationProps) {
   const { category } = route.params;
 
+  const [searchText, setSearchText] = useState<string>('');
+
   return (
     <AuthWrapper>
       <ContentWrapper hasHeader={false}>
-        <SecondarySearch />
+        <SecondarySearch
+          searchText={searchText}
+          setSearchText={setSearchText}
+        />
         <View className="flex-1">
           <View className="m-4 flex flex-row items-center">
             <Text className="absolute text-xl text-unihub-gray-200">

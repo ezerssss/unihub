@@ -1,12 +1,18 @@
 import { View, TouchableOpacity } from 'react-native';
-import React, { useState } from 'react';
+import React from 'react';
 import Search from '../../components/Search';
 import { LeftArrowIcon } from '../../components/icons';
 import useGoBack from '../../hooks/useGoBack';
 
-export default function SecondarySearch() {
-  const [searchText, setSearchText] = useState('');
+interface SecondarySearchProps {
+  searchText: string;
+  setSearchText: (query: string) => void;
+}
 
+export default function SecondarySearch({
+  searchText,
+  setSearchText,
+}: SecondarySearchProps) {
   const goBack = useGoBack();
 
   return (
