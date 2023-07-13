@@ -55,7 +55,7 @@ function CategorySwiper(props: SwiperProps) {
     const formattedtime = dayjs(dateObject).format('HH:mm A');
     return (
       <TouchableOpacity
-        className="mx-1 mt-5 rounded-lg shadow shadow-gray-500"
+        className="mx-1 mt-5 rounded-lg bg-white shadow shadow-gray-500"
         key={product.images[0]}
         onPress={() => {
           goToSpecificProduct(product);
@@ -68,8 +68,6 @@ function CategorySwiper(props: SwiperProps) {
             source={{ uri: product.images[0] }}
           />
           <View className="flex flex-col gap-0 bg-white px-3 py-3">
-            <View className="absolute -top-3 h-3 w-3 bg-white"></View>
-            <View className="absolute -top-3 right-0 h-3 w-3 bg-white"></View>
             <Text className="my-3 text-lg text-black">{product.title}</Text>
             <View className="my-1 flex flex-row items-center">
               <LocationIcon />
