@@ -55,13 +55,13 @@ function CategorySwiper(props: SwiperProps) {
     const formattedtime = dayjs(dateObject).format('HH:mm A');
     return (
       <TouchableOpacity
-        className="mx-1 mt-5 flex-row items-center rounded-lg shadow shadow-gray-500"
+        className="mx-1 mt-5 rounded-lg shadow shadow-gray-500"
         key={product.images[0]}
         onPress={() => {
           goToSpecificProduct(product);
         }}
       >
-        <View className="overflow-hidden rounded-lg">
+        <View className="w-44 overflow-hidden rounded-lg">
           <Image
             className="z-10 h-36 rounded-lg"
             resizeMode="cover"
@@ -77,7 +77,7 @@ function CategorySwiper(props: SwiperProps) {
                 {product.meetup.location}
               </Text>
             </View>
-            <View className="my-1 flex flex-row">
+            <View className="my-1 flex flex-row justify-between">
               <View className="flex flex-row items-start">
                 <ClockIcon />
                 <Text className="ml-1 text-unihub-gray-200">
@@ -86,7 +86,7 @@ function CategorySwiper(props: SwiperProps) {
               </View>
               <View className="ml-2 flex flex-row items-center">
                 <Text className="font-extrabold text-primary-300">
-                  PHP {formatNumber(product.price)}
+                  ₱ {formatNumber(product.price, 0)}
                 </Text>
               </View>
             </View>
@@ -98,7 +98,7 @@ function CategorySwiper(props: SwiperProps) {
 
   return (
     <ScrollView>
-      <View className="flex flex-row flex-wrap justify-between">
+      <View className="flex flex-row flex-wrap justify-center gap-2 pt-8">
         {renderProducts}
       </View>
     </ScrollView>
