@@ -78,7 +78,11 @@ function Home({ navigation }: RootNavigationProps) {
 
   return (
     <AuthWrapper>
-      <ContentWrapper className="px-0" hasLightStatusBar={true}>
+      <ContentWrapper
+        className="px-0"
+        hasFooter={true}
+        hasLightStatusBar={true}
+      >
         <ScrollView
           className="mb-5 bg-white"
           refreshControl={
