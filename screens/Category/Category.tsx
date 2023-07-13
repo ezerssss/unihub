@@ -1,30 +1,27 @@
 import React from 'react';
-import { View, Text, TouchableOpacity } from 'react-native';
+import { View, Text } from 'react-native';
 import CategorySwiper from './CategorySwiper';
 import { CategoryNavigationProps } from '../../types/navigation';
 import AuthWrapper from '../../components/AuthWrapper';
 import ContentWrapper from '../../components/ContentWrapper';
-import useGoBack from '../../hooks/useGoBack';
-import { AntDesign } from '@expo/vector-icons';
+import SecondarySearch from '../Search/SecondarySearch';
 
 function Category({ route }: CategoryNavigationProps) {
   const { category } = route.params;
 
-  const goBack = useGoBack();
   return (
     <AuthWrapper>
       <ContentWrapper hasHeader={false}>
-        <View className=" flex-1 pt-10">
-          <View className="h-15 items-center bg-white">
-            <TouchableOpacity
-              className="absolute bottom-3 left-0 z-20 pl-3"
-              onPress={goBack}
-            >
-              <AntDesign color="black" name="left" size={30} />
-            </TouchableOpacity>
-            <Text className="py-4 text-xl font-semibold">{category}</Text>
+        <SecondarySearch />
+        <View className="flex-1">
+          <View className="m-4 flex flex-row items-center">
+            <Text className="absolute text-xl text-unihub-gray-200">
+              Category:
+            </Text>
+            <Text className="mx-auto text-2xl font-extrabold">{category}</Text>
           </View>
-          <View className="flex-1 bg-primary-400">
+          <View className="mx-3 h-[0.75px] bg-primary-500"></View>
+          <View className="flex-1 bg-white">
             <CategorySwiper category={category} />
           </View>
         </View>

@@ -1,9 +1,12 @@
 import React, { useEffect, useState, useContext, useCallback } from 'react';
-import { View, Text, Image, ScrollView, TouchableOpacity } from 'react-native';
+import { View, ScrollView, Text, Image, TouchableOpacity } from 'react-native';
+import dayjs from 'dayjs';
 import type { Product } from '../../types/product';
+import type { Timestamp } from 'firebase/firestore';
 import { formatNumber } from '../../helpers/number';
 import UserContext from '../../context/UserContext';
 import { Categories } from '../../enums/categories';
+import { LocationIcon, ClockIcon } from '../../components/icons';
 import { useNavigation } from '@react-navigation/native';
 import { RootStackParamsList } from '../../types/navigation';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -47,41 +50,57 @@ function CategorySwiper(props: SwiperProps) {
       product,
     });
   }
-  const renderProducts = products.map((product) => (
-    <TouchableOpacity
-      className="mx-3 mt-5 flex-row items-center"
-      key={product.images[0]}
-      onPress={() => {
-        goToSpecificProduct(product);
-      }}
-    >
-      <View className="overflow-hidden rounded-lg ">
-        <Image
-          className="h-28 w-28"
-          resizeMode="cover"
-          source={{ uri: product.images[0] }}
-        />
-      </View>
-      <View className="ml-3 h-28 w-3/4 overflow-hidden rounded-lg bg-white pl-5">
-        <Text
-          className="mt-3 w-3/4 text-xl font-semibold text-black"
-          numberOfLines={1}
-        >
-          {product.title}
-        </Text>
-        <Text className="text-base font-medium text-black">
-          by {product.seller}
-        </Text>
-        <Text className="pt-1 text-lg font-extrabold text-primary-100">
-          ₱{formatNumber(product.price)}
-        </Text>
-      </View>
-    </TouchableOpacity>
-  ));
+  const renderProducts = products.map((product) => {
+    const dateObject = (product.meetup.time as unknown as Timestamp).toDate();
+    const formattedtime = dayjs(dateObject).format('HH:mm A');
+    return (
+      <TouchableOpacity
+        className="mx-1 mt-5 flex-row items-center rounded-lg shadow shadow-gray-500"
+        key={product.images[0]}
+        onPress={() => {
+          goToSpecificProduct(product);
+        }}
+      >
+        <View className="overflow-hidden rounded-lg">
+          <Image
+            className="z-10 h-36 rounded-lg"
+            resizeMode="cover"
+            source={{ uri: product.images[0] }}
+          />
+          <View className="flex flex-col gap-0 bg-white px-3 py-3">
+            <View className="absolute -top-3 h-3 w-3 bg-white"></View>
+            <View className="absolute -top-3 right-0 h-3 w-3 bg-white"></View>
+            <Text className="my-3 text-lg text-black">{product.title}</Text>
+            <View className="my-1 flex flex-row items-start">
+              <LocationIcon />
+              <Text className="ml-2 text-unihub-gray-200">
+                {product.meetup.location}
+              </Text>
+            </View>
+            <View className="my-1 flex flex-row">
+              <View className="flex flex-row items-start">
+                <ClockIcon />
+                <Text className="ml-1 text-unihub-gray-200">
+                  {formattedtime}
+                </Text>
+              </View>
+              <View className="ml-2 flex flex-row items-center">
+                <Text className="font-extrabold text-primary-300">
+                  PHP {formatNumber(product.price)}
+                </Text>
+              </View>
+            </View>
+          </View>
+        </View>
+      </TouchableOpacity>
+    );
+  });
 
   return (
-    <ScrollView showsVerticalScrollIndicator={false}>
-      {renderProducts}
+    <ScrollView>
+      <View className="flex flex-row flex-wrap justify-between">
+        {renderProducts}
+      </View>
     </ScrollView>
   );
 }
