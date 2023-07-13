@@ -9,3 +9,5 @@ export { default as BigSearchIcon } from './BigSearchIcon';
 export { default as LeftArrowIcon } from './LeftArrow';
 export { default as AlgoliaSearchIcon } from './AlgoliaSearchIcon';
 export { default as MenuIcon } from './MenuIcon';
+export { default as LocationIcon } from './LocationIcon';
+export { default as ClockIcon } from './ClockIcon';
