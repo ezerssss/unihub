@@ -4,7 +4,7 @@ import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamsList } from '../types/navigation';
 import Header from './Header';
-import Footer from './Footer';
+import Footer from './Footer/Footer';
 import StatusBarStyle from './StatusBarStyle';
 
 interface PropsInterface {

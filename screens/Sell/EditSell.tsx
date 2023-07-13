@@ -395,7 +395,7 @@ export default function EditSell({
 
         <View className="h-28 bg-white shadow shadow-black">
           <View
-            className="h-full flex-row items-center justify-end border-t border-transparent py-4"
+            className="h-full flex-row items-center justify-end border-t-0 border-transparent py-4"
             style={{ elevation: 2 }}
           >
             <TouchableOpacity
