@@ -4,12 +4,14 @@ import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamsList } from '../types/navigation';
 import Header from './Header';
+import Footer from './Footer';
 import StatusBarStyle from './StatusBarStyle';
 
 interface PropsInterface {
   children: JSX.Element | JSX.Element[];
   className?: string;
   hasHeader?: boolean;
+  hasFooter?: boolean;
   hasLightStatusBar?: boolean;
 }
 
@@ -19,11 +21,13 @@ function ContentWrapper(props: PropsInterface) {
     className,
     hasLightStatusBar = false,
     hasHeader = true,
+    hasFooter = false,
   } = props;
 
   const navigation =
     useNavigation<NativeStackNavigationProp<RootStackParamsList>>();
   const renderHeader = hasHeader && <Header />;
+  const renderFooter = hasFooter && <Footer />;
   const lightStatusBar = StatusBarStyle(hasLightStatusBar);
 
   useLayoutEffect(() => {
@@ -35,6 +39,7 @@ function ContentWrapper(props: PropsInterface) {
       {renderHeader}
       {lightStatusBar}
       {children}
+      {renderFooter}
     </View>
   );
 }
