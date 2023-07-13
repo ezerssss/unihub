@@ -256,7 +256,7 @@ export default function Transactions({ navigation }: RootNavigationProps) {
         </ScrollView>
         <>{renderLoading}</>
         <FlatList
-          className="mb-5"
+          className="mb-5 min-h-[128px]"
           data={orders.filter((orders) => orders.status === activeOrderStatus)}
           ListEmptyComponent={renderNoOrders}
           renderItem={({ item }) => handleRender(item)}
@@ -300,7 +300,7 @@ export default function Transactions({ navigation }: RootNavigationProps) {
         </ScrollView>
         <>{renderLoading}</>
         <FlatList
-          className="py-5"
+          className="min-h-[128px] py-5"
           data={
             activeListingStatus !== StatusEnum.PENDING
               ? listings.filter(
