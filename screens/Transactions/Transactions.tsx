@@ -219,7 +219,7 @@ export default function Transactions({ navigation }: RootNavigationProps) {
   return (
     <AuthWrapper>
       <ContentWrapper hasLightStatusBar hasHeader={false}>
-        <View className="relative h-28 flex-row items-center justify-center rounded-3xl bg-primary-400">
+        <View className="relative h-28 flex-row items-center justify-center rounded-b-3xl bg-primary-400">
           <TouchableOpacity className="absolute left-7 top-12" onPress={goBack}>
             <AntDesign color="white" name="left" size={30} />
           </TouchableOpacity>
