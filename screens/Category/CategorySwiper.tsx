@@ -8,7 +8,7 @@ import {
 } from 'react-native';
 import dayjs from 'dayjs';
 import type { Product } from '../../types/product';
-import type { Timestamp } from 'firebase/firestore';
+import { Timestamp } from 'firebase/firestore';
 import { formatNumber } from '../../helpers/number';
 import UserContext from '../../context/UserContext';
 import { Categories } from '../../enums/categories';
@@ -113,7 +113,9 @@ function CategorySwiper(props: SwiperProps) {
   }
 
   function handleRender(product: Product) {
-    const dateObject = (product.meetup.time as unknown as Timestamp).toDate();
+    const timestamp = product.meetup.time;
+    const dateObject =
+      timestamp instanceof Timestamp ? timestamp.toDate() : timestamp;
     const formattedTime = dayjs(dateObject).format('HH:mm A');
 
     return (
