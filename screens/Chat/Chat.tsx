@@ -47,7 +47,6 @@ function Chat({ route }: ChatNavigationProps) {
   const [transactionID, setTransactionID] = useState<string>('');
   const [isSending, setIsSending] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const [isChatEnabled, setChatEnabled] = useState(true);
 
   const handleGetTransactionDocID = useCallback(getTransactionDocID, [
     user?.email,
@@ -119,7 +118,7 @@ function Chat({ route }: ChatNavigationProps) {
   }, [user, transactionID]);
 
   const handleSend = useCallback(async () => {
-    if (inputText.trim() === '' || !user?.email || !isChatEnabled) {
+    if (inputText.trim() === '' || !user?.email) {
       return;
     }
 
@@ -139,7 +138,7 @@ function Chat({ route }: ChatNavigationProps) {
     } finally {
       setIsSending(false);
     }
-  }, [inputText, transaction, user, isChatEnabled]);
+  }, [inputText, transaction, user]);
 
   function handleRender(message: Message) {
     const { content, from, date } = message;
@@ -175,12 +174,10 @@ function Chat({ route }: ChatNavigationProps) {
     otherName = transaction.buyer;
   }
 
-  if (
-    transaction.status === StatusEnum.SUCCESS ||
-    transaction.status === StatusEnum.DENY
-  ) {
-    setChatEnabled(false);
-  }
+  const isChatEnabled =
+    transaction.status !== StatusEnum.SUCCESS &&
+    transaction.status !== StatusEnum.DENY &&
+    transaction.status !== StatusEnum.CANCEL;
 
   return (
     <AuthWrapper>
