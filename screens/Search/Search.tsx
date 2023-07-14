@@ -13,6 +13,7 @@ import { RootStackParamsList } from '../../types/navigation';
 import { useNavigation } from '@react-navigation/native';
 import { Routes } from '../../enums/routes';
 import { Categories } from '../../enums/categories';
+import { generateErrorMessage } from '../../helpers/error';
 
 export default function SearchScreen() {
   const [searchText, setSearchText] = useState('');
@@ -23,21 +24,31 @@ export default function SearchScreen() {
 
   const debouncedSearch = useCallback(
     _debounce(async (query: string) => {
-      const fetchedResults = await search(query);
-      setSearchResults(fetchedResults);
+      try {
+        const fetchedResults = await search(query);
+        setSearchResults(fetchedResults);
+      } catch (error) {
+        const message = generateErrorMessage(error);
+        alert(message);
+      }
     }, searchDebounceTimeInMs),
     []
   );
 
   useEffect(() => {
     (async () => {
-      if (!searchText) {
-        setSearchResults([]);
+      try {
+        if (!searchText) {
+          setSearchResults([]);
 
-        return;
+          return;
+        }
+
+        await debouncedSearch(searchText);
+      } catch (error) {
+        const message = generateErrorMessage(error);
+        alert(message);
       }
-
-      await debouncedSearch(searchText);
     })();
   }, [searchText]);
 

@@ -23,7 +23,7 @@ export default function SearchTextResult(props: PropsInterface) {
   const handlePress = useCallback(async () => {
     const product: Product = createProductFromAlgoliaSearch(result);
 
-    navigation.navigate(Routes.PRODUCT, { product });
+    navigation.navigate(Routes.PRODUCT, { product, isRedirect: true });
   }, []);
 
   return (

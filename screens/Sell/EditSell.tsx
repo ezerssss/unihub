@@ -87,29 +87,34 @@ export default function EditSell({
   }
 
   async function handleAddImage(index: number) {
-    const image = await ImagePicker.launchImageLibraryAsync({
-      allowsEditing: true,
-      aspect: [4, 4],
-      quality: 1,
-      allowsMultipleSelection: false,
-    });
+    try {
+      const image = await ImagePicker.launchImageLibraryAsync({
+        allowsEditing: true,
+        aspect: [4, 4],
+        quality: 1,
+        allowsMultipleSelection: false,
+      });
 
-    if (image.canceled || !image.assets) {
-      alert('You did not select any image.');
-      return;
+      if (image.canceled || !image.assets) {
+        alert('You did not select any image.');
+        return;
+      }
+
+      const newURI = await compressImage(image.assets[0].uri);
+
+      setImageURIs(
+        imageURIs.map((uri, i) => {
+          if (i === index) {
+            return newURI;
+          }
+
+          return uri;
+        })
+      );
+    } catch (error) {
+      const message = generateErrorMessage(error);
+      alert(message);
     }
-
-    const newURI = await compressImage(image.assets[0].uri);
-
-    setImageURIs(
-      imageURIs.map((uri, i) => {
-        if (i === index) {
-          return newURI;
-        }
-
-        return uri;
-      })
-    );
   }
 
   function showErrorPopup(message: string) {
@@ -159,63 +164,73 @@ export default function EditSell({
   }
 
   async function handleDelete() {
-    if (!user) {
-      return;
+    try {
+      if (!user) {
+        return;
+      }
+
+      setIsDeleting(true);
+
+      await deleteProduct(product, user);
+      handleStateCleanUp();
+      navigation.navigate(Routes.HOME);
+    } catch (error) {
+      const message = generateErrorMessage(error);
+      alert(message);
     }
-
-    setIsDeleting(true);
-
-    await deleteProduct(product, user);
-    handleStateCleanUp();
-    navigation.navigate(Routes.HOME);
   }
 
   async function handleEdit() {
-    if (!user) {
-      return;
-    }
+    try {
+      if (!user) {
+        return;
+      }
 
-    setIsEditing(true);
+      setIsEditing(true);
 
-    const hasTitleChanged = product.title !== title;
+      const hasTitleChanged = product.title !== title;
 
-    if (hasTitleChanged && (await hasProductDuplicate(user.uid, title))) {
-      Alert.alert(
-        'Cannot have duplicate product',
-        'Please rename your product.'
+      if (hasTitleChanged && (await hasProductDuplicate(user.uid, title))) {
+        Alert.alert(
+          'Cannot have duplicate product',
+          'Please rename your product.'
+        );
+        setIsEditing(false);
+
+        return;
+      }
+
+      const outdatedImages = product.images.filter(
+        (uri, index) => uri !== imageURIs[index]
       );
-      setIsEditing(false);
 
-      return;
+      await deleteProductPhotos(outdatedImages);
+      const images = await uploadProductPhotos(imageURIs);
+
+      const newProduct: Product = {
+        images,
+        title,
+        price: parseFloat(price),
+        description,
+        category: selectedCategory as Categories,
+        meetup: {
+          time,
+          location,
+        },
+        seller: user?.displayName ?? '-',
+        sellerExpoPushToken: expoPushToken,
+      };
+
+      await updateProduct(product, newProduct, user);
+      handleStateCleanUp();
+      navigation.navigate(Routes.PRODUCT, {
+        product: newProduct,
+        isRedirect: true,
+      });
+    } catch (error) {
+      const message = generateErrorMessage(error);
+      alert(message);
     }
-
-    const outdatedImages = product.images.filter(
-      (uri, index) => uri !== imageURIs[index]
-    );
-
-    await deleteProductPhotos(outdatedImages);
-    const images = await uploadProductPhotos(imageURIs);
-
-    const newProduct: Product = {
-      images,
-      title,
-      price: parseFloat(price),
-      description,
-      category: selectedCategory as Categories,
-      meetup: {
-        time,
-        location,
-      },
-      seller: user?.displayName ?? '-',
-      sellerExpoPushToken: expoPushToken,
-    };
-
-    await updateProduct(product, newProduct, user);
-    handleStateCleanUp();
-    navigation.navigate(Routes.PRODUCT, {
-      product: newProduct,
-      isRedirect: true,
-    });
   }
 
   async function handleDeleteButtonPress() {

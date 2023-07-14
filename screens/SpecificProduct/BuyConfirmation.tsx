@@ -25,7 +25,9 @@ function Buy({ route, navigation }: BuyNavigationProps) {
     useState<Transaction>(transaction);
   const [transactionID, setTransactionID] = useState('');
 
-  const dateObject = (product.meetup.time as unknown as Timestamp).toDate();
+  const timestamp = product.meetup.time;
+  const dateObject =
+    timestamp instanceof Timestamp ? timestamp.toDate() : timestamp;
 
   function handleBack() {
     const { index, routes } = navigation.getState();
