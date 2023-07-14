@@ -135,12 +135,14 @@ async function getProductAndUserProductRefs(
   const qProductsCollection = query(
     productsRef,
     where('title', '==', title),
-    where('seller', '==', seller)
+    where('seller', '==', seller),
+    limit(1)
   );
   const qUsersCollection = query(
     userProductsRef,
     where('title', '==', title),
-    where('seller', '==', seller)
+    where('seller', '==', seller),
+    limit(1)
   );
 
   const productsSnapshot = await getDocs(qProductsCollection);
