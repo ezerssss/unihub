@@ -77,14 +77,19 @@ export default function TransactionButton(props: PropsInterface) {
       return;
     }
 
-    if (currentStatus === StatusEnum.CONFIRM) {
-      await handleUpdateStatus(StatusEnum.MEETUP);
-      await cancelAllProductTransactions(product, user, true);
-    } else if (currentStatus === StatusEnum.MEETUP) {
-      await handleUpdateStatus(StatusEnum.SUCCESS);
-      await handleDeleteProduct();
+    try {
+      if (currentStatus === StatusEnum.CONFIRM) {
+        await handleUpdateStatus(StatusEnum.MEETUP);
+        await cancelAllProductTransactions(product, user, true);
+      } else if (currentStatus === StatusEnum.MEETUP) {
+        await handleUpdateStatus(StatusEnum.SUCCESS);
+        await handleDeleteProduct();
 
-      navigation.navigate(Routes.PRODUCT_SOLD);
+        navigation.navigate(Routes.PRODUCT_SOLD);
+      }
+    } catch (error) {
+      const message = generateErrorMessage(error);
+      alert(message);
     }
   }
 

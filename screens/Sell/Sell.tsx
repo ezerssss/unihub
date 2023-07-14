@@ -146,31 +146,36 @@ export default function Sell({ navigation }: RootNavigationProps) {
   }
 
   async function handleSell() {
-    if (!user) {
-      return;
+    try {
+      if (!user) {
+        return;
+      }
+
+      setIsUploading(true);
+
+      const images = await uploadProductPhotos(imageURIs);
+
+      const product: Product = {
+        images,
+        title,
+        price: parseFloat(price),
+        description,
+        category: selectedCategory as Categories,
+        meetup: {
+          time,
+          location,
+        },
+        seller: user?.displayName ?? '-',
+        sellerExpoPushToken: expoPushToken,
+      };
+
+      await sell(product, user);
+      handleStateCleanUp();
+      navigation.navigate(Routes.PRODUCT, { product, isRedirect: true });
+    } catch (error) {
+      const message = generateErrorMessage(error);
+      alert(message);
     }
-
-    setIsUploading(true);
-
-    const images = await uploadProductPhotos(imageURIs);
-
-    const product: Product = {
-      images,
-      title,
-      price: parseFloat(price),
-      description,
-      category: selectedCategory as Categories,
-      meetup: {
-        time,
-        location,
-      },
-      seller: user?.displayName ?? '-',
-      sellerExpoPushToken: expoPushToken,
-    };
-
-    await sell(product, user);
-    handleStateCleanUp();
-    navigation.navigate(Routes.PRODUCT, { product, isRedirect: true });
   }
 
   async function handleSellButtonPress() {

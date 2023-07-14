@@ -94,7 +94,12 @@ function CategorySwiper(props: SwiperProps) {
 
   useEffect(() => {
     (async () => {
-      await debouncedSearch(searchText);
+      try {
+        await debouncedSearch(searchText);
+      } catch (error) {
+        const message = generateErrorMessage(error);
+        alert(message);
+      }
     })();
   }, [searchText]);
 
