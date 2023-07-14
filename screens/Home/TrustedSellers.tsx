@@ -29,7 +29,7 @@ function SellerScroll(props: SellerScrollProps) {
       <View className="mx-3 my-2" key={product.images[0]}>
         <TouchableOpacity
           className="h-32 w-full overflow-hidden rounded-lg bg-white py-4 pl-5 shadow shadow-black"
-          style={{ elevation: 2 }}
+          style={{ elevation: 4 }}
           onPress={() => goToSpecificProduct(product)}
         >
           <View className="flex-row items-center">

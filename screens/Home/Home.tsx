@@ -96,7 +96,7 @@ function Home({ navigation }: RootNavigationProps) {
           <View className="max-h-max bg-white">
             <View
               className="my-4 h-12 w-48 items-center rounded-r-lg bg-primary-200 shadow shadow-black"
-              style={{ elevation: 4 }}
+              style={{ elevation: 2 }}
             >
               <Text className="py-3 text-base font-extrabold text-secondary-100">
                 Check these out!

@@ -22,7 +22,7 @@ function CategoriesCarousel(props: CategoriesCarouselProps) {
   }
 
   const renderCategories = categories.map((category) => (
-    <View className="mx-2 mt-5" key={category.id}>
+    <View className="mx-2 mt-3" key={category.id}>
       <View className="overflow-hidden rounded-lg">
         <TouchableOpacity
           onPress={() => {
@@ -43,9 +43,11 @@ function CategoriesCarousel(props: CategoriesCarouselProps) {
   ));
 
   return (
+    <View className='ml-6'>
     <ScrollView horizontal showsHorizontalScrollIndicator={false}>
       {renderCategories}
     </ScrollView>
+    </View>
   );
 }
 
