@@ -208,7 +208,7 @@ export async function buy(
       product: product,
       sellerEmail,
       status: StatusEnum.CONFIRM,
-      buyerExpoPushToken: expoPushToken,
+      ...(expoPushToken && { buyerExpoPushToken: expoPushToken }),
     };
 
     const buyerRef = collection(db, DB.USERS, buyer.uid, DB.TRANSACTIONS);
