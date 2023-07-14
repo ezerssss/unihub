@@ -64,7 +64,7 @@ export default function TransactionButton(props: PropsInterface) {
   const renderDenyButton = (
     <TouchableOpacity
       className="h-20 flex-1 items-center justify-center bg-gray-200"
-      disabled={isLoading || currentStatus === StatusEnum.DENY}
+      disabled={isLoading || currentStatus === StatusEnum.DENY || currentStatus === StatusEnum.CANCEL}
       onPress={() => handleUpdateStatus(StatusEnum.DENY)}
     >
       <Text className="font-bold">Deny Order Request</Text>
