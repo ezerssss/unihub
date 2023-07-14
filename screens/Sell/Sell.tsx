@@ -166,7 +166,7 @@ export default function Sell({ navigation }: RootNavigationProps) {
           location,
         },
         seller: user?.displayName ?? '-',
-        sellerExpoPushToken: expoPushToken,
+        ...(expoPushToken && { sellerExpoPushToken: expoPushToken }),
       };
 
       await sell(product, user);
