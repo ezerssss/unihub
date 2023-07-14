@@ -126,7 +126,7 @@ export default function Transactions({ navigation }: RootNavigationProps) {
     const isProductOwned = user?.displayName === seller;
 
     const renderChatListing = isProductOwned &&
-      transaction &&
+      !!transaction &&
       transaction.status !== StatusEnum.PENDING && (
         <TouchableOpacity
           className="absolute right-6 top-5 rounded-full"
@@ -136,7 +136,7 @@ export default function Transactions({ navigation }: RootNavigationProps) {
         </TouchableOpacity>
       );
 
-    const renderChatOrder = !isProductOwned && transaction && (
+    const renderChatOrder = !isProductOwned && !!transaction && (
       <TouchableOpacity
         className="absolute right-6 top-4 rounded-full"
         onPress={() => handleClick(product, transaction)}
