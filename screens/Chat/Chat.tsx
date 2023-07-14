@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 import ContentWrapper from '../../components/ContentWrapper';
 import ArrowIcon from '../../components/icons/ArrowIcon';
-import EmojiIcon from '../../components/icons/EmojiIcon';
+import { StatusEnum } from '../../enums/status';
 import ReturnIcon from '../../components/icons/ReturnIcon';
 import { Message } from '../../types/messages';
 import useGoBack from '../../hooks/useGoBack';
@@ -47,6 +47,7 @@ function Chat({ route }: ChatNavigationProps) {
   const [transactionID, setTransactionID] = useState<string>('');
   const [isSending, setIsSending] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [isChatEnabled, setChatEnabled] = useState(true);
 
   const handleGetTransactionDocID = useCallback(getTransactionDocID, [
     user?.email,
@@ -118,7 +119,7 @@ function Chat({ route }: ChatNavigationProps) {
   }, [user, transactionID]);
 
   const handleSend = useCallback(async () => {
-    if (inputText.trim() === '' || !user?.email) {
+    if (inputText.trim() === '' || !user?.email || !isChatEnabled) {
       return;
     }
 
@@ -138,7 +139,7 @@ function Chat({ route }: ChatNavigationProps) {
     } finally {
       setIsSending(false);
     }
-  }, [inputText, transaction, user]);
+  }, [inputText, transaction, user, isChatEnabled]);
 
   function handleRender(message: Message) {
     const { content, from, date } = message;
@@ -146,7 +147,7 @@ function Chat({ route }: ChatNavigationProps) {
     const textAlign = from === user?.email ? 'self-end' : 'self-start';
     const messageStyle = from === user?.email ? 'text-gray-900' : 'text-white';
     const dateTextStyle = `text-${
-      from === user?.email ? 'gray-500' : 'gray-900'
+      from === user?.email ? 'gray-500' : 'blue-500'
     } text-xs self-end`;
     const dateObject = (date as unknown as Timestamp).toDate();
 
@@ -172,6 +173,13 @@ function Chat({ route }: ChatNavigationProps) {
   let otherName = seller;
   if (otherName === user?.displayName) {
     otherName = transaction.buyer;
+  }
+
+  if (
+    transaction.status === StatusEnum.SUCCESS ||
+    transaction.status === StatusEnum.DENY
+  ) {
+    setChatEnabled(false);
   }
 
   return (
@@ -200,14 +208,10 @@ function Chat({ route }: ChatNavigationProps) {
             behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
           >
             <View className="h-24 flex-row items-center bg-white p-4">
-              <View className="mr-4">
-                <TouchableOpacity>
-                  <EmojiIcon />
-                </TouchableOpacity>
-              </View>
               <View className="flex-1">
                 <TextInput
                   className="h-10 rounded-lg bg-white px-4"
+                  editable={isChatEnabled}
                   placeholder="Type a message..."
                   value={inputText}
                   onChangeText={setInputText}
@@ -216,7 +220,7 @@ function Chat({ route }: ChatNavigationProps) {
               <View className="ml-4">
                 <TouchableOpacity
                   className="h-10 w-10 items-center justify-center rounded-full bg-white"
-                  disabled={isSending}
+                  disabled={isSending || !isChatEnabled}
                   onPress={handleSend}
                 >
                   {renderButton}
