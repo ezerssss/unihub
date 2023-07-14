@@ -37,44 +37,51 @@ function SpecificProduct({ route, navigation }: ProductNavigationProps) {
   const [showSeeMore, setShowSeeMore] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
-  async function handleBuyOrder() {
+  async function handleBuyService() {
     try {
       if (!user) {
         return;
       }
 
-      if (user.displayName === product.seller) {
-        alert("You can't buy your own product.");
-        return;
-      }
-
-      Alert.alert(
-        'Confirm Purchase?',
-        '',
-        [
-          {
-            text: 'No',
-            style: 'cancel',
-          },
-          {
-            text: 'Yes',
-            onPress: async () => {
-              setIsLoading(true);
-              const transaction = await buy(product, user, expoPushToken);
-              navigation.navigate(Routes.BUY, {
-                product,
-                transaction,
-              });
-              setIsLoading(false);
-            },
-          },
-        ],
-        { cancelable: false }
-      );
+      setIsLoading(true);
+      const transaction = await buy(product, user, expoPushToken);
+      navigation.navigate(Routes.BUY, {
+        product,
+        transaction,
+      });
     } catch (error) {
       const message = generateErrorMessage(error);
       alert(message);
+    } finally {
+      setIsLoading(false);
     }
+  }
+
+  async function handleBuyOrder() {
+    if (!user) {
+      return;
+    }
+
+    if (user.displayName === product.seller) {
+      alert("You can't buy your own product.");
+      return;
+    }
+
+    Alert.alert(
+      'Confirm Purchase?',
+      '',
+      [
+        {
+          text: 'No',
+          style: 'cancel',
+        },
+        {
+          text: 'Yes',
+          onPress: handleBuyService,
+        },
+      ],
+      { cancelable: false }
+    );
   }
 
   const goBack = useGoBack();

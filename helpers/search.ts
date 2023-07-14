@@ -1,4 +1,3 @@
-import { Timestamp } from 'firebase/firestore';
 import { Product } from '../types/product';
 import { SearchResult } from '../types/search';
 
@@ -10,14 +9,11 @@ export function createProductFromAlgoliaSearch(result: SearchResult): Product {
     description,
     category,
     meetup,
-    isFeatured,
     seller,
     sellerExpoPushToken,
   } = result;
 
-  const { seconds, nanoseconds } = meetup.time as unknown as Timestamp;
-  const timestamp = new Timestamp(seconds, nanoseconds) as unknown as Date;
-  meetup.time = timestamp;
+  meetup.time = new Date(meetup.time);
 
   const product: Product = {
     images,
@@ -26,9 +22,8 @@ export function createProductFromAlgoliaSearch(result: SearchResult): Product {
     description,
     category,
     meetup,
-    isFeatured,
     seller,
-    sellerExpoPushToken,
+    ...(sellerExpoPushToken && { sellerExpoPushToken }),
   };
 
   return product;
