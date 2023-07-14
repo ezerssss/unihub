@@ -6,6 +6,7 @@ import {
   collection,
   doc,
   getDocs,
+  limit,
   query,
   updateDoc,
   where,
@@ -14,7 +15,11 @@ import { DB } from '../enums/db';
 import { StatusEnum } from '../enums/status';
 import db from '../firebase/db';
 import { getTransactionDocID } from '../helpers/message';
-import { getStatusSellerText } from '../helpers/status';
+import {
+  getNextStatusText,
+  getNotificationSellerText,
+  getStatusSellerText,
+} from '../helpers/status';
 import { getUserDocID } from '../helpers/user';
 import { Message } from '../types/messages';
 import { Transaction } from '../types/transaction';
@@ -109,18 +114,31 @@ export async function updateTransactionStatus(
     await updateDoc(sellerDocRef, { status: newStatus });
     await updateDoc(buyerDocRef, { status: newStatus, isSeen: false });
 
-    const message: Message = {
-      content: getStatusSellerText(newStatus, user.displayName ?? '-'),
+    const automatedMessage: Message = {
+      content: getStatusSellerText(newStatus),
       from: user.email ?? '-',
       date: new Date(),
+      isAutomated: true,
     };
 
-    await sendMessage(transaction, message, user);
+    await sendMessage(transaction, automatedMessage, user);
+
+    const nextStatusText = getNextStatusText(newStatus);
+    if (nextStatusText) {
+      const secondAutomatedMessage: Message = {
+        content: nextStatusText,
+        from: user.email ?? '-',
+        date: new Date(),
+        isAutomated: true,
+      };
+
+      await sendMessage(transaction, secondAutomatedMessage, user);
+    }
 
     if (buyerExpoPushToken) {
       await sendProductPushNotification(
         buyerExpoPushToken,
-        getStatusSellerText(newStatus, user.displayName ?? '-'),
+        getNotificationSellerText(newStatus, user.displayName ?? '-'),
         'Your order status has been updated.',
         transaction
       );
@@ -164,7 +182,8 @@ export async function buy(
     const userRef = collection(db, DB.USERS);
     const sellerQuery = query(
       userRef,
-      where('displayName', '==', product.seller)
+      where('displayName', '==', product.seller),
+      limit(1)
     );
 
     const sellerSnapshot = await getDocs(sellerQuery);
@@ -199,7 +218,9 @@ export async function buy(
       sellerRef,
       where('product.title', '==', product.title),
       where('sellerEmail', '==', sellerEmail),
-      where('buyerEmail', '==', buyerEmail)
+      where('buyerEmail', '==', buyerEmail),
+      where('status', '!=', StatusEnum.SUCCESS),
+      limit(1)
     );
 
     const pendingTransactionSnapshot = await getDocs(pendingTransactionQuery);

@@ -29,7 +29,8 @@ export default function TransactionButton(props: PropsInterface) {
   const { status, product } = transaction;
   const { user } = useContext(UserContext);
 
-  const [isLoading, setIsLoading] = useState(false);
+  const [isConfirmButtonsLoading, setIsConfirmButtonsLoading] = useState(false);
+  const [isDenyButtonsLoading, setIsDenyButtonsLoading] = useState(false);
   const [currentStatus, setCurrentStatus] = useState<StatusEnum>(status);
 
   const navigation =
@@ -42,33 +43,17 @@ export default function TransactionButton(props: PropsInterface) {
       }
 
       try {
-        setIsLoading(true);
         await updateTransactionStatus(user, transaction, newStatus);
         setCurrentStatus(newStatus);
       } catch (error) {
         const message = generateErrorMessage(error);
         alert(message);
       } finally {
-        setIsLoading(false);
+        setIsConfirmButtonsLoading(false);
+        setIsDenyButtonsLoading(false);
       }
     },
     [user, transaction]
-  );
-
-  const renderDeniedButton = currentStatus === StatusEnum.DENY && (
-    <View className="h-20 flex-1 items-center justify-center bg-gray-200">
-      <Text className="font-bold">Order Denied</Text>
-    </View>
-  );
-
-  const renderDenyButton = (
-    <TouchableOpacity
-      className="h-20 flex-1 items-center justify-center bg-gray-200"
-      disabled={isLoading || currentStatus === StatusEnum.DENY || currentStatus === StatusEnum.CANCEL}
-      onPress={() => handleUpdateStatus(StatusEnum.DENY)}
-    >
-      <Text className="font-bold">Deny Order Request</Text>
-    </TouchableOpacity>
   );
 
   const handleDeleteProduct = useCallback(async () => {
@@ -77,20 +62,38 @@ export default function TransactionButton(props: PropsInterface) {
     }
 
     try {
-      setIsLoading(true);
+      setIsConfirmButtonsLoading(true);
       await deleteProduct(product, user);
     } catch (error) {
       const message = generateErrorMessage(error);
       alert(message);
     } finally {
-      setIsLoading(false);
+      setIsConfirmButtonsLoading(false);
     }
   }, [product, user]);
 
-  async function handlePress() {
+  async function handleConfirmServices() {
     if (!user) {
       return;
     }
+
+    if (currentStatus === StatusEnum.CONFIRM) {
+      await handleUpdateStatus(StatusEnum.MEETUP);
+      await cancelAllProductTransactions(product, user, true);
+    } else if (currentStatus === StatusEnum.MEETUP) {
+      await handleUpdateStatus(StatusEnum.SUCCESS);
+      await handleDeleteProduct();
+
+      navigation.navigate(Routes.PRODUCT_SOLD);
+    }
+  }
+
+  async function handleConfirmButtons() {
+    if (!user) {
+      return;
+    }
+
+    setIsConfirmButtonsLoading(true);
 
     let confirmationMessage = '';
 
@@ -107,16 +110,7 @@ export default function TransactionButton(props: PropsInterface) {
       },
       {
         text: 'Confirm',
-        onPress: async () => {
-          if (currentStatus === StatusEnum.CONFIRM) {
-            await handleUpdateStatus(StatusEnum.MEETUP);
-            await cancelAllProductTransactions(product, user, true);
-          } else if (currentStatus === StatusEnum.MEETUP) {
-            await handleUpdateStatus(StatusEnum.SUCCESS);
-            await handleDeleteProduct();
-            navigation.navigate(Routes.PRODUCT_SOLD);
-          }
-        },
+        onPress: handleConfirmServices,
       },
     ]);
   }
@@ -124,30 +118,75 @@ export default function TransactionButton(props: PropsInterface) {
   const renderButtonText =
     currentStatus === StatusEnum.CONFIRM ? 'Approve Order' : 'Confirm Payment';
 
-  const renderButtons = currentStatus !== StatusEnum.SUCCESS && (
-    <TouchableOpacity
-      className="h-20 flex-1 items-center justify-center bg-secondary-100"
-      disabled={isLoading}
-      onPress={handlePress}
-    >
-      <Text className="font-bold text-white">{renderButtonText}</Text>
-    </TouchableOpacity>
-  );
+  const denyButtonText =
+    transaction.status === StatusEnum.CONFIRM
+      ? 'Deny Order Request'
+      : 'Cancel Order';
 
-  const renderLoading = isLoading && (
-    <ActivityIndicator
-      className="absolute top-6 z-20"
-      color="black"
-      size="large"
-    />
-  );
+  async function handleDenyServices() {
+    if (transaction.status === StatusEnum.CONFIRM) {
+      handleUpdateStatus(StatusEnum.DENY);
+    } else if (transaction.status === StatusEnum.MEETUP) {
+      handleUpdateStatus(StatusEnum.CANCEL);
+    }
+  }
+
+  async function handleDenyButtons() {
+    if (!user) {
+      return;
+    }
+
+    setIsDenyButtonsLoading(true);
+
+    let confirmationMessage = '';
+
+    if (currentStatus === StatusEnum.CONFIRM) {
+      confirmationMessage = 'Are you sure you want to deny this order?';
+    } else if (currentStatus === StatusEnum.MEETUP) {
+      confirmationMessage = 'Are you sure you want to cancel the order?';
+    }
+
+    Alert.alert('Confirmation', confirmationMessage, [
+      {
+        text: 'Cancel',
+        style: 'cancel',
+      },
+      {
+        text: 'Confirm',
+        onPress: handleDenyServices,
+      },
+    ]);
+  }
 
   return (
-    <View className="relative mb-5 w-full flex-row justify-center">
-      {renderDeniedButton}
-      {renderDenyButton}
-      {renderLoading}
-      {renderButtons}
+    <View className="bg-white shadow shadow-gray-100">
+      <View
+        className="flex-row justify-between px-3 py-4"
+        style={{ elevation: 1 }}
+      >
+        <TouchableOpacity
+          className="w-44 items-center justify-center rounded-lg bg-light-silver py-4"
+          disabled={isConfirmButtonsLoading || isDenyButtonsLoading}
+          onPress={handleDenyButtons}
+        >
+          {isDenyButtonsLoading ? (
+            <ActivityIndicator color="black" />
+          ) : (
+            <Text className="font-bold text-deny-text">{denyButtonText}</Text>
+          )}
+        </TouchableOpacity>
+        <TouchableOpacity
+          className="w-44 items-center justify-center rounded-lg bg-secondary-100 py-4"
+          disabled={isConfirmButtonsLoading || isDenyButtonsLoading}
+          onPress={handleConfirmButtons}
+        >
+          {isConfirmButtonsLoading ? (
+            <ActivityIndicator color="black" />
+          ) : (
+            <Text className="font-bold text-white">{renderButtonText}</Text>
+          )}
+        </TouchableOpacity>
+      </View>
     </View>
   );
 }

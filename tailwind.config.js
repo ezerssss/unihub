@@ -22,7 +22,7 @@ module.exports = {
           400: '#FFFADA',
         },
         tertiary: {
-          100: '#FF240D'
+          100: '#FF240D',
         },
         dark: '#01010E',
         'unihub-gray': {
@@ -35,6 +35,7 @@ module.exports = {
         'pale-yellow': '#FDFDBA',
         'orange-yellow': '#EECE5E',
         'light-silver': '#D9D9D9',
+        'deny-text': '#404040',
       },
     },
   },

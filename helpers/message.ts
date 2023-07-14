@@ -1,4 +1,4 @@
-import { collection, getDocs, query, where } from 'firebase/firestore';
+import { collection, getDocs, limit, query, where } from 'firebase/firestore';
 import { DB } from '../enums/db';
 import db from '../firebase/db';
 import { Transaction } from '../types/transaction';
@@ -26,7 +26,8 @@ export async function getTransactionDocID(
     transactionsCollectionRef,
     where('buyerEmail', '==', buyerEmail),
     where('sellerEmail', '==', sellerEmail),
-    where('product.title', '==', title)
+    where('product.title', '==', title),
+    limit(1)
   );
   const querySnapshot = await getDocs(transactionQuery);
 

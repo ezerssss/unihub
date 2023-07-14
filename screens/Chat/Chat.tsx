@@ -15,15 +15,14 @@ import { StatusEnum } from '../../enums/status';
 import ReturnIcon from '../../components/icons/ReturnIcon';
 import { Message } from '../../types/messages';
 import useGoBack from '../../hooks/useGoBack';
-import { formatTime } from '../../helpers/date';
 import AuthWrapper from '../../components/AuthWrapper';
 import { getTransactionDocID } from '../../helpers/message';
 import { ChatNavigationProps } from '../../types/navigation';
 import UserContext from '../../context/UserContext';
 import {
-  Timestamp,
   Unsubscribe,
   collection,
+  doc,
   onSnapshot,
   orderBy,
   query,
@@ -33,14 +32,18 @@ import { DB } from '../../enums/db';
 import TransactionButton from './TransactionButton';
 import { seenMessages, sendMessage } from '../../services/chat';
 import { generateErrorMessage } from '../../helpers/error';
+import { Transaction } from '../../types/transaction';
 
 function Chat({ route }: ChatNavigationProps) {
   const { user } = useContext(UserContext);
   const { transaction } = route.params;
-  const { product } = transaction;
-  const { seller } = product;
 
   const goBack = useGoBack();
+
+  const [transactionState, setTransactionState] =
+    useState<Transaction>(transaction);
+  const { product } = transactionState;
+  const { seller } = product;
 
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputText, setInputText] = useState<string>('');
@@ -50,22 +53,22 @@ function Chat({ route }: ChatNavigationProps) {
 
   const handleGetTransactionDocID = useCallback(getTransactionDocID, [
     user?.email,
-    transaction,
+    transactionState,
   ]);
 
   useEffect(() => {
     (async () => {
-      if (!user?.email) {
+      if (!user?.email || transactionID) {
         return;
       }
 
       const transactID = await handleGetTransactionDocID(
         user.email,
-        transaction
+        transactionState
       );
       setTransactionID(transactID);
     })();
-  }, [user]);
+  }, [user, transactionState]);
 
   const handleSeenMessages = useCallback(
     async (unsubscribe: Unsubscribe) => {
@@ -74,7 +77,7 @@ function Chat({ route }: ChatNavigationProps) {
           return;
         }
 
-        await seenMessages(user.email, user.uid, transaction);
+        await seenMessages(user.email, user.uid, transactionState);
       } catch (error) {
         const message = generateErrorMessage(error);
         alert(message);
@@ -82,7 +85,7 @@ function Chat({ route }: ChatNavigationProps) {
         unsubscribe();
       }
     },
-    [user?.email, user?.uid, transaction]
+    [user?.email, user?.uid, transactionState]
   );
 
   useEffect(() => {
@@ -117,6 +120,22 @@ function Chat({ route }: ChatNavigationProps) {
     };
   }, [user, transactionID]);
 
+  useEffect(() => {
+    if (!user || !transactionID) {
+      return;
+    }
+
+    const docRef = doc(db, DB.USERS, user.uid, DB.TRANSACTIONS, transactionID);
+
+    const unsubscribe = onSnapshot(docRef, (docSnapshot) => {
+      const data = docSnapshot.data() as Transaction;
+
+      setTransactionState(data);
+    });
+
+    return () => unsubscribe();
+  }, [user, transactionID]);
+
   const handleSend = useCallback(async () => {
     if (inputText.trim() === '' || !user?.email) {
       return;
@@ -131,59 +150,65 @@ function Chat({ route }: ChatNavigationProps) {
         from: user.email,
         date: new Date(),
       };
-      await sendMessage(transaction, newMessage, user);
+      await sendMessage(transactionState, newMessage, user);
     } catch (error) {
       const message = generateErrorMessage(error);
       alert(message);
     } finally {
       setIsSending(false);
     }
-  }, [inputText, transaction, user]);
+  }, [inputText, transactionState, user]);
 
   function handleRender(message: Message) {
-    const { content, from, date } = message;
-    const textBackground = from === user?.email ? 'bg-white' : 'bg-blue-900';
+    const { content, from, isAutomated } = message;
+    const textBackground =
+      from === user?.email ? 'bg-light-silver' : 'bg-primary-400';
     const textAlign = from === user?.email ? 'self-end' : 'self-start';
     const messageStyle = from === user?.email ? 'text-gray-900' : 'text-white';
-    const dateTextStyle = `text-${
-      from === user?.email ? 'gray-500' : 'blue-500'
-    } text-xs self-end`;
-    const dateObject = (date as unknown as Timestamp).toDate();
+
+    if (isAutomated) {
+      return (
+        <View className="mx-auto mb-4 w-fit rounded-3xl bg-light-silver p-2">
+          <Text className="text-center text-xs text-unihub-gray-200">
+            {content}
+          </Text>
+        </View>
+      );
+    }
 
     return (
       <View
-        className={`${textBackground} mb-4 rounded-2xl p-4 ${textAlign}`}
+        className={`${textBackground} mb-4 rounded-3xl p-4 ${textAlign}`}
         key={content}
       >
         <Text className={messageStyle}>{content}</Text>
-        <Text className={dateTextStyle}>{formatTime(dateObject)}</Text>
       </View>
     );
   }
+
+  const isChatEnabled =
+    transactionState.status !== StatusEnum.SUCCESS &&
+    transactionState.status !== StatusEnum.DENY &&
+    transactionState.status !== StatusEnum.CANCEL;
 
   const renderLoading = isLoading && (
     <ActivityIndicator className="mt-5" size="large" />
   );
   const renderButton = isSending ? <ActivityIndicator /> : <ArrowIcon />;
-  const renderTransactionButton = user?.email === transaction.sellerEmail && (
-    <TransactionButton transaction={transaction} />
-  );
+  const renderTransactionButton = user?.email ===
+    transactionState.sellerEmail &&
+    isChatEnabled && <TransactionButton transaction={transactionState} />;
 
   let otherName = seller;
   if (otherName === user?.displayName) {
-    otherName = transaction.buyer;
+    otherName = transactionState.buyer;
   }
-
-  const isChatEnabled =
-    transaction.status !== StatusEnum.SUCCESS &&
-    transaction.status !== StatusEnum.DENY &&
-    transaction.status !== StatusEnum.CANCEL;
 
   return (
     <AuthWrapper>
       <ContentWrapper hasHeader={false}>
         <View className="flex-1 bg-secondary-400">
-          <View className="mt-10 flex-row items-center justify-center bg-yellow-50 p-4">
+          <View className="mt-10 flex-row items-center justify-center p-4">
             <View className="absolute left-0">
               <TouchableOpacity className="ml-4" onPress={goBack}>
                 <ReturnIcon />
@@ -196,13 +221,14 @@ function Chat({ route }: ChatNavigationProps) {
           {renderLoading}
           <FlatList
             inverted
-            className="p-4"
+            className="px-4"
             data={messages}
             renderItem={({ item }) => handleRender(item)}
           />
           {renderTransactionButton}
           <KeyboardAvoidingView
             behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+            className="border-t border-unihub-gray-100"
           >
             <View className="h-24 flex-row items-center bg-white p-4">
               <View className="flex-1">
