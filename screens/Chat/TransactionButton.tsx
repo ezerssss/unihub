@@ -1,4 +1,10 @@
-import { View, Text, TouchableOpacity, ActivityIndicator } from 'react-native';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  ActivityIndicator,
+  Alert,
+} from 'react-native';
 import React, { useCallback, useContext, useState } from 'react';
 import { Transaction } from '../../types/transaction';
 import { StatusEnum } from '../../enums/status';
@@ -55,10 +61,10 @@ export default function TransactionButton(props: PropsInterface) {
     </View>
   );
 
-  const renderDenyButton = currentStatus === StatusEnum.CONFIRM && (
+  const renderDenyButton = (
     <TouchableOpacity
       className="h-20 flex-1 items-center justify-center bg-gray-200"
-      disabled={isLoading}
+      disabled={isLoading || currentStatus === StatusEnum.DENY}
       onPress={() => handleUpdateStatus(StatusEnum.DENY)}
     >
       <Text className="font-bold">Deny Order Request</Text>
@@ -86,29 +92,47 @@ export default function TransactionButton(props: PropsInterface) {
       return;
     }
 
+    let confirmationMessage = '';
+
     if (currentStatus === StatusEnum.CONFIRM) {
-      await handleUpdateStatus(StatusEnum.MEETUP);
-      await cancelAllProductTransactions(product, user, true);
+      confirmationMessage = 'Are you sure you want to approve this order?';
     } else if (currentStatus === StatusEnum.MEETUP) {
-      await handleUpdateStatus(StatusEnum.SUCCESS);
-      await handleDeleteProduct();
-      navigation.navigate(Routes.PRODUCT_SOLD);
+      confirmationMessage = 'Are you sure you want to confirm the payment?';
     }
+
+    Alert.alert('Confirmation', confirmationMessage, [
+      {
+        text: 'Cancel',
+        style: 'cancel',
+      },
+      {
+        text: 'Confirm',
+        onPress: async () => {
+          if (currentStatus === StatusEnum.CONFIRM) {
+            await handleUpdateStatus(StatusEnum.MEETUP);
+            await cancelAllProductTransactions(product, user, true);
+          } else if (currentStatus === StatusEnum.MEETUP) {
+            await handleUpdateStatus(StatusEnum.SUCCESS);
+            await handleDeleteProduct();
+            navigation.navigate(Routes.PRODUCT_SOLD);
+          }
+        },
+      },
+    ]);
   }
 
   const renderButtonText =
     currentStatus === StatusEnum.CONFIRM ? 'Approve Order' : 'Confirm Payment';
 
-  const renderButtons = currentStatus !== StatusEnum.DENY &&
-    currentStatus !== StatusEnum.SUCCESS && (
-      <TouchableOpacity
-        className="h-20 flex-1 items-center justify-center bg-secondary-100"
-        disabled={isLoading}
-        onPress={handlePress}
-      >
-        <Text className="font-bold text-white">{renderButtonText}</Text>
-      </TouchableOpacity>
-    );
+  const renderButtons = currentStatus !== StatusEnum.SUCCESS && (
+    <TouchableOpacity
+      className="h-20 flex-1 items-center justify-center bg-secondary-100"
+      disabled={isLoading}
+      onPress={handlePress}
+    >
+      <Text className="font-bold text-white">{renderButtonText}</Text>
+    </TouchableOpacity>
+  );
 
   const renderLoading = isLoading && (
     <ActivityIndicator
