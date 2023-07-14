@@ -2,11 +2,12 @@ import { TouchableOpacity, Text } from 'react-native';
 import React, { useCallback } from 'react';
 import { SearchResult } from '../../types/search';
 import { BigSearchIcon } from '../../components/icons';
-import { getProductByDocID } from '../../services/product';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamsList } from '../../types/navigation';
 import { useNavigation } from '@react-navigation/native';
 import { Routes } from '../../enums/routes';
+import { Product } from '../../types/product';
+import { createProductFromAlgoliaSearch } from '../../helpers/search';
 
 interface PropsInterface {
   result: SearchResult;
@@ -14,13 +15,13 @@ interface PropsInterface {
 
 export default function SearchTextResult(props: PropsInterface) {
   const { result } = props;
-  const { searchText, docID } = result;
+  const { searchText } = result;
 
   const navigation =
     useNavigation<NativeStackNavigationProp<RootStackParamsList>>();
 
   const handlePress = useCallback(async () => {
-    const product = await getProductByDocID(docID);
+    const product: Product = createProductFromAlgoliaSearch(result);
 
     navigation.navigate(Routes.PRODUCT, { product });
   }, []);

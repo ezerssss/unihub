@@ -1,5 +1,11 @@
 import React, { useEffect, useState, useContext, useCallback } from 'react';
-import { View, ScrollView, Text, Image, TouchableOpacity } from 'react-native';
+import {
+  View,
+  Text,
+  Image,
+  TouchableOpacity,
+  RefreshControl,
+} from 'react-native';
 import dayjs from 'dayjs';
 import type { Product } from '../../types/product';
 import type { Timestamp } from 'firebase/firestore';
@@ -13,34 +19,84 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { Routes } from '../../enums/routes';
 import { generateErrorMessage } from '../../helpers/error';
 import { getProductsByCategory } from '../../services/product';
+import { FlatList } from 'react-native-gesture-handler';
+import _debounce from 'lodash/debounce';
+import { search } from '../../services/search';
+import { searchDebounceTimeInMs } from '../../constants/search';
+import { createProductFromAlgoliaSearch } from '../../helpers/search';
 
 interface SwiperProps {
+  isGlobalSearch: boolean;
   category: Categories;
+  searchText: string;
 }
 
 function CategorySwiper(props: SwiperProps) {
-  const { category } = props;
+  const { category, searchText, isGlobalSearch } = props;
   const { user } = useContext(UserContext);
 
+  const [isFetching, setIsFetching] = useState(true);
   const [products, setProducts] = useState<Product[]>([]);
 
   const handleGetProducts = useCallback(getProductsByCategory, [category]);
 
-  useEffect(() => {
-    (async () => {
+  const handleGetCategoryData = useCallback(async () => {
+    try {
+      if (!user) {
+        return;
+      }
+
+      setIsFetching(true);
+
+      const fetchedProducts = await handleGetProducts(category);
+      setProducts(fetchedProducts);
+    } catch (error) {
+      const message = generateErrorMessage(error);
+      alert(message);
+    } finally {
+      setIsFetching(false);
+    }
+  }, []);
+
+  const debouncedSearch = useCallback(
+    _debounce(async (query: string) => {
+      if (!query) {
+        await handleGetCategoryData();
+
+        return;
+      }
+
       try {
-        if (!user) {
-          return;
+        setIsFetching(true);
+        const fetchedResults = await search(query);
+        const productsArray: Product[] = [];
+
+        for (const result of fetchedResults) {
+          const product = createProductFromAlgoliaSearch(result);
+
+          if (!isGlobalSearch && product.category !== category) {
+            continue;
+          }
+
+          productsArray.push(product);
         }
 
-        const fetchedProducts = await handleGetProducts(category);
-        setProducts(fetchedProducts);
+        setProducts(productsArray);
       } catch (error) {
         const message = generateErrorMessage(error);
         alert(message);
+      } finally {
+        setIsFetching(false);
       }
+    }, searchDebounceTimeInMs),
+    []
+  );
+
+  useEffect(() => {
+    (async () => {
+      await debouncedSearch(searchText);
     })();
-  }, []);
+  }, [searchText]);
 
   const navigation =
     useNavigation<NativeStackNavigationProp<RootStackParamsList>>();
@@ -50,56 +106,66 @@ function CategorySwiper(props: SwiperProps) {
       product,
     });
   }
-  const renderProducts = products.map((product) => {
+
+  function handleRender(product: Product) {
     const dateObject = (product.meetup.time as unknown as Timestamp).toDate();
-    const formattedtime = dayjs(dateObject).format('HH:mm A');
+    const formattedTime = dayjs(dateObject).format('HH:mm A');
+
     return (
       <TouchableOpacity
-        className="mx-1 mt-5 rounded-lg bg-white shadow shadow-gray-500"
+        className="mb-2 ml-2 h-fit w-[47.6%] overflow-hidden rounded-lg border border-gray-100 bg-white shadow shadow-gray-500"
         key={product.images[0]}
         onPress={() => {
           goToSpecificProduct(product);
         }}
       >
-        <View className="w-44 overflow-hidden rounded-lg">
-          <Image
-            className="z-10 h-36 rounded-lg"
-            resizeMode="cover"
-            source={{ uri: product.images[0] }}
-          />
-          <View className="flex flex-col gap-0 bg-white px-3 py-3">
-            <Text className="my-3 text-lg text-black">{product.title}</Text>
-            <View className="my-1 flex flex-row items-center">
-              <LocationIcon />
-              <Text className="ml-2 text-unihub-gray-200" numberOfLines={1}>
-                {product.meetup.location}
-              </Text>
+        <Image
+          className="z-10 h-36 rounded-lg"
+          resizeMode="cover"
+          source={{ uri: product.images[0] }}
+        />
+        <View className="justify-center p-3">
+          <Text className="my-1 text-lg text-black" numberOfLines={2}>
+            {product.title}
+          </Text>
+          <View className="my-1 flex-row items-center">
+            <LocationIcon />
+            <Text className="ml-1 text-unihub-gray-200" numberOfLines={1}>
+              {product.meetup.location}
+            </Text>
+          </View>
+          <View className="my-1 flex-row flex-wrap justify-between">
+            <View className="flex-row items-center justify-between">
+              <ClockIcon />
+              <Text className="ml-1 text-unihub-gray-200">{formattedTime}</Text>
             </View>
-            <View className="my-1 flex flex-row justify-between">
-              <View className="flex flex-row items-center">
-                <ClockIcon />
-                <Text className="ml-1 text-unihub-gray-200">
-                  {formattedtime}
-                </Text>
-              </View>
-              <View className="ml-2 flex flex-row items-center">
-                <Text className="font-extrabold text-primary-300">
-                  ₱ {formatNumber(product.price, 0)}
-                </Text>
-              </View>
-            </View>
+            <Text className="font-extrabold text-primary-300">
+              ₱ {formatNumber(product.price, 0)}
+            </Text>
           </View>
         </View>
       </TouchableOpacity>
     );
-  });
+  }
+
+  const renderNoProducts = (
+    <Text className="mx-3 text-sm text-gray-400">No products.</Text>
+  );
 
   return (
-    <ScrollView>
-      <View className="flex flex-row flex-wrap justify-center gap-2 pt-8">
-        {renderProducts}
-      </View>
-    </ScrollView>
+    <FlatList
+      className="-ml-2 flex-1 px-3"
+      data={products}
+      ListEmptyComponent={renderNoProducts}
+      numColumns={2}
+      refreshControl={
+        <RefreshControl
+          refreshing={isFetching}
+          onRefresh={handleGetCategoryData}
+        />
+      }
+      renderItem={({ item }) => handleRender(item)}
+    />
   );
 }
 

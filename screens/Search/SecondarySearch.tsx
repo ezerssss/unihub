@@ -5,14 +5,14 @@ import { LeftArrowIcon } from '../../components/icons';
 import useGoBack from '../../hooks/useGoBack';
 
 interface SecondarySearchProps {
+  autoFocus?: boolean;
   searchText: string;
   setSearchText: (query: string) => void;
 }
 
-export default function SecondarySearch({
-  searchText,
-  setSearchText,
-}: SecondarySearchProps) {
+export default function SecondarySearch(props: SecondarySearchProps) {
+  const { autoFocus = true, searchText, setSearchText } = props;
+
   const goBack = useGoBack();
 
   return (
@@ -24,7 +24,7 @@ export default function SecondarySearch({
         <LeftArrowIcon />
       </TouchableOpacity>
       <Search
-        autoFocus
+        autoFocus={autoFocus}
         value={searchText}
         onChange={(query: string) => setSearchText(query)}
       />
