@@ -8,10 +8,18 @@ import { search } from '../../services/search';
 import { searchDebounceTimeInMs } from '../../constants/search';
 import { SearchResult } from '../../types/search';
 import SearchTextResult from './SearchTextResult';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { RootStackParamsList } from '../../types/navigation';
+import { useNavigation } from '@react-navigation/native';
+import { Routes } from '../../enums/routes';
+import { Categories } from '../../enums/categories';
 
 export default function SearchScreen() {
   const [searchText, setSearchText] = useState('');
   const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
+
+  const navigation =
+    useNavigation<NativeStackNavigationProp<RootStackParamsList>>();
 
   const debouncedSearch = useCallback(
     _debounce(async (query: string) => {
@@ -39,6 +47,13 @@ export default function SearchScreen() {
     return <SearchTextResult key={docID} result={item} />;
   }
 
+  function handleGoToCategories() {
+    navigation.navigate(Routes.CATEGORY, {
+      category: Categories.ALL,
+      initialQuery: searchText,
+    });
+  }
+
   return (
     <AuthWrapper>
       <ContentWrapper hasLightStatusBar hasHeader={false}>
@@ -47,7 +62,11 @@ export default function SearchScreen() {
           setSearchText={setSearchText}
         />
         <View className="p-4">
-          <TouchableOpacity className="flex-row py-2">
+          <TouchableOpacity
+            className="flex-row py-2"
+            disabled={!searchText}
+            onPress={handleGoToCategories}
+          >
             <Text className="text-gray-300">Search for </Text>
             <Text className="text-gray-400">{searchText || '....'}</Text>
           </TouchableOpacity>

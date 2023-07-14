@@ -2,10 +2,7 @@ import { searchIndex } from '../search/search';
 import { Product } from '../types/product';
 import { SearchResult } from '../types/search';
 
-interface CleanedSearchableProduct {
-  title: string;
-  description: string;
-  seller: string;
+interface SearchableProduct extends Product {
   objectID: string;
 }
 
@@ -13,16 +10,12 @@ export async function saveAsSearchableItem(
   product: Product,
   productDocID: string
 ) {
-  const { title, description, seller } = product;
-
-  const cleanedSearchableProduct: CleanedSearchableProduct = {
-    title,
-    description,
-    seller,
+  const searchableProduct: SearchableProduct = {
+    ...product,
     objectID: productDocID,
   };
 
-  await searchIndex.saveObject(cleanedSearchableProduct);
+  await searchIndex.saveObject(searchableProduct);
 }
 
 export async function deleteSearchableItem(productDocID: string) {
@@ -33,12 +26,8 @@ export async function updateSearchableItem(
   product: Product,
   productDocID: string
 ) {
-  const { title, description, seller } = product;
-
-  const object: CleanedSearchableProduct = {
-    title,
-    description,
-    seller,
+  const object: SearchableProduct = {
+    ...product,
     objectID: productDocID,
   };
 
@@ -51,11 +40,13 @@ export async function search(query: string): Promise<SearchResult[]> {
 
   const { hits } = response;
   for (const item of hits) {
-    const { objectID, title } = item as CleanedSearchableProduct;
+    const { objectID } = item as SearchableProduct;
+    const product = item as SearchableProduct;
 
     const result: SearchResult = {
       docID: objectID,
-      searchText: title,
+      searchText: product.title,
+      ...product,
     };
 
     results.push(result);

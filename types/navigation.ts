@@ -12,7 +12,10 @@ export type RootStackParamsList = {
   Product: { product: Product; isRedirect?: boolean };
   ProductListings: undefined;
   Buy: { product: Product; transaction: Transaction };
-  Category: { category: Categories };
+  Category: {
+    category: Categories;
+    initialQuery?: string;
+  };
   ProductSold: undefined;
   Transactions: undefined;
   Search: undefined;
