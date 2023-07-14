@@ -26,10 +26,10 @@ function ProductsCarousel(props: ProductsCarouselProps) {
 
   const renderProducts = products.map((product) => {
     return (
-      <View className="mx-2 mb-8 mt-4" key={product.images[0]}>
+      <View className="mx-2 mb-8" key={product.images[0]}>
         <View
           className="w-32 overflow-hidden rounded-lg shadow shadow-black"
-          style={{ elevation: 2 }}
+          style={{ elevation: 4 }}
         >
           <TouchableOpacity
             className="bg-white"
@@ -58,9 +58,11 @@ function ProductsCarousel(props: ProductsCarouselProps) {
   });
 
   return (
+    <View className='ml-1'>
     <ScrollView horizontal showsHorizontalScrollIndicator={false}>
       {renderProducts}
     </ScrollView>
+    </View>
   );
 }
 
